@@ -1,2 +1,0 @@
-# ProyectoFronted
-frontend proyecto
