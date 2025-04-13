@@ -1,0 +1,83 @@
+<div class="min-h-screen bg-gray-950 py-12 px-6 lg:px-8 font-sans flex flex-col items-center">
+
+    <!-- Contenedor principal -->
+    <div class="w-full max-w-7xl px-6">
+
+        <!-- Encabezado -->
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-bold text-gray-100 font-playfair">Gestión de Eventos</h1>
+            <p class="mt-3 text-lg text-gray-400">Explora y administra eventos de manera eficiente.</p>
+        </div>
+
+        <!-- Navegación con animación -->
+        <nav class="flex justify-center space-x-6 border-b border-gray-800 pb-4 mb-8">
+            <a routerLink=".." class="nav-link">Principal</a>
+            <a routerLink="../rutinaDeportista" class="nav-link">Deportistas</a>
+            <a routerLink="../crearEquipos" class="nav-link">Equipos</a>
+            <a routerLink="../equipoEvento" class="nav-link">Eventos</a>
+            <a href="#" class="nav-link">Historial</a>
+        </nav>
+
+        <!-- Barra de búsqueda -->
+        <div class="flex justify-center mb-8">
+            <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarEquipos()" 
+                placeholder="Buscar evento..." 
+                class="w-1/2 px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-500 shadow-md">
+        </div>
+
+        <!-- Grid de eventos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div *ngFor="let evento of eventos" class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
+                <img [src]="evento" alt="Evento" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold text-gray-100">{{ evento.nombre }}</h3>
+                    <p class="text-gray-400 text-sm">Fecha: {{ evento.fecha | date:'mediumDate' }}</p>
+                    <p class="mt-2 text-gray-300 text-sm">{{ evento.descripcion }}</p>
+                </div>
+                <div class="flex justify-between px-4 py-2 bg-gray-800">
+                    <button (click)="verDetallesEvento(evento)" class="text-blue-400 hover:underline">Detalles</button>
+                    <button (click)="abrirModalAsociarEquipo(evento)" class="text-green-400 hover:underline">Asociar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de detalles del evento -->
+        <div *ngIf="mostrarDetallesEvento" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-lg font-bold mb-4 text-gray-100">Detalles del Evento: {{ eventoSeleccionado?.nombre }}</h2>
+                <div class="text-gray-300">
+                    <p><strong>Descripción:</strong> {{ eventoSeleccionado?.organizacion?.nombreOrganizacion }}</p>
+                    <p><strong>Ubicación:</strong> {{ eventoSeleccionado?.numMaxEquipos }}</p>
+                    <p><strong>Fecha:</strong> {{ eventoSeleccionado?.fecha | date:'longDate' }}</p>
+                    <p><strong>Organizador:</strong> {{ eventoSeleccionado?.contactoOrganizador }}</p>
+                    <p><strong>Imagen:</strong></p>
+                    <img [src]="eventoSeleccionado?.contactoOrganizador" alt="Evento" class="w-full h-40 rounded-lg object-cover">
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button (click)="mostrarDetallesEvento = false" class="bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="mostrarModalAsociarEquipo" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+              <h2 class="text-lg font-bold mb-4 text-gray-100">Inscribir Equipo al Evento {{ eventoSeleccionado?.nombre }}</h2>
+              <form (ngSubmit)="asociarEquipo()">
+                <div class="mb-4">
+                  <label class="block text-gray-300">Seleccionar Jugador:</label>
+                  <select [(ngModel)]="equipoSeleccionado" name="jugador" class="w-full p-2 border border-gray-700 rounded-lg bg-gray-700 text-gray-100" required>
+                    <option *ngFor="let equipo of equipos" [value]="equipo.id">{{ equipo.nombre }} {{ equipo.maxJugadores }}</option>
+                  </select>
+                </div>
+                <div class="mt-4 flex justify-end">
+                  <button type="submit" class="bg-blue-600 px-4 py-2 rounded-lg text-white hover:bg-blue-700">Asociar</button>
+                  <button (click)="mostrarModalAsociarEquipo = false" type="button" class="ml-2 bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">Cancelar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        
+
+    </div>
+</div>

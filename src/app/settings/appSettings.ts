@@ -1,0 +1,27 @@
+export const appSettings={
+    apiLogin:"http://localhost:8080/auth/login/deportista",
+    apiLoginOrg:"http://localhost:8080/auth/login/organizacion",
+    apiLoginInst:"http://localhost:8080/auth/login/instructor",
+    apiRutinas:"http://localhost:8080/rutinas",
+    apiPosiciones:"http://localhost:8080/posiciones",
+    apiEliminarRutinas:"http://localhost:8080/rutinas/eliminar",
+    apiAgregarRutinas:"http://localhost:8080/rutinas/agregar",
+    apiDeportistas:"http://localhost:8080/deportistas",
+    apiRutinasJugador:"http://localhost:8080/rutinaJugador",
+    apiVincularRutinas:"http://localhost:8080/rutinaJugador/vincular",
+    apiEquipo:"http://localhost:8080/equipos",
+    apiJugadorEquipo:"http://localhost:8080/equipos/jugadores",
+    apiVincularEquipo:"http://localhost:8080/equipos/vincular",
+    apiEliminarEquipos:"http://localhost:8080/equipos/eliminar",
+    apiAgregarEquipos:"http://localhost:8080/equipos/agregar",
+    apiRutinasInst:"http://localhost:8080/rutinas/total",
+    apiEventoEquipo:"http://localhost:8080/eventosEquipo",
+    apiEventoEquipos:"http://localhost:8080/eventosEquipo/equipos",
+    apiVincularEvento:"http://localhost:8080/eventosEquipo/vincular",
+    apiVideo:"http://localhost:8080/api/recursos/video",
+    apiEjercicios:"http://localhost:8080/ejercicios",
+    apiAgregarEjercicio:"http://localhost:8080/ejercicios/agregar",
+    apiEliminarEjercicios:"http://localhost:8080/ejercicios/eliminar",
+    
+
+}

@@ -1,0 +1,92 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 py-12 px-6 font-sans text-white">
+    <!-- Encabezado principal -->
+    <div class="max-w-7xl mx-auto text-center mb-16">
+      <h1 class="text-5xl font-bold font-playfair text-blue-400 drop-shadow-xl">Gestión de Ejercicios</h1>
+      <p class="mt-4 text-xl text-gray-300">Optimiza tus entrenamientos con ejercicios personalizados.</p>
+    </div>
+  
+    <!-- Navegación superior -->
+    <nav class="max-w-7xl mx-auto flex justify-center space-x-8 mb-12 border-b border-gray-700 pb-4">
+      <a routerLink=".." class="nav-link">Principal</a>
+      <a routerLink="ejercicios" class="nav-link">Ejercicios</a>
+      <a routerLink="videos" class="nav-link">Videos</a>
+    </nav>
+  
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+  
+      <!-- Formulario -->
+      <div class="bg-gray-900 shadow-2xl rounded-2xl p-8">
+        <h2 class="text-3xl font-bold text-center text-blue-400 mb-6">Nuevo Ejercicio</h2>
+        <form #rutinaForm="ngForm" class="space-y-6">
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Nombre del ejercicio</mat-label>
+            <input matInput [(ngModel)]="nombre" name="nombre" required />
+            <mat-icon matSuffix>fitness_center</mat-icon>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput [(ngModel)]="descripcion" name="descripcion" required></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+          </mat-form-field>
+  
+          <div class="grid grid-cols-2 gap-4">
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Rutina Asociada</mat-label>
+              <mat-select [(ngModel)]="rutina" name="rutina" required>
+                <mat-option *ngFor="let rutina of rutinas" [value]="rutina">{{ rutina.nombre }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="fill" class="w-full" >
+                <mat-label>Series:</mat-label>
+                <input matInput [(ngModel)]="series" type="number" name="series" required />
+            </mat-form-field>
+  
+          </div>
+  
+  
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Repeticiones</mat-label>
+            <input matInput [(ngModel)]="repeticiones" name="repeticiones" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Descanso</mat-label>
+            <input matInput [(ngModel)]="descanso" name="descanso" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="w-full" >
+            <mat-label>Orden:</mat-label>
+            <input matInput [(ngModel)]="orden" type="number" name="orden" required />
+        </mat-form-field>
+  
+          <button mat-raised-button color="primary" (click)="agregarEjercicio()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all">
+            Agregar Ejercicio
+          </button>
+        </form>
+      </div>
+  
+      <!-- Lista de Rutinas -->
+      <div class="bg-gray-900 shadow-2xl rounded-2xl p-6">
+        <h2 class="text-3xl font-bold text-center text-blue-400 mb-6">Ejercicios Existentes</h2>
+        <div class="max-h-96 overflow-y-auto space-y-4">
+          <div *ngFor="let ejercicio of ejercicios" class="bg-gray-800 p-4 rounded-xl shadow hover:shadow-xl transition transform hover:-translate-y-1">
+            <h4 class="text-xl font-semibold text-center text-white">{{ ejercicio.nombre }}</h4>
+            <p class="text-sm text-gray-300 text-center">{{ ejercicio.descripcion }}</p>
+            <div class="grid grid-cols-2 gap-2 text-sm text-gray-400 mt-2">
+              <p>Descanso: <span class="text-blue-400 font-medium">{{ ejercicio.descanso}}</span></p>
+              <p>Orden: <span class="text-blue-400 font-medium">{{ ejercicio.orden }}</span></p>
+              <p>Repeticiones <span class="text-blue-400 font-medium">{{ ejercicio.repeticiones}}</span></p>
+              <p class="col-span-2">Series: <span class="text-blue-400 font-medium">{{ ejercicio.series }}</span></p>
+            </div>
+            <div class="flex justify-center mt-4 space-x-2">
+              <button (click)="editarEjercicio(ejercicio)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm">Editar</button>
+              <button (click)="eliminarEjercicio(ejercicio)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md text-sm">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

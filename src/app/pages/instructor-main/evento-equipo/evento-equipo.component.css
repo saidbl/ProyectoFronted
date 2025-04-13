@@ -1,0 +1,39 @@
+.nav-link {
+    position: relative;
+    font-size: 1.1rem;
+    color: #cbd5e1;
+    transition: color 0.3s ease-in-out;
+  }
+  .nav-link:hover {
+    color: #3b82f6;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 0;
+    height: 2px;
+    background: #3b82f6;
+    transition: all 0.3s ease-in-out;
+  }
+  .nav-link:hover::after {
+    width: 100%;
+    left: 0;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.3s ease-in-out;
+  }
+  .btn-blue { background: #3b82f6; color: white; }
+  .btn-blue:hover { background: #2563eb; }
+  .btn-yellow { background: #facc15; color: black; }
+  .btn-yellow:hover { background: #eab308; }
+  .btn-red { background: #ef4444; color: white; }
+  .btn-red:hover { background: #dc2626; }
+  .btn-green { background: #22c55e; color: white; }
+  .btn-green:hover { background: #16a34a; }
+  .btn-gray { background: #6b7280; color: white; }
+  .btn-gray:hover { background: #4b5563; }

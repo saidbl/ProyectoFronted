@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-gray-950 py-12 px-6 lg:px-8 font-sans">
+  <!-- Encabezado con Hero Section -->
+  <div class="max-w-7xl mx-auto text-center mb-12">
+    <h1 class="text-5xl font-bold text-gray-100 font-playfair animate-fade-in">Lista de Jugadores</h1>
+    <p class="mt-4 text-xl text-gray-400 font-sans animate-slide-up">Gestiona y asigna rutinas de manera eficiente.</p>
+  </div>
+
+  <!-- Navegación -->
+  <div class="max-w-7xl mx-auto mb-8">
+    <nav class="flex justify-center space-x-6 bg-gray-900 shadow-md py-4 px-6 rounded-lg">
+      <a routerLink=".." class="nav-link">Principal</a>
+      <a routerLink="../rutinas" class="nav-link">Rutinas</a>
+      <a routerLink="../crearEquipos" class="nav-link">Equipos</a>
+      <a href="#" class="nav-link">Eventos</a>
+      <a href="#" class="nav-link">Historial</a>
+    </nav>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="max-w-5xl mx-auto mb-8 flex items-center bg-gray-900 rounded-lg p-4 shadow-lg">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar jugador..." 
+      class="w-full p-2 bg-gray-800 text-white rounded-lg outline-none border border-gray-700 focus:border-blue-500 transition-all">
+  </div>
+
+  <!-- Contenedor de tarjetas -->
+  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let deportista of filtrarDeportistas()" 
+         class="card">
+      <div class="flex items-center space-x-4">
+        <img src="https://source.unsplash.com/100x100/?person,sports" alt="avatar" class="avatar">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-100">{{ deportista.nombre }} {{ deportista.apellido }}</h2>
+          <p class="text-gray-400">{{ deportista.posicion.nombre }}</p>
+        </div>
+      </div>
+      <div class="mt-4 flex space-x-2">
+        <button (click)="abrirModal(deportista)" class="btn-primary">Asignar Rutina</button>
+        <button (click)="verRutinas(deportista)" class="btn-green">Ver Rutinas</button>
+        <button (click)="verPerfil(deportista)" class="btn-purple">Ver Perfil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de asignación de rutina -->
+  <div *ngIf="mostrarModal" class="modal">
+    <div class="modal-content">
+      <h2 class="modal-title">Asignar Rutina a {{ jugadorSeleccionado?.nombre }}</h2>
+      <label class="modal-label">Selecciona una rutina:</label>
+      <select [(ngModel)]="rutinaSeleccionada" class="modal-select">
+        <option *ngFor="let rutina of rutinasFiltradas" [value]="rutina.id">{{ rutina.nombre }}</option>
+      </select>
+      <div class="modal-actions">
+        <button (click)="asignarRutina(jugadorSeleccionado)" class="btn-primary">Guardar</button>
+        <button (click)="mostrarModal = false" class="btn-gray">Cancelar</button>
+      </div>
+    </div>
+  </div>
+    <!-- Modal para ver rutinas asignadas -->
+    <div *ngIf="mostrarRutinas" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-lg font-bold mb-4 text-gray-100">Rutinas de {{ jugadorSeleccionado?.nombre }}</h2>
+        <ul class="list-disc pl-5 text-gray-300">
+          <li *ngFor="let rutinaJugador of rutinasJugador">{{ rutinaJugador.rutina.nombre }}</li>
+        </ul>
+        <div class="mt-4 flex justify-end">
+          <button (click)="mostrarRutinas = false" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Modal para ver perfil del jugador -->
+    <div *ngIf="mostrarPerfil" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-lg font-bold mb-4 text-gray-100">Perfil de {{ jugadorSeleccionado?.nombre }}</h2>
+        <div class="text-gray-300">
+          <p><strong>Nombre:</strong> {{ jugadorSeleccionado?.nombre }} {{ jugadorSeleccionado?.apellido }}</p>
+          <p><strong>Email:</strong> {{ jugadorSeleccionado?.email }}</p>
+          <p><strong>Fecha de Nacimiento:</strong> {{ jugadorSeleccionado?.fechaNacimiento }}</p>
+          <p><strong>Telefono:</strong> {{ jugadorSeleccionado?.telefono }}</p>
+          <p><strong>Genero:</strong> {{ jugadorSeleccionado?.genero }}</p>
+          <p><strong>Estatura:</strong> {{ jugadorSeleccionado?.estatura }} cm</p>
+          <p><strong>Peso:</strong> {{ jugadorSeleccionado?.peso }}kg</p>
+          <p><strong>Posición:</strong> {{ jugadorSeleccionado?.posicion.nombre }}</p>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button (click)="mostrarPerfil = false" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+</div>

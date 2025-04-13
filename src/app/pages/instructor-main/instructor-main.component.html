@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+  <!-- Encabezado -->
+  <div class="max-w-7xl mx-auto text-center mb-12">
+    <h1 class="text-5xl font-bold text-gray-100 font-playfair">Gestión del Instructor</h1>
+    <p class="mt-4 text-xl text-gray-400 font-sans">Administra rutinas, deportistas, equipos y eventos de manera eficiente.</p>
+  </div>
+
+  <!-- Navegación -->
+  <div class="max-w-7xl mx-auto mb-12">
+    <nav class="flex justify-center space-x-6">
+      <a routerLink="rutinas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+        <i class="fas fa-dumbbell mr-2"></i> Rutinas
+      </a>
+      <a routerLink="rutinaDeportista" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+        <i class="fas fa-users mr-2"></i> Deportistas
+      </a>
+      <a href="#" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+        <i class="fas fa-users-cog mr-2"></i> Equipos
+      </a>
+      <a href="#" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+        <i class="fas fa-calendar-alt mr-2"></i> Eventos
+      </a>
+      <a href="#" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+        <i class="fas fa-history mr-2"></i> Historial
+      </a>
+    </nav>
+  </div>
+
+  <!-- Sección de Tarjetas -->
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Tarjeta 1: Rutinas Activas -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
+      <div class="p-8">
+        <div class="flex items-center mb-6">
+          <i class="fas fa-dumbbell text-3xl text-blue-400 mr-4"></i>
+          <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Rutinas Activas</h2>
+        </div>
+        <p class="mt-4 text-lg text-gray-400 font-sans">Total de rutinas asignadas: <span class="font-semibold text-blue-400">{{totalRutinas}}</span></p>
+        <p class="mt-2 text-lg text-gray-400 font-sans">Rutinas más populares: <span *ngFor="let rutina of rutinas" class="font-semibold text-blue-400">{{rutina.nombre}} | </span></p>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2: Deportistas Asignados -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
+      <div class="p-8">
+        <div class="flex items-center mb-6">
+          <i class="fas fa-users text-3xl text-blue-400 mr-4"></i>
+          <h2 class="text-3xl font-bold text-gray-100 font-playfair">Deportistas Asignados</h2>
+        </div>
+        <p class="mt-4 text-lg text-gray-400 font-sans">Total de deportistas: <span class="font-semibold text-blue-400">0</span></p>
+        <p class="mt-2 text-lg text-gray-400 font-sans">Deportistas destacados: <span class="font-semibold text-blue-400">Ejemplo 1, Ejemplo 2</span></p>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3: Eventos Futuros -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
+      <div class="p-8">
+        <div class="flex items-center mb-6">
+          <i class="fas fa-calendar-alt text-3xl text-blue-400 mr-4"></i>
+          <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Eventos Futuros</h2>
+        </div>
+        <p class="mt-4 text-lg text-gray-400 font-sans">Total de eventos programados: <span class="font-semibold text-blue-400">0</span></p>
+        <p class="mt-2 text-lg text-gray-400 font-sans">Próximo evento: <span class="font-semibold text-blue-400">Ejemplo 1</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de Estadísticas -->
+  <div class="max-w-7xl mx-auto mt-12">
+    <h2 class="text-4xl font-bold text-center text-gray-100 font-playfair">Estadísticas Generales</h2>
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Estadística 1 -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
+        <i class="fas fa-check-circle text-4xl text-blue-400 mb-4"></i>
+        <p class="text-xl text-gray-400 font-sans">Rutinas Completadas</p>
+        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
+      </div>
+
+      <!-- Estadística 2 -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
+        <i class="fas fa-running text-4xl text-blue-400 mb-4"></i>
+        <p class="text-xl text-gray-400 font-sans">Deportistas en Actividad</p>
+        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
+      </div>
+
+      <!-- Estadística 3 -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
+        <i class="fas fa-calendar-check text-4xl text-blue-400 mb-4"></i>
+        <p class="text-xl text-gray-400 font-sans">Eventos Pasados</p>
+        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
+      </div>
+
+      <!-- Estadística 4 -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
+        <i class="fas fa-user-plus text-4xl text-blue-400 mb-4"></i>
+        <p class="text-xl text-gray-400 font-sans">Nuevos Deportistas</p>
+        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de Gráficos -->
+  <div class="max-w-7xl mx-auto mt-12">
+    <h2 class="text-4xl font-bold text-center text-gray-100 font-playfair">Rendimiento de Rutinas</h2>
+    <div class="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-8">
+      <canvas id="rutinasChart"></canvas>
+    </div>
+  </div>
+</div>

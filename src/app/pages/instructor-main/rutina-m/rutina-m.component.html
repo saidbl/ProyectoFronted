@@ -1,0 +1,96 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 py-12 px-6 font-sans text-white">
+  <!-- Encabezado principal -->
+  <div class="max-w-7xl mx-auto text-center mb-16">
+    <h1 class="text-5xl font-bold font-playfair text-blue-400 drop-shadow-xl">Gestión de Rutinas</h1>
+    <p class="mt-4 text-xl text-gray-300">Optimiza tus entrenamientos con rutinas personalizadas y seguimiento visual.</p>
+  </div>
+
+  <!-- Navegación superior -->
+  <nav class="max-w-7xl mx-auto flex justify-center space-x-8 mb-12 border-b border-gray-700 pb-4">
+    <a routerLink=".." class="nav-link">Principal</a>
+    <a routerLink="ejercicios" class="nav-link">Ejercicios</a>
+    <a routerLink="videos" class="nav-link">Videos</a>
+  </nav>
+
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+
+    <!-- Formulario -->
+    <div class="bg-gray-900 shadow-2xl rounded-2xl p-8">
+      <h2 class="text-3xl font-bold text-center text-blue-400 mb-6">Nueva Rutina</h2>
+      <form #rutinaForm="ngForm" class="space-y-6">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Nombre de la Rutina</mat-label>
+          <input matInput [(ngModel)]="nombre" name="nombre" required />
+          <mat-icon matSuffix>fitness_center</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput [(ngModel)]="descripcion" name="descripcion" required></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+
+        <div class="grid grid-cols-2 gap-4">
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Posición</mat-label>
+            <mat-select [(ngModel)]="posicion" name="posicion" required>
+              <mat-option *ngFor="let posicion of posiciones" [value]="posicion">{{ posicion.nombre }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Dificultad</mat-label>
+            <mat-select [(ngModel)]="nivelDificultad" name="nivelDificultad" required>
+              <mat-option *ngFor="let dificultad of dificultades" [value]="dificultad">{{ dificultad }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Día</mat-label>
+          <mat-select [(ngModel)]="dia" name="dia" required>
+            <mat-option *ngFor="let dia of dias" [value]="dia">{{ dia }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Duración</mat-label>
+          <input matInput [(ngModel)]="duracion" name="duracion" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Objetivo</mat-label>
+          <mat-select [(ngModel)]="objetivo" name="objetivo" required>
+            <mat-option *ngFor="let objetivo of objetivos" [value]="objetivo">{{ objetivo }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="agregarRutina()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all">
+          Agregar Rutina
+        </button>
+      </form>
+    </div>
+
+    <!-- Lista de Rutinas -->
+    <div class="bg-gray-900 shadow-2xl rounded-2xl p-6">
+      <h2 class="text-3xl font-bold text-center text-blue-400 mb-6">Rutinas Existentes</h2>
+      <div class="max-h-96 overflow-y-auto space-y-4">
+        <div *ngFor="let rutina of rutinas" class="bg-gray-800 p-4 rounded-xl shadow hover:shadow-xl transition transform hover:-translate-y-1">
+          <h4 class="text-xl font-semibold text-center text-white">{{ rutina.nombre }}</h4>
+          <p class="text-sm text-gray-300 text-center">{{ rutina.descripcion }}</p>
+          <div class="grid grid-cols-2 gap-2 text-sm text-gray-400 mt-2">
+            <p>Día: <span class="text-blue-400 font-medium">{{ rutina.dia }}</span></p>
+            <p>Duración: <span class="text-blue-400 font-medium">{{ rutina.duracion_esperada }}</span></p>
+            <p>Posición: <span class="text-blue-400 font-medium">{{ rutina.posicion.nombre }}</span></p>
+            <p>Dificultad: <span class="text-blue-400 font-medium">{{ rutina.nivel_dificultad }}</span></p>
+            <p class="col-span-2">Objetivo: <span class="text-blue-400 font-medium">{{ rutina.objetivo }}</span></p>
+          </div>
+          <div class="flex justify-center mt-4 space-x-2">
+            <button (click)="editarRutina(rutina)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm">Editar</button>
+            <button (click)="eliminarRutina(rutina)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md text-sm">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

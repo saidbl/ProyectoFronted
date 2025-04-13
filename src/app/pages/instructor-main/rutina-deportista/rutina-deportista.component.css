@@ -1,0 +1,129 @@
+/* Estilos de navegación */
+.nav-link {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 500; /* font-medium */
+    color: #d1d5db; /* text-gray-300 */
+    transition: color 0.2s ease-in-out;
+}
+.nav-link:hover {
+    color: #60a5fa; /* text-blue-400 */
+}
+
+/* Tarjetas de jugadores */
+.card {
+    background-color: #1f2937; /* bg-gray-900 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-lg */
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 1.5rem; /* p-6 */
+    transition: all 0.3s ease-in-out;
+}
+.card:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* shadow-2xl */
+    transform: scale(1.05); /* hover:scale-105 */
+}
+
+/* Avatar */
+.avatar {
+    width: 4rem; /* w-16 */
+    height: 4rem; /* h-16 */
+    border-radius: 50%; /* rounded-full */
+    border: 2px solid #3b82f6; /* border-blue-500 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+}
+
+/* Botones */
+.btn-primary {
+    background: linear-gradient(to right, #3b82f6, #2563eb); /* bg-gradient-to-r */
+    color: white;
+    font-weight: 600; /* font-semibold */
+    padding: 0.5rem 1rem; /* px-4 py-2 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 0.2s ease-in-out;
+}
+.btn-primary:hover {
+    background: linear-gradient(to right, #2563eb, #1e40af); /* hover:bg-gradient */
+    transform: scale(1.05);
+}
+
+.btn-green {
+    background: linear-gradient(to right, #10b981, #059669);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+.btn-green:hover {
+    background: linear-gradient(to right, #059669, #047857);
+}
+
+.btn-purple {
+    background: linear-gradient(to right, #8b5cf6, #7c3aed);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+.btn-purple:hover {
+    background: linear-gradient(to right, #7c3aed, #6d28d9);
+}
+
+.btn-gray {
+    background-color: #4b5563; /* bg-gray-600 */
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+.btn-gray:hover {
+    background-color: #374151; /* hover:bg-gray-700 */
+}
+
+/* Modales */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(17, 24, 39, 0.5); /* bg-gray-900 bg-opacity-50 */
+}
+
+.modal-content {
+    background-color: #1f2937; /* bg-gray-800 */
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-lg */
+    width: 24rem; /* w-96 */
+}
+
+.modal-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: bold;
+    margin-bottom: 1rem; /* mb-4 */
+    color: #f3f4f6; /* text-gray-100 */
+}
+
+.modal-label {
+    display: block;
+    margin-bottom: 0.5rem; /* mb-2 */
+    color: #d1d5db; /* text-gray-300 */
+}
+
+.modal-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #374151; /* border-gray-700 */
+    border-radius: 0.5rem;
+    background-color: #374151; /* bg-gray-700 */
+    color: #d1d5db; /* text-gray-100 */
+}
+
+.modal-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
