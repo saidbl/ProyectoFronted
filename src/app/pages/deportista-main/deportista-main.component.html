@@ -2,13 +2,10 @@
     <!-- Encabezado personalizado -->
     <div class="max-w-7xl mx-auto text-center mb-12">
       <h1 class="text-5xl font-bold text-gray-100 font-playfair">Panel del Deportista</h1>
-      <p class="mt-4 text-xl text-gray-400 font-sans">Bienvenido, {{deportista.nombre}} {{deportista.apellido}}</p>
+      <p class="mt-4 text-xl text-gray-400 font-sans">Bienvenido, {{nombre}} {{apellido}} </p>
       <div class="mt-4 flex justify-center items-center space-x-4">
         <span class="px-4 py-2 bg-blue-900/50 rounded-full text-blue-400">
-          {{deportista.id_posicion}} | {{deportista.id_deporte }}
-        </span>
-        <span class="px-4 py-2 bg-green-900/50 rounded-full text-green-400" *ngIf="deportista.activo">
-          Activo
+          {{posicion}} 
         </span>
       </div>
     </div>
@@ -16,7 +13,7 @@
     <!-- Navegación para deportista -->
     <div class="max-w-7xl mx-auto mb-12">
       <nav class="flex justify-center space-x-6 flex-wrap">
-        <a routerLink="mis-rutinas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+        <a routerLink="rutinas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
           <i class="fas fa-dumbbell mr-2"></i> Mis Rutinas
         </a>
         <a routerLink="checkin" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
@@ -97,7 +94,7 @@
             <i class="fas fa-trophy text-3xl text-purple-400 mr-4"></i>
             <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Próximo Evento</h2>
           </div>
-          <div *ngIf="proximoEvento" class="mt-4">
+          <div *ngFor="let proximoEvento of proximosEventos" class="mt-4">
             <h3 class="text-xl font-semibold text-gray-200">{{proximoEvento.nombre}}</h3>
             <p class="text-gray-400 mt-2">
               <i class="far fa-calendar-alt mr-2"></i>
@@ -109,14 +106,13 @@
             </p>
             <p class="text-gray-400 mt-1">
               <i class="fas fa-clock mr-2"></i>
-              {{proximoEvento.hora_inicio}} - {{proximoEvento.hora_fin}}
+              {{proximoEvento.horaInicio}} - {{proximoEvento.horaFin}}
             </p>
             <div class="mt-4">
-
             </div>
           </div>
-          <p *ngIf="!proximoEvento" class="text-gray-400 italic">No tienes eventos próximos</p>
-          <button *ngIf="proximoEvento" 
+          <p *ngIf="!proximosEventos" class="text-gray-400 italic">No tienes eventos próximos</p>
+          <button *ngIf="proximosEventos" 
                   class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition duration-200"
                   routerLink="proximos-eventos">
             Ver Todos los Eventos

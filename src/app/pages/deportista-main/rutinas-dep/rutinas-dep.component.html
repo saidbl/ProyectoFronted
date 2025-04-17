@@ -1,0 +1,142 @@
+<div class="min-h-screen bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <!-- Encabezado -->
+    <div class="max-w-7xl mx-auto text-center mb-12">
+        <h1 class="text-5xl font-bold text-gray-100 font-playfair">Mis Rutinas</h1>
+        <p class="mt-4 text-xl text-gray-400 font-sans">Rutinas asignadas </p>
+        <div class="mt-4 flex justify-center space-x-4">
+            <span class="px-4 py-2 bg-blue-900/50 rounded-full text-blue-400">
+                {{posicion}}
+            </span>
+        </div>
+    </div>
+
+    <!-- Filtros por día -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="flex overflow-x-auto space-x-2 pb-2">
+            <button (click)="filtrarPorDia('TODOS')"
+                    class="px-4 py-2 rounded-full whitespace-nowrap transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700 shadow-md hover:shadow-gray-600/20"
+                    [class.bg-gradient-to-r]="diaFiltrado === 'TODOS'"
+                    [class.from-purple-600]="diaFiltrado === 'TODOS'"
+                    [class.to-purple-500]="diaFiltrado === 'TODOS'"
+                    [class.text-white]="diaFiltrado === 'TODOS'"
+                    [class.shadow-lg]="diaFiltrado === 'TODOS'">
+                Todas las Rutinas
+            </button>
+
+            <!-- Botones para días de la semana -->
+            <button *ngFor="let dia of diasSemana" 
+                    (click)="filtrarPorDia(dia)"
+                    class="px-4 py-2 rounded-full whitespace-nowrap transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700 shadow-md hover:shadow-gray-600/20"
+                    [class.bg-gradient-to-r]="diaFiltrado === dia"
+                    [class.from-blue-600]="diaFiltrado === dia"
+                    [class.to-blue-500]="diaFiltrado === dia"
+                    [class.text-white]="diaFiltrado === dia"
+                    [class.shadow-lg]="diaFiltrado === dia">
+                {{dia}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenedor de rutinas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 gap-8">
+        <!-- Mensaje cuando no hay rutinas -->
+        <div *ngIf="rutinasFiltradas.length === 0" class="text-center py-12">
+            <i class="fas fa-dumbbell text-4xl text-gray-600 mb-4"></i>
+            <p class="text-xl text-gray-400">No tienes rutinas asignadas para este día</p>
+        </div>
+
+        <!-- Tarjeta por cada rutina -->
+        <div *ngFor="let rutina of rutinasFiltradas" class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl overflow-hidden">
+            <!-- Encabezado de la rutina -->
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-100">{{rutina.nombre}}</h2>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                                 >
+                                {{rutina.nivel_dificultad}}
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-900/50 text-blue-400">
+                                <i class="fas fa-bullseye mr-1"></i> {{rutina.objetivo}}
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-900/50 text-purple-400">
+                                <i class="fas fa-clock mr-1"></i> {{rutina.duracion_esperada}} min
+                            </span>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-gray-700 text-gray-300">
+                        {{rutina.dia}}
+                    </span>
+                </div>
+                <p class="mt-4 text-gray-400">{{rutina.descripcion}}</p>
+            </div>
+
+            <!-- Lista de ejercicios -->
+            <div class="divide-y divide-gray-700">
+                <div *ngFor="let ejercicio of rutina.ejercicios" class="p-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400 mr-4">
+                            <span class="font-bold">{{ejercicio.orden}}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-lg font-semibold text-gray-200">{{ejercicio.nombre}}</h3>
+                            <p class="mt-1 text-gray-400">{{ejercicio.descripcion}}</p>
+                            <div class="mt-2 flex flex-wrap gap-3">
+                                <span class="inline-flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-redo mr-1"></i> {{ejercicio.series}} series
+                                </span>
+                                <span class="inline-flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-sync-alt mr-1"></i> {{ejercicio.repeticiones}}
+                                </span>
+                                <span class="inline-flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-stopwatch mr-1"></i> Descanso: {{ejercicio.descanso}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recursos multimedia -->
+                    <div *ngIf="ejercicio.recursos.length > 0" class="mt-4 ml-14 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div *ngFor="let recurso of ejercicio.recursos" class="rounded-lg overflow-hidden bg-gray-800">
+                            <div *ngIf="recurso.tipo === 'VIDEO'" class="relative pt-[56.25%]">
+                                <iframe class="absolute top-0 left-0 w-full h-full" 
+                                        [src]="getSafeUrl(recurso.url)" 
+                                        frameborder="0" 
+                                        allowfullscreen></iframe>
+                            </div>
+                            <div *ngIf="recurso.tipo === 'IMAGEN'" class="p-4">
+                                <img [src]="recurso.url" [alt]="recurso.descripcion" class="rounded-lg w-full">
+                            </div>
+                            <div *ngIf="recurso.tipo === 'PDF'" class="p-4 flex items-center">
+                                <i class="fas fa-file-pdf text-3xl text-red-500 mr-3"></i>
+                                <div>
+                                    <p class="text-gray-200 font-medium">{{recurso.descripcion || 'Documento PDF'}}</p>
+                                    <a [href]="recurso.url" target="_blank" class="text-sm text-blue-400 hover:underline">
+                                        Ver documento
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="px-4 py-2 bg-gray-900/50 text-xs text-gray-400">
+                                <i class="fas fa-info-circle mr-1"></i> {{recurso.descripcion || 'Recurso de ejercicio'}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Check-in -->
+            <div class="p-6 bg-gray-900/50 flex justify-between items-center">
+                <div>
+                    <h4 class="text-sm font-medium text-gray-300">Registro de completado</h4>
+                    <p class="text-xs text-gray-500">Marca cuando hayas completado esta rutina</p>
+                </div>
+                <button (click)="registrarCheckin(rutina.id)"
+                        class="px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-check mr-2"></i>
+                    {{rutina.completada ? 'Completada' : 'Marcar como completada'}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

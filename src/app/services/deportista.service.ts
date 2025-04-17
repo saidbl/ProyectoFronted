@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders} from "@angular/common/http";
 import { appSettings } from "../settings/appSettings";
 import { Observable } from "rxjs";
 import { Deportista } from "../models/deportista.model";
+import { Rutina } from "../models/rutina.model";
 @Injectable({
     providedIn:"root"
 })
@@ -21,6 +22,13 @@ export class DeportistaService{
             });
             return this.http.get<Deportista[]>(`${appSettings.apiDeportistas}?id=${id}`, { headers });
         }
+
+    listRutinas( id: number,token: string): Observable<Rutina[]> {
+          const headers = new HttpHeaders({
+              'Authorization': `Bearer ${token}`
+          });
+          return this.http.get<Rutina[]>(`${appSettings.apiDeportistaRutina}/${id}`, { headers });
+      }
 
       logOut():void{
         if(typeof localStorage!=="undefined"){

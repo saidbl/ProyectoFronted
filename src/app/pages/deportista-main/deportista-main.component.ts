@@ -1,21 +1,61 @@
-import { Component } from '@angular/core';
+import { Component, OnInit , inject} from '@angular/core';
+import { DeportistaService } from '../../services/deportista.service';
+import { Rutina } from '../../models/rutina.model';
+import { CommonModule } from '@angular/common';
+import { Evento } from '../../models/evento.model';
+import { EventoService } from '../../services/evento.service';
+import { RouterModule } from '@angular/router'; 
 
 @Component({
   selector: 'app-deportista-main',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, RouterModule],
   templateUrl: './deportista-main.component.html',
   styleUrl: './deportista-main.component.css'
 })
-export class DeportistaMainComponent {
-
-  deportista: any = {};
-  rutinasHoy: any[] = [];
+export class DeportistaMainComponent implements OnInit{
+  private dservice = inject(DeportistaService)
+  private eservice = inject(EventoService)
+  rutinasHoy: Rutina[] = [];
   porcentajeCumplimiento: number = 0;
   totalCheckins: number = 0;
   streakActual: number = 0;
-  proximoEvento: any = null;
+  proximosEventos: Evento[] = [];
   ultimosCheckins: any[] = [];
+  nombre : string | null = ""
+  apellido : string | null = ""
+  posicion : string | null = ""
+  id : number = 0 
+  ngOnInit(): void {
+    const token=localStorage.getItem("token")
+      const id = Number(localStorage.getItem("id"))
+      console.log(localStorage)
+      if(!token) {
+        throw new Error("Not Token Found")
+      }
+    this.nombre= localStorage.getItem("nombre")
+    this.apellido= localStorage.getItem("apellido")
+    this.posicion= localStorage.getItem("posicion")
+    this.dservice.listRutinas(id,token).subscribe({
+      next:(data)=>{
+        console.log(data)
+        this.rutinasHoy=data
+      },
+      error:(err)=>{
+        console.log(err)
+      }
+    })
+    this.eservice.listEventosByDeportista(id,token).subscribe({
+      next:(data)=>{
+        console.log(data)
+        this.proximosEventos=data
+      },
+      error:(err)=>{
+        console.log(err)
+      }
+    })
+  }
+
 
   cargarDatosDeportista() {
     // Obtener datos del deportista logueado

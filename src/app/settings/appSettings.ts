@@ -22,6 +22,8 @@ export const appSettings={
     apiEjercicios:"http://localhost:8080/ejercicios",
     apiAgregarEjercicio:"http://localhost:8080/ejercicios/agregar",
     apiEliminarEjercicios:"http://localhost:8080/ejercicios/eliminar",
+    apiDeportistaRutina: "http://localhost:8080/deportista",
+    apiEventosFuturosDep: "http://localhost:8080/eventosFuturosDep"
     
 
 }

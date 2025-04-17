@@ -29,4 +29,10 @@ export class EventoService{
             });
             return this.http.post<Equipo>(`${appSettings.apiAgregarEquipos}`,equipo,{ headers })
         }
+    listEventosByDeportista(id : number, token : string):Observable<Evento[]>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get<Evento[]>(`${appSettings.apiEventosFuturosDep}/${id}`,{ headers })
+    }
 }

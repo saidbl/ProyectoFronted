@@ -10,6 +10,7 @@ import { EquiposComponent } from './pages/instructor-main/equipos/equipos.compon
 import { EventoEquipoComponent } from './pages/instructor-main/evento-equipo/evento-equipo.component';
 import { VideosComponent } from './pages/instructor-main/rutina-m/videos/videos.component';
 import { EjerciciosComponent } from './pages/instructor-main/rutina-m/ejercicios/ejercicios.component';
+import { RutinasDepComponent } from './pages/deportista-main/rutinas-dep/rutinas-dep.component';
 
 export const routes: Routes = [
     {path:'', redirectTo:"/login",pathMatch:'full'},
@@ -23,6 +24,7 @@ export const routes: Routes = [
     { path: 'instructor/equipoEvento', component: EventoEquipoComponent},
     { path: 'instructor/rutinas/videos', component: VideosComponent},
     { path: 'instructor/rutinas/ejercicios', component: EjerciciosComponent},
+    { path: 'deportista/rutinas', component: RutinasDepComponent},
     { path: '', redirectTo: '/rutinas', pathMatch: 'full' },
     { path: '**', component:LoginComponent },
 ];
