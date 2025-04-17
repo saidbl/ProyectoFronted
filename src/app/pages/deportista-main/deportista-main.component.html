@@ -1,1 +1,210 @@
-<p>deportista-main works!</p>
+<div class="min-h-screen bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <!-- Encabezado personalizado -->
+    <div class="max-w-7xl mx-auto text-center mb-12">
+      <h1 class="text-5xl font-bold text-gray-100 font-playfair">Panel del Deportista</h1>
+      <p class="mt-4 text-xl text-gray-400 font-sans">Bienvenido, {{deportista.nombre}} {{deportista.apellido}}</p>
+      <div class="mt-4 flex justify-center items-center space-x-4">
+        <span class="px-4 py-2 bg-blue-900/50 rounded-full text-blue-400">
+          {{deportista.id_posicion}} | {{deportista.id_deporte }}
+        </span>
+        <span class="px-4 py-2 bg-green-900/50 rounded-full text-green-400" *ngIf="deportista.activo">
+          Activo
+        </span>
+      </div>
+    </div>
+  
+    <!-- Navegación para deportista -->
+    <div class="max-w-7xl mx-auto mb-12">
+      <nav class="flex justify-center space-x-6 flex-wrap">
+        <a routerLink="mis-rutinas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-dumbbell mr-2"></i> Mis Rutinas
+        </a>
+        <a routerLink="checkin" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-check-circle mr-2"></i> Check-in Diario
+        </a>
+        <a routerLink="mi-equipo" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-users mr-2"></i> Mi Equipo
+        </a>
+        <a routerLink="proximos-eventos" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-calendar-alt mr-2"></i> Próximos Eventos
+        </a>
+        <a routerLink="mi-progreso" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-chart-line mr-2"></i> Mi Progreso
+        </a>
+      </nav>
+    </div>
+  
+    <!-- Sección de Tarjetas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Tarjeta 1: Rutinas de Hoy -->
+      <div class="bg-gradient-to-br from-gray-900 to-blue-900/20 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
+        <div class="p-8">
+          <div class="flex items-center mb-6">
+            <i class="fas fa-calendar-day text-3xl text-blue-400 mr-4"></i>
+            <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Rutinas de Hoy</h2>
+          </div>
+          <div *ngFor="let rutina of rutinasHoy" class="mt-4">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-semibold text-gray-200">{{rutina.nombre}}</h3>
+              <span class="px-2 py-1 text-xs rounded-full" ></span>
+            </div>
+            <p class="text-gray-400 text-sm mt-1">{{rutina.descripcion}}</p>
+            <p class="text-gray-500 text-xs mt-2">
+              <i class="fas fa-bullseye mr-1"></i> Objetivo: {{rutina.objetivo}} | 
+              <i class="fas fa-tachometer-alt ml-2 mr-1"></i> Nivel: {{rutina.nivel_dificultad}}
+            </p>
+          </div>
+          <button *ngIf="rutinasHoy.length > 0" 
+                  class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-200"
+                  routerLink="checkin">
+            Registrar Check-in
+          </button>
+          <p *ngIf="rutinasHoy.length === 0" class="text-gray-400 italic">No tienes rutinas programadas para hoy</p>
+        </div>
+      </div>
+  
+      <!-- Tarjeta 2: Mi Progreso -->
+      <div class="bg-gradient-to-br from-gray-900 to-green-900/20 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
+        <div class="p-8">
+          <div class="flex items-center mb-6">
+            <i class="fas fa-chart-line text-3xl text-green-400 mr-4"></i>
+            <h2 class="text-3xl font-bold text-gray-100 font-playfair">Mi Progreso</h2>
+          </div>
+          <div class="flex items-center justify-between mt-4">
+            <div>
+              <p class="text-lg text-gray-400 font-sans">Cumplimiento semanal</p>
+              <p class="text-2xl font-bold text-green-400">{{porcentajeCumplimiento}}%</p>
+            </div>
+            <div class="w-24 h-24">
+              <canvas id="progressChart"></canvas>
+            </div>
+          </div>
+          <div class="mt-6">
+            <p class="text-gray-400"><span class="font-semibold text-green-400">{{totalCheckins}}</span> rutinas completadas</p>
+            <p class="text-gray-400 mt-1"><span class="font-semibold text-green-400">{{streakActual}}</span> días consecutivos</p>
+          </div>
+          <button class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition duration-200"
+                  routerLink="mi-progreso">
+            Ver Detalles
+          </button>
+        </div>
+      </div>
+  
+      <!-- Tarjeta 3: Próximo Evento -->
+      <div class="bg-gradient-to-br from-gray-900 to-purple-900/20 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
+        <div class="p-8">
+          <div class="flex items-center mb-6">
+            <i class="fas fa-trophy text-3xl text-purple-400 mr-4"></i>
+            <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Próximo Evento</h2>
+          </div>
+          <div *ngIf="proximoEvento" class="mt-4">
+            <h3 class="text-xl font-semibold text-gray-200">{{proximoEvento.nombre}}</h3>
+            <p class="text-gray-400 mt-2">
+              <i class="far fa-calendar-alt mr-2"></i>
+              {{proximoEvento.fecha}}
+            </p>
+            <p class="text-gray-400 mt-1">
+              <i class="fas fa-map-marker-alt mr-2"></i>
+              {{proximoEvento.ubicacion}}
+            </p>
+            <p class="text-gray-400 mt-1">
+              <i class="fas fa-clock mr-2"></i>
+              {{proximoEvento.hora_inicio}} - {{proximoEvento.hora_fin}}
+            </p>
+            <div class="mt-4">
+
+            </div>
+          </div>
+          <p *ngIf="!proximoEvento" class="text-gray-400 italic">No tienes eventos próximos</p>
+          <button *ngIf="proximoEvento" 
+                  class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition duration-200"
+                  routerLink="proximos-eventos">
+            Ver Todos los Eventos
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Sección de Check-in Reciente -->
+    <div class="max-w-7xl mx-auto mt-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-4xl font-bold text-gray-100 font-playfair">Registro de Check-ins</h2>
+        <button class="flex items-center text-blue-400 hover:text-blue-300 transition duration-200"
+                routerLink="checkin">
+          <i class="fas fa-plus mr-2"></i> Nuevo Check-in
+        </button>
+      </div>
+      
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-gray-800">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Fecha
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Rutina
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Comentarios
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-gray-900 divide-y divide-gray-700">
+              <tr *ngFor="let checkin of ultimosCheckins">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {{checkin.fecha }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">
+                  {{checkin.rutina.nombre}}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-400 max-w-xs truncate">
+                  {{checkin.comentarios || 'Sin comentarios'}}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button class="text-blue-400 hover:text-blue-300 mr-4"
+                          (click)="editarCheckin(checkin.id)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="text-red-400 hover:text-red-300"
+                          (click)="eliminarCheckin(checkin.id)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="ultimosCheckins.length === 0">
+                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-400">
+                  No hay registros de check-in recientes
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Sección de Gráficos -->
+    <div class="max-w-7xl mx-auto mt-12">
+      <h2 class="text-4xl font-bold text-center text-gray-100 font-playfair">Mi Rendimiento</h2>
+      <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-8">
+          <h3 class="text-xl font-semibold text-gray-300 mb-4">Cumplimiento Mensual</h3>
+          <canvas id="monthlyPerformanceChart"></canvas>
+        </div>
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-8">
+          <h3 class="text-xl font-semibold text-gray-300 mb-4">Distribución por Objetivos</h3>
+          <canvas id="goalsDistributionChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>

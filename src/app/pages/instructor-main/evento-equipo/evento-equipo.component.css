@@ -37,3 +37,15 @@
   .btn-green:hover { background: #16a34a; }
   .btn-gray { background: #6b7280; color: white; }
   .btn-gray:hover { background: #4b5563; }
+  .btn-primary {
+    background: linear-gradient(to right, #3b82f6, #2563eb); /* bg-gradient-to-r */
+    color: white;
+    font-weight: 600; /* font-semibold */
+    padding: 0.5rem 1rem; /* px-4 py-2 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 0.2s ease-in-out;
+}
+.btn-primary:hover {
+    background: linear-gradient(to right, #2563eb, #1e40af); /* hover:bg-gradient */
+    transform: scale(1.05);
+}

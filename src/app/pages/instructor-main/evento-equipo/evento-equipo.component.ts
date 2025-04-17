@@ -29,6 +29,7 @@ export class EventoEquipoComponent implements OnInit{
   equipoSeleccionado : number = 0
   equiposDisponibles : Equipo[] = []
   equiposInscritos : EventoEquipo[] = []
+  categoriaSeleccionada : string = ""
   equipos : Equipo[]=[]
   ngOnInit(): void {
     try{
@@ -117,6 +118,9 @@ export class EventoEquipoComponent implements OnInit{
             console.error('No se ha seleccionado ningún jugador');
           }
         }
+    }
+    filtrarPorCategoria(categoria  : string){
+
     }
 
 }
