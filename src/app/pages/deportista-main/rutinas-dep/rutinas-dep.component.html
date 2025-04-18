@@ -46,7 +46,7 @@
         </div>
 
         <!-- Tarjeta por cada rutina -->
-        <div *ngFor="let rutina of rutinasFiltradas" class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl overflow-hidden">
+        <div *ngFor="let rutina of rutinas" class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl overflow-hidden">
             <!-- Encabezado de la rutina -->
             <div class="p-6 border-b border-gray-700">
                 <div class="flex justify-between items-start">
@@ -120,6 +120,7 @@
                             <div class="px-4 py-2 bg-gray-900/50 text-xs text-gray-400">
                                 <i class="fas fa-info-circle mr-1"></i> {{recurso.descripcion || 'Recurso de ejercicio'}}
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -131,11 +132,6 @@
                     <h4 class="text-sm font-medium text-gray-300">Registro de completado</h4>
                     <p class="text-xs text-gray-500">Marca cuando hayas completado esta rutina</p>
                 </div>
-                <button (click)="registrarCheckin(rutina.id)"
-                        class="px-4 py-2 rounded-lg flex items-center">
-                    <i class="fas fa-check mr-2"></i>
-                    {{rutina.completada ? 'Completada' : 'Marcar como completada'}}
-                </button>
             </div>
         </div>
     </div>

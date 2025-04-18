@@ -23,7 +23,7 @@ export const appSettings={
     apiAgregarEjercicio:"http://localhost:8080/ejercicios/agregar",
     apiEliminarEjercicios:"http://localhost:8080/ejercicios/eliminar",
     apiDeportistaRutina: "http://localhost:8080/deportista",
-    apiEventosFuturosDep: "http://localhost:8080/eventosFuturosDep"
-    
+    apiEventosFuturosDep: "http://localhost:8080/eventosFuturosDep",
+    apiRutinasEjerciciosRecursos :"http://localhost:8080/rutinasdeportista"
 
 }

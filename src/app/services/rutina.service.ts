@@ -5,6 +5,7 @@ import { appSettings } from "../settings/appSettings";
 import { Rutina } from "../models/rutina.model";
 import { ResponseAPI } from "../models/ResponseAPI";
 import { RutinaDTO } from "../models/rutinaDTO.model";
+import { RutinaDTOR } from "../models/rutinaDTOr.model";
 
 @Injectable({
     providedIn:"root"
@@ -44,5 +45,12 @@ export class RutinaService{
             'Authorization': `Bearer ${token}`
         });
         return this.http.get<Rutina[]>(`${appSettings.apiRutinas}/${instructorId}/top3`, { headers });
+      }
+
+      getRutinasEjerciciosRecursos(deportistaid: number, token: string): Observable<RutinaDTOR[]>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get<RutinaDTOR[]>(`${appSettings.apiRutinasEjerciciosRecursos}/${deportistaid}`,{ headers })
       }
 }

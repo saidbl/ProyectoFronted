@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RutinaService } from '../../../services/rutina.service';
+import { RutinaDTO } from '../../../models/rutinaDTO.model';
+import { RutinaDTOR } from '../../../models/rutinaDTOr.model';
 @Component({
   selector: 'app-rutinas-dep',
   standalone: true,
@@ -8,13 +11,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './rutinas-dep.component.css'
 })
 export class RutinasDepComponent implements OnInit{
-
+  private rservice = inject(RutinaService)
   diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
   diaFiltrado = 'TODOS';
-  rutinas: any[] = [];
+  rutinas: RutinaDTOR[] = [];
   rutinasFiltradas: any[] = [];
-  
-  // Datos del deportista
   nombre: string = '';
   apellido: string = '';
   posicion: string|null = '';
@@ -22,9 +23,23 @@ export class RutinasDepComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.posicion =localStorage.getItem("posicion")
-    this.cargarDatosDeportista();
-    this.cargarRutinas();
+    console.log("hola")
+    const id =Number(localStorage.getItem("id"))
+    const token = localStorage.getItem("token")
+    if(!token){
+      throw new Error("Not Token Found")
+    }
+    this.rservice.getRutinasEjerciciosRecursos(id, token).subscribe({
+      next:(data)=>{
+        console.log(data)
+        console.log("hola")
+        this.rutinas = data 
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
+
   }
 
   cargarDatosDeportista() {
