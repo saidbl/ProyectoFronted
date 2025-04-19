@@ -12,4 +12,5 @@ export interface RutinaDTOR {
     objetivo:string;
     duracion_esperada:number;
     ejercicios : EjercicioDTO[]
+    mostrarEjercicios : boolean
   }

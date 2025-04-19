@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { DeportistaMainComponent } from './pages/deportista-main/deportista-main.component';
 import { OrganizacionMainComponent } from './pages/organizacion-main/organizacion-main.component';
-import { InstructorService } from './services/instructor.service';
 import { InstructorMainComponent } from './pages/instructor-main/instructor-main.component';
 import { RutinaMComponent } from './pages/instructor-main/rutina-m/rutina-m.component';
 import { RutinaDeportistaComponent } from './pages/instructor-main/rutina-deportista/rutina-deportista.component';
@@ -11,6 +10,7 @@ import { EventoEquipoComponent } from './pages/instructor-main/evento-equipo/eve
 import { VideosComponent } from './pages/instructor-main/rutina-m/videos/videos.component';
 import { EjerciciosComponent } from './pages/instructor-main/rutina-m/ejercicios/ejercicios.component';
 import { RutinasDepComponent } from './pages/deportista-main/rutinas-dep/rutinas-dep.component';
+import { CheckComponent } from './pages/deportista-main/check/check.component';
 
 export const routes: Routes = [
     {path:'', redirectTo:"/login",pathMatch:'full'},
@@ -25,6 +25,7 @@ export const routes: Routes = [
     { path: 'instructor/rutinas/videos', component: VideosComponent},
     { path: 'instructor/rutinas/ejercicios', component: EjerciciosComponent},
     { path: 'deportista/rutinas', component: RutinasDepComponent},
+    { path: 'deportista/check', component: CheckComponent},
     { path: '', redirectTo: '/rutinas', pathMatch: 'full' },
     { path: '**', component:LoginComponent },
 ];

@@ -1,6 +1,7 @@
 import { RecursoRutina } from "./recursoRutina.model"
 
 export interface EjercicioDTO{
+    id : number
     idrutina? : number
     nombre : string
     descripcion: string
@@ -9,4 +10,5 @@ export interface EjercicioDTO{
     descanso : string
     orden : number
     recursos : RecursoRutina[]
+    mostrarRecursos : boolean
 }
