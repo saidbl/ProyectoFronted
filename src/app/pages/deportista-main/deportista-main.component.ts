@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { Evento } from '../../models/evento.model';
 import { EventoService } from '../../services/evento.service';
 import { RouterModule } from '@angular/router'; 
+import { RutinaService } from '../../services/rutina.service';
+import { RutinaDTOR } from '../../models/rutinaDTOr.model';
 
 @Component({
   selector: 'app-deportista-main',
@@ -14,9 +16,9 @@ import { RouterModule } from '@angular/router';
   styleUrl: './deportista-main.component.css'
 })
 export class DeportistaMainComponent implements OnInit{
-  private dservice = inject(DeportistaService)
+  private rservice = inject(RutinaService)
   private eservice = inject(EventoService)
-  rutinasHoy: Rutina[] = [];
+  rutinasHoy: RutinaDTOR[] = [];
   porcentajeCumplimiento: number = 0;
   totalCheckins: number = 0;
   streakActual: number = 0;
@@ -36,7 +38,7 @@ export class DeportistaMainComponent implements OnInit{
     this.nombre= localStorage.getItem("nombre")
     this.apellido= localStorage.getItem("apellido")
     this.posicion= localStorage.getItem("posicion")
-    this.dservice.listRutinas(id,token).subscribe({
+    this.rservice.getRutinasByEjerciciosAndDia(id,token).subscribe({
       next:(data)=>{
         console.log(data)
         this.rutinasHoy=data

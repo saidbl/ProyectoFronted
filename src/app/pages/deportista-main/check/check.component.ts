@@ -1,9 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RutinaDTO } from '../../../models/rutinaDTO.model';
 import { RutinaDTOR } from '../../../models/rutinaDTOr.model';
 import { RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
+import { DeportistaMainComponent } from '../deportista-main.component';
+import { DeportistaService } from '../../../services/deportista.service';
+import { Rutina } from '../../../models/rutina.model';
+import { RutinaService } from '../../../services/rutina.service';
 
 @Component({
   selector: 'app-check',
@@ -15,12 +19,27 @@ import { CommonModule } from '@angular/common';
 export class CheckComponent {
     rutinasHoy: RutinaDTOR[] = [];
     fechaActual: Date = new Date();
+    private rservice = inject(RutinaService)
   
     constructor(
     ) {}
   
     ngOnInit(): void {
-      this.cargarRutinasHoy();
+      const token=localStorage.getItem("token")
+      const id = Number(localStorage.getItem("id"))
+      console.log(localStorage)
+      if(!token) {
+        throw new Error("Not Token Found")
+      }
+    this.rservice.getRutinasByEjerciciosAndDia(id,token).subscribe({
+      next:(data)=>{
+        console.log(data)
+        this.rutinasHoy= data
+      },
+      error:(err)=>{
+        console.log(err)
+      }
+    })
     }
   
     cargarRutinasHoy(): void {
@@ -31,8 +50,6 @@ export class CheckComponent {
       const rutina = this.rutinasHoy.find(r => r.id === rutinaId);
       if (rutina) {
         rutina.mostrarEjercicios = !rutina.mostrarEjercicios;
-        
-  
       }
     }
   

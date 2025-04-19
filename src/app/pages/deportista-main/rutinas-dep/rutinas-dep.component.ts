@@ -12,7 +12,7 @@ import { RutinaDTOR } from '../../../models/rutinaDTOr.model';
 })
 export class RutinasDepComponent implements OnInit{
   private rservice = inject(RutinaService)
-  diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
   diaFiltrado = 'TODOS';
   rutinas: RutinaDTOR[] = [];
   rutinasFiltradas: RutinaDTOR[] = [];

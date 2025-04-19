@@ -53,4 +53,10 @@ export class RutinaService{
         });
         return this.http.get<RutinaDTOR[]>(`${appSettings.apiRutinasEjerciciosRecursos}/${deportistaid}`,{ headers })
       }
+      getRutinasByEjerciciosAndDia(deportistaid: number, token: string): Observable<RutinaDTOR[]>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get<RutinaDTOR[]>(`${appSettings.apiDeportistaRutina}/${deportistaid}`,{ headers })
+      }
 }
