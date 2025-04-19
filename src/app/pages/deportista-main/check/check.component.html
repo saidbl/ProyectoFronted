@@ -9,6 +9,16 @@
             </span>
         </div>
     </div>
+    <div class="max-w-7xl mx-auto mb-12">
+      <nav class="flex justify-center space-x-6 flex-wrap">
+        <a routerLink="completadas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-users mr-2"></i> Completadas
+        </a>
+        <a routerLink="completadas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
+          <i class="fas fa-calendar-alt mr-2"></i> Incompletas
+        </a>
+      </nav>
+    </div>
 
     <!-- Contenedor de rutinas -->
     <div class="max-w-7xl mx-auto grid grid-cols-1 gap-8">
@@ -97,18 +107,11 @@
                         Pendiente de completar hoy
                     </p>
                 </div>
-                
                 <div class="flex space-x-3 w-full sm:w-auto">
-                    <button *ngIf="rutina.descripcion !== 'COMPLETADA'"
-                            (click)="marcarCompletada()"
+                    <button
+                            (click)="marcarCompletada(rutina.id)"
                             class="px-6 py-2 bg-gradient-to-r from-green-600 to-green-500 rounded-full text-white font-medium hover:shadow-lg hover:shadow-green-500/30 transition-all">
                         <i class="fas fa-check mr-2"></i> Completar
-                    </button>
-                    
-                    <button *ngIf="rutina.descripcion === 'COMPLETADA'"
-                            (click)="desmarcarCompletada()"
-                            class="px-6 py-2 bg-gradient-to-r from-gray-600 to-gray-500 rounded-full text-white font-medium hover:shadow-lg hover:shadow-gray-500/30 transition-all">
-                        <i class="fas fa-undo mr-2"></i> Deshacer
                     </button>
                 </div>
             </div>

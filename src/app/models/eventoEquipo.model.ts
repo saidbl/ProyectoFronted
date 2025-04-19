@@ -4,5 +4,5 @@ import { Evento } from "./evento.model";
 export interface EventoEquipo{
     id?: number;
     evento: Evento;
-    equupo: Equipo;
+    equipo: Equipo;
 }

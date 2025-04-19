@@ -1,13 +1,10 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { RutinaDTO } from '../../../models/rutinaDTO.model';
 import { RutinaDTOR } from '../../../models/rutinaDTOr.model';
 import { RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
-import { DeportistaMainComponent } from '../deportista-main.component';
-import { DeportistaService } from '../../../services/deportista.service';
-import { Rutina } from '../../../models/rutina.model';
 import { RutinaService } from '../../../services/rutina.service';
+import { CheckInRutinaService } from '../../../services/checkinrutina.service';
+import { CheckInRutinaDTO } from '../../../models/checkinRutinaDTO.model';
 
 @Component({
   selector: 'app-check',
@@ -20,6 +17,8 @@ export class CheckComponent {
     rutinasHoy: RutinaDTOR[] = [];
     fechaActual: Date = new Date();
     private rservice = inject(RutinaService)
+    private chservice = inject (CheckInRutinaService)
+    comentarios : string = ""
   
     constructor(
     ) {}
@@ -53,13 +52,28 @@ export class CheckComponent {
       }
     }
   
-    cargarEjerciciosRutina(rutinaId: number|undefined): void {
-      // Implementar servicio para cargar ejercicios de la rutina
-      console.log('Cargando ejercicios para rutina', rutinaId);
-    }
-  
-    marcarCompletada(): void {
-  
+    marcarCompletada(rutinaid: number | undefined): void {
+      const token=localStorage.getItem("token")
+      const id = Number(localStorage.getItem("id"))
+      console.log(localStorage)
+      if(!token) {
+        throw new Error("Not Token Found")
+      }
+      const nuevoCheckin: CheckInRutinaDTO = {
+                            idrutina: rutinaid,
+                            idjugador: id,
+                            comentarios: this.comentarios
+                          };
+      console.log(nuevoCheckin)                    
+      this.chservice.add(nuevoCheckin,token).subscribe({
+        next: (data)=>{
+          alert("Rutina vinculada correctamente");
+        }, 
+        error: (err)=>{
+          console.error("Error al vincular rutina", err);
+        }
+      })
+
     }
   
     desmarcarCompletada(): void {

@@ -11,6 +11,8 @@ import { VideosComponent } from './pages/instructor-main/rutina-m/videos/videos.
 import { EjerciciosComponent } from './pages/instructor-main/rutina-m/ejercicios/ejercicios.component';
 import { RutinasDepComponent } from './pages/deportista-main/rutinas-dep/rutinas-dep.component';
 import { CheckComponent } from './pages/deportista-main/check/check.component';
+import { CompletadasComponent } from './pages/deportista-main/check/completadas/completadas.component';
+
 
 export const routes: Routes = [
     {path:'', redirectTo:"/login",pathMatch:'full'},
@@ -26,6 +28,7 @@ export const routes: Routes = [
     { path: 'instructor/rutinas/ejercicios', component: EjerciciosComponent},
     { path: 'deportista/rutinas', component: RutinasDepComponent},
     { path: 'deportista/check', component: CheckComponent},
+    { path: 'deportista/check/completadas', component: CompletadasComponent},
     { path: '', redirectTo: '/rutinas', pathMatch: 'full' },
     { path: '**', component:LoginComponent },
 ];
