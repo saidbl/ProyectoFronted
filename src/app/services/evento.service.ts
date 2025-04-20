@@ -6,6 +6,7 @@ import { Equipo } from "../models/equipo.model";
 import { ResponseAPI } from "../models/ResponseAPI";
 import { EquipoDTO } from "../models/equipoDTO.model";
 import { Evento } from "../models/evento.model";
+import { EventoDTO } from "../models/eventoDTO.model";
 @Injectable({
     providedIn:"root"
 })
@@ -34,5 +35,11 @@ export class EventoService{
             'Authorization': `Bearer ${token}`
         });
         return this.http.get<Evento[]>(`${appSettings.apiEventosFuturosDep}/${id}`,{ headers })
+    }
+    addEvento(evento:EventoDTO,token:string):Observable<Evento>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.post<Evento>(`${appSettings.apiAgregarEvento}`,evento,{ headers })
     }
 }

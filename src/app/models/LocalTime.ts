@@ -18,4 +18,5 @@ export class LocalTime {
         const [horas, minutos, segundos] = timeString.split(':').map(Number);
         return new LocalTime(horas, minutos, segundos);
     }
+    
 }

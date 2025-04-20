@@ -16,5 +16,10 @@ export interface Evento{
     estado:string
     contactoOrganizador:string
     equiposInscritos:number
+    fechaFin: Date
+    recurrente: boolean;
+    frecuencia:string;
+    diasSemana: string[];
+    excluirFines: string;
 
 }

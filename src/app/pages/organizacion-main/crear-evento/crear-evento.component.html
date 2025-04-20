@@ -1,0 +1,134 @@
+<div class="min-h-[calc(110vh-4rem)] p-6 bg-gray-900 text-white">
+  <h2 class="text-2xl font-bold mb-6">Crear Nuevo Evento</h2>
+  
+  <form (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Información básica -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block mb-2">Nombre del Evento</label>
+        <input type="text" [(ngModel)]="nombre" name="nombre" 
+               class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+      </div>
+      
+      <div>
+        <label class="block mb-2">Ubicación</label>
+        <input type="text" [(ngModel)]="ubicacion" name="ubicacion" 
+               class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+      </div>
+      <div>
+        <label class="block mb-2">Numero Maximo de Equipos</label>
+        <input type="number" [(ngModel)]="numMaxEquipos" name="numMaxEquipos" 
+               class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+      </div>
+      <div>
+        <label class="block mb-2">Correo</label>
+        <input type="email" [(ngModel)]="correo" name="correo" 
+               class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+      </div>
+    </div>
+    
+    <!-- Fechas -->
+    <div class="bg-gray-800 p-4 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4">Configuración de Fechas</h3>
+      
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="recurrente" [(ngModel)]="recurrente" name="recurrente" 
+               (change)="actualizarVistaPrevia()" class="mr-2">
+        <label for="recurrente">Evento recurrente</label>
+      </div>
+      
+      <div *ngIf="!recurrente" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-2">Fecha</label>
+          <input type="date" [(ngModel)]="fechaInicio" name="fechaInicio" 
+                 (change)="actualizarVistaPrevia()" 
+                 class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2">Hora Inicio</label>
+            <input type="time" [(ngModel)]="horaInicio" name="horaInicio" 
+                   (change)="actualizarVistaPrevia()" 
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+          </div>
+          <div>
+            <label class="block mb-2">Hora Fin</label>
+            <input type="time" [(ngModel)]="horaFin" name="horaFin" 
+                   (change)="actualizarVistaPrevia()" 
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="recurrente" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2">Fecha Inicio</label>
+            <input type="date" [(ngModel)]="fechaInicio" name="fechaInicioRecurrente" 
+                   (change)="actualizarVistaPrevia()" 
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+          </div>
+          <div>
+            <label class="block mb-2">Fecha Fin</label>
+            <input type="date" [(ngModel)]="fechaFin" name="fechaFin" 
+                   (change)="actualizarVistaPrevia()" 
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2">Frecuencia</label>
+            <select [(ngModel)]="frecuencia" name="frecuencia" 
+                    (change)="actualizarVistaPrevia()" 
+                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+              <option value="DIARIO">Diario</option>
+              <option value="SEMANAL">Semanal</option>
+              <option value="MENSUAL">Mensual</option>
+              <option value="ANUAL">Anual</option>
+            </select>
+          </div>
+          
+          <div *ngIf="frecuencia === 'SEMANAL'">
+            <label class="block mb-2">Días de la semana</label>
+            <div class="flex flex-wrap gap-2">
+              <label *ngFor="let dia of diasDisponibles" class="flex items-center">
+                <input type="checkbox" [checked]="diasSemana.includes(dia.value)" 
+                       (change)="toggleDiaSeleccionado(dia.value)" 
+                       class="mr-1">
+                {{dia.label}}
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-center">
+          <input type="checkbox" id="excluirFines" [(ngModel)]="excluirFines" name="excluirFines" 
+                 (change)="actualizarVistaPrevia()" class="mr-2">
+          <label for="excluirFines">Excluir fines de semana</label>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2">Hora Inicio</label>
+            <input type="time" [(ngModel)]="horaInicio" name="horaInicioRecurrente" 
+                   (change)="actualizarVistaPrevia()" 
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+          </div>
+          <div>
+            <label class="block mb-2">Hora Fin</label>
+            <input type="time" [(ngModel)]="horaFin" name="horaFinRecurrente" 
+                   (change)="actualizarVistaPrevia()" 
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+      Crear Evento
+    </button>
+  </form>
+</div>
+

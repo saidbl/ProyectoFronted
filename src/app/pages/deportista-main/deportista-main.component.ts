@@ -1,6 +1,4 @@
 import { Component, OnInit , inject} from '@angular/core';
-import { DeportistaService } from '../../services/deportista.service';
-import { Rutina } from '../../models/rutina.model';
 import { CommonModule } from '@angular/common';
 import { Evento } from '../../models/evento.model';
 import { EventoService } from '../../services/evento.service';
