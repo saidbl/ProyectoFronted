@@ -33,7 +33,7 @@
       
       <div class="flex items-center mb-4">
         <input type="checkbox" id="recurrente" [(ngModel)]="recurrente" name="recurrente" 
-               (change)="actualizarVistaPrevia()" class="mr-2">
+               class="mr-2">
         <label for="recurrente">Evento recurrente</label>
       </div>
       
@@ -41,7 +41,7 @@
         <div>
           <label class="block mb-2">Fecha</label>
           <input type="date" [(ngModel)]="fechaInicio" name="fechaInicio" 
-                 (change)="actualizarVistaPrevia()" 
+                 
                  class="w-full p-2 rounded bg-gray-700 border border-gray-600">
         </div>
         
@@ -49,13 +49,13 @@
           <div>
             <label class="block mb-2">Hora Inicio</label>
             <input type="time" [(ngModel)]="horaInicio" name="horaInicio" 
-                   (change)="actualizarVistaPrevia()" 
+                  
                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
           </div>
           <div>
             <label class="block mb-2">Hora Fin</label>
             <input type="time" [(ngModel)]="horaFin" name="horaFin" 
-                   (change)="actualizarVistaPrevia()" 
+                
                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
           </div>
         </div>
@@ -66,13 +66,13 @@
           <div>
             <label class="block mb-2">Fecha Inicio</label>
             <input type="date" [(ngModel)]="fechaInicio" name="fechaInicioRecurrente" 
-                   (change)="actualizarVistaPrevia()" 
+                  
                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
           </div>
           <div>
             <label class="block mb-2">Fecha Fin</label>
             <input type="date" [(ngModel)]="fechaFin" name="fechaFin" 
-                   (change)="actualizarVistaPrevia()" 
+                   
                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
           </div>
         </div>
@@ -81,7 +81,7 @@
           <div>
             <label class="block mb-2">Frecuencia</label>
             <select [(ngModel)]="frecuencia" name="frecuencia" 
-                    (change)="actualizarVistaPrevia()" 
+                   
                     class="w-full p-2 rounded bg-gray-700 border border-gray-600">
               <option value="DIARIO">Diario</option>
               <option value="SEMANAL">Semanal</option>
@@ -105,7 +105,7 @@
         
         <div class="flex items-center">
           <input type="checkbox" id="excluirFines" [(ngModel)]="excluirFines" name="excluirFines" 
-                 (change)="actualizarVistaPrevia()" class="mr-2">
+                 class="mr-2">
           <label for="excluirFines">Excluir fines de semana</label>
         </div>
         
@@ -113,13 +113,13 @@
           <div>
             <label class="block mb-2">Hora Inicio</label>
             <input type="time" [(ngModel)]="horaInicio" name="horaInicioRecurrente" 
-                   (change)="actualizarVistaPrevia()" 
+                   
                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
           </div>
           <div>
             <label class="block mb-2">Hora Fin</label>
             <input type="time" [(ngModel)]="horaFin" name="horaFinRecurrente" 
-                   (change)="actualizarVistaPrevia()" 
+                 
                    class="w-full p-2 rounded bg-gray-700 border border-gray-600">
           </div>
         </div>

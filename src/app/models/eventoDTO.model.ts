@@ -11,8 +11,8 @@ export interface EventoDTO{
     fechaFin:Date;
     descripcion:string;
     ubicacion:string;
-    horaInicio:LocalTime;
-    horaFin: LocalTime;
+    horaInicio:string;
+    horaFin: string;
     estado:string;
     contactoOrganizador:string;
     recurrente:boolean;

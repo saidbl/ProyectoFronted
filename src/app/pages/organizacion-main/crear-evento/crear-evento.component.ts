@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Evento } from '../../../models/evento.model';
 import { FormsModule } from '@angular/forms';
 import { EventoDTO } from '../../../models/eventoDTO.model';
 import { LocalTime } from '../../../models/LocalTime';
+import { EventoService } from '../../../services/evento.service';
 @Component({
   selector: 'app-crear-evento',
   standalone: true,
@@ -12,12 +12,11 @@ import { LocalTime } from '../../../models/LocalTime';
   styleUrl: './crear-evento.component.css'
 })
 export class CrearEventoComponent implements OnInit {
-
+  private eservice = inject (EventoService)
   nombre: string = '';
   ubicacion: string = '';
   descripcion: string = '';
   numMaxEquipos:number =0
-  // Configuración de fechas
   recurrente: boolean = false;
   fechaInicio: string = '';
   fechaFin: string = '';
@@ -37,12 +36,11 @@ export class CrearEventoComponent implements OnInit {
   ];
   excluirFines: boolean = true;
 
-  // Vista previa de fechas generadas
-  fechasGeneradas: any[] = [];
 
   constructor() { }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    const id = localStorage.getItem("id")
+    const token = localStorage.getItem("token")
   }
 
   toggleDiaSeleccionado(dia: string): void {
@@ -52,41 +50,15 @@ export class CrearEventoComponent implements OnInit {
     } else {
       this.diasSemana.push(dia);
     }
-    this.actualizarVistaPrevia();
   }
 
-  actualizarVistaPrevia(): void {
-    if (this.recurrente) {
-      // Lógica para generar vista previa de fechas recurrentes
-      this.fechasGeneradas = this.generarEjemploFechas();
-    } else {
-      // Mostrar solo la fecha única
-      this.fechasGeneradas = [{
-        fecha: this.fechaInicio,
-        horaInicio: this.horaInicio,
-        horaFin: this.horaFin
-      }];
-    }
-  }
-
-  private generarEjemploFechas(): any[] {
-    // Esto es solo para demostración - implementa tu lógica real aquí
-    const ejemploFechas = [];
-    const fecha = new Date(this.fechaInicio);
-    
-    for (let i = 0; i < 5; i++) {
-      fecha.setDate(fecha.getDate() + (i === 0 ? 0 : 7)); // Semanal
-      ejemploFechas.push({
-        fecha: fecha.toISOString().split('T')[0],
-        horaInicio: this.horaInicio,
-        horaFin: this.horaFin
-      });
-    }
-    
-    return ejemploFechas;
-  }
 
   onSubmit(): void {
+    const id = localStorage.getItem("id")
+    const token = localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
     const nuevoEvento: EventoDTO = {
               nombre: this.nombre,
               idOrganizacion : Number(localStorage.getItem("id")),
@@ -96,8 +68,8 @@ export class CrearEventoComponent implements OnInit {
               fechaFin: new Date(this.fechaFin),
               descripcion: this.descripcion,
               ubicacion: this.ubicacion,
-              horaInicio: LocalTime.fromString(this.horaInicio),
-              horaFin: LocalTime.fromString(this.horaFin),
+              horaInicio: this.horaInicio,
+              horaFin: this.horaFin,
               estado: "Planificado",
               contactoOrganizador:this.correo,
               recurrente:this.recurrente,
@@ -106,8 +78,15 @@ export class CrearEventoComponent implements OnInit {
               excluirFines:this.excluirFines,
               fechas: [],
               equiposInscritos:0,
-
             };
-    // Aquí llamarías a tu servicio para guardar el evento
+      this.eservice.addEvento(nuevoEvento,token).subscribe({
+        next:(data)=>{
+          alert("Agregado Correctamente")
+        },
+        error:(err)=>{
+          console.error(err)
+        }
+      })
+    
   }
 }
