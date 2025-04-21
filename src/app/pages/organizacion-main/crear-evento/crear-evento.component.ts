@@ -25,6 +25,7 @@ export class CrearEventoComponent implements OnInit {
   horaFin: string = '18:00';
   frecuencia: string = 'SEMANAL';
   diasSemana: string[] = ['L', 'M', 'X', 'J', 'V'];
+  archivo?: File;
   diasDisponibles: any[] = [
     { value: 'L', label: 'Lunes' },
     { value: 'M', label: 'Martes' },
@@ -78,8 +79,10 @@ export class CrearEventoComponent implements OnInit {
               excluirFines:this.excluirFines,
               fechas: [],
               equiposInscritos:0,
+              imagen:""
             };
-      this.eservice.addEvento(nuevoEvento,token).subscribe({
+      if(this.archivo){
+      this.eservice.addEvento(nuevoEvento,token, this.archivo).subscribe({
         next:(data)=>{
           alert("Agregado Correctamente")
         },
@@ -87,6 +90,10 @@ export class CrearEventoComponent implements OnInit {
           console.error(err)
         }
       })
+    }
     
+  }
+  seleccionarArchivo(event: any) {
+    this.archivo = event.target.files[0];
   }
 }

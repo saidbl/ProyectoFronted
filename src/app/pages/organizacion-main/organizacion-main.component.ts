@@ -9,5 +9,10 @@ import { CommonModule } from '@angular/common';
   styleUrl: './organizacion-main.component.css'
 })
 export class OrganizacionMainComponent {
-
+  nombre_organizacion:string= ""
+  proximoEvento:any 
+  totalEventos:number =0
+  eventosActivos : number = 0
+  totalEquipos:number =0
+  eventosRecientes:any
 }

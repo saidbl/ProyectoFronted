@@ -28,11 +28,12 @@
         <!-- Grid de eventos -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <div *ngFor="let evento of eventos" class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                <img [src]="evento" alt="Evento" class="w-full h-48 object-cover">
+                <img [src]="'http://localhost:8080/' + evento.imagen"  alt="Evento" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <h3 class="text-xl font-bold text-gray-100">{{ evento.nombre }}</h3>
                     <p class="text-gray-400 text-sm">Fecha: {{ evento.fecha | date:'mediumDate' }}</p>
                     <p class="mt-2 text-gray-300 text-sm">{{ evento.descripcion }}</p>
+                    {{evento.imagen}}
                 </div>
                 <div class="flex justify-between px-4 py-2 bg-gray-800">
                     <button (click)="verDetallesEvento(evento)" class="text-blue-400 hover:underline">Detalles</button>
@@ -50,7 +51,7 @@
                     <p><strong>Ubicación:</strong> {{ eventoSeleccionado?.numMaxEquipos }}</p>
                     <p><strong>Fecha:</strong> {{ eventoSeleccionado?.fecha | date:'longDate' }}</p>
                     <p><strong>Organizador:</strong> {{ eventoSeleccionado?.contactoOrganizador }}</p>
-                    <p><strong>Imagen:</strong></p>
+                    <p><strong>Imagen</strong></p>
                     <img [src]="eventoSeleccionado?.contactoOrganizador" alt="Evento" class="w-full h-40 rounded-lg object-cover">
                 </div>
                 <div class="mt-4 flex justify-end">

@@ -1,0 +1,35 @@
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Mis Próximos Eventos</h1>
+    
+    <div *ngIf="cargando" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  
+    <div *ngIf="!cargando && eventos.length === 0" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+      <p>No tienes eventos próximos.</p>
+    </div>
+  
+    <div *ngFor="let evento of eventos" class="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-2xl font-semibold text-gray-800">{{evento.nombre}}</h2>
+            <p class="text-gray-600 mt-1">{{evento.deporte}} • Organizado por {{evento.nombreOrganizador}}</p>
+          </div>
+          <span [ngClass]="{
+            'bg-green-100 text-green-800': evento.estado === 'ACTIVO',
+            'bg-yellow-100 text-yellow-800': evento.estado === 'PLANIFICADO',
+            'bg-red-100 text-red-800': evento.estado === 'CANCELADO'
+          }" class="px-3 py-1 rounded-full text-sm font-medium">
+            {{evento.estado | titlecase}}
+          </span>
+        </div>
+        
+        <p class="mt-4 text-gray-700">{{evento.descripcion}}</p>
+        <p class="mt-2 text-gray-600">
+          <i class="fas fa-map-marker-alt mr-2"></i>{{evento.ubicacion}}
+        </p>
+        {{evento.fechas}}
+    </div>
+    </div>
+  </div>

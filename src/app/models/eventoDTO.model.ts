@@ -21,4 +21,5 @@ export interface EventoDTO{
     excluirFines:boolean;
     fechas: EventoFecha[];
     equiposInscritos:number;
+    imagen:string
 }

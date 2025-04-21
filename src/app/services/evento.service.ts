@@ -7,6 +7,7 @@ import { ResponseAPI } from "../models/ResponseAPI";
 import { EquipoDTO } from "../models/equipoDTO.model";
 import { Evento } from "../models/evento.model";
 import { EventoDTO } from "../models/eventoDTO.model";
+import { EventoDeportistaDTO } from "../models/eventoDeportista.model";
 @Injectable({
     providedIn:"root"
 })
@@ -36,10 +37,20 @@ export class EventoService{
         });
         return this.http.get<Evento[]>(`${appSettings.apiEventosFuturosDep}/${id}`,{ headers })
     }
-    addEvento(evento:EventoDTO,token:string):Observable<Evento>{
+    addEvento(evento:EventoDTO,token:string, archivo: File):Observable<Evento>{
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-        return this.http.post<Evento>(`${appSettings.apiAgregarEvento}`,evento,{ headers })
+        const formData = new FormData();
+        formData.append('archivo', archivo);
+        const eventoBlob = new Blob([JSON.stringify(evento)], { type: 'application/json' });
+        formData.append('evento', eventoBlob);
+        return this.http.post<Evento>(`${appSettings.apiAgregarEvento}`,formData,{ headers })
+    }
+    listarEventosDeportista(id: number, token: string):Observable<EventoDeportistaDTO[]>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get<EventoDeportistaDTO[]>(`${appSettings.apiListarEventosDeportista}/${id}`,{ headers })
     }
 }

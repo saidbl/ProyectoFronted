@@ -21,5 +21,6 @@ export interface Evento{
     frecuencia:string;
     diasSemana: string[];
     excluirFines: string;
+    imagen:string
 
 }
