@@ -79,7 +79,8 @@ export class CrearEventoComponent implements OnInit {
               excluirFines:this.excluirFines,
               fechas: [],
               equiposInscritos:0,
-              imagen:""
+              imagen:"",
+              esFuturo:true
             };
       if(this.archivo){
       this.eservice.addEvento(nuevoEvento,token, this.archivo).subscribe({

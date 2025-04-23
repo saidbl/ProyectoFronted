@@ -23,14 +23,26 @@ export class EventoService{
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${token}`
             });
-            return this.http.delete<ResponseAPI>(`${appSettings.apiEliminarEquipos}/${id}`,{ headers })
+            return this.http.delete<ResponseAPI>(`${appSettings.apiEliminarEventos}/${id}`,{ headers })
         }
-    add(equipo:EquipoDTO, token: string):Observable<Equipo>{
-            const headers = new HttpHeaders({
-                'Authorization': `Bearer ${token}`
-            });
-            return this.http.post<Equipo>(`${appSettings.apiAgregarEquipos}`,equipo,{ headers })
-        }
+    actualizarEvento(idEvento: number, evento: EventoDTO,token:string): Observable<Evento> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        if (evento.diasSemana && typeof evento.diasSemana === 'string') {
+            // Convertir string a array
+            evento.diasSemana = (evento.diasSemana as string)
+              .replace(/[\[\] ]/g, '') // Eliminar corchetes y espacios
+              .split(',');
+          } else if (!evento.diasSemana) {
+            // Asignar valor por defecto si es undefined/null
+            evento.diasSemana = [];
+          }
+        const formData = new FormData();
+        const eventoBlob = new Blob([JSON.stringify(evento)], { type: 'application/json' });
+        formData.append('evento', eventoBlob);
+        return this.http.put<Evento>(`${appSettings.apiActualizarEvento}/${idEvento}`, formData,{ headers });
+    }
     listEventosByDeportista(id : number, token : string):Observable<Evento[]>{
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
@@ -47,10 +59,12 @@ export class EventoService{
         formData.append('evento', eventoBlob);
         return this.http.post<Evento>(`${appSettings.apiAgregarEvento}`,formData,{ headers })
     }
-    listarEventosDeportista(id: number, token: string):Observable<EventoDeportistaDTO[]>{
+    listEventosByOrganizacion(id : number, token : string):Observable<Evento[]>{
+        console.log(appSettings.apiEventosFuturosOrg)
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-        return this.http.get<EventoDeportistaDTO[]>(`${appSettings.apiListarEventosDeportista}/${id}`,{ headers })
+        return this.http.get<Evento[]>(`${appSettings.apiEventosFuturosOrg}/${id}`,{ headers })
     }
+    
 }

@@ -29,6 +29,10 @@ export const appSettings={
     apiEquipoDeportista: "http://localhost:8080/equiposDeportista",
     apicompletadas : "http://localhost:8080/checkin/completadas",
     apiAgregarEvento:"http://localhost:8080/organizacion/crear",
-    apiListarEventosDeportista:"http://localhost:8080/eventosDeportista"
+    apiListarEventosDeportista:"http://localhost:8080/eventosDeportista",
+    apilistarFechasEvento:"http://localhost:8080/eventoFecha/listar",
+    apiEliminarEventos:"http://localhost:8080/eliminarEvento",
+    apiActualizarEvento: "http://localhost:8080/actualizarEvento",
+    apiEventosFuturosOrg: "http://localhost:8080/eventosFuturosOrg",
 
 }

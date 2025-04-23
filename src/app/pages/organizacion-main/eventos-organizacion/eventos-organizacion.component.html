@@ -1,42 +1,51 @@
 <div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">Mis Próximos Eventos</h1>
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Eventos de la Organización</h1>
   
-  <!-- Loading spinner -->
   <div *ngIf="cargando" class="flex justify-center items-center h-64">
     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
   </div>
 
-  <!-- No events message -->
-  <div *ngIf="!cargando && eventos.length === 0" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
-    <p>No tienes eventos próximos.</p>
-  </div>
-
-  <!-- Event cards -->
-  <div *ngFor="let evento of eventos" 
-       class="mb-8 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-       (click)="abrirModalFechas(evento.id)">
-    <div class="p-6">
-      <div class="flex justify-between items-start">
-        <div>
-          <h2 class="text-2xl font-semibold text-gray-800">{{evento.nombre}}</h2>
-          <p class="text-gray-600 mt-1">{{evento.deporte}} • Organizado por {{evento}}</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let evento of eventos" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <div class="p-6" (click)="abrirModalFechas(evento.id)">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-800">{{evento.nombre}}</h2>
+            <p class="text-gray-600 mt-1">{{evento.fecha | date:'mediumDate'}}</p>
+          </div>
+          <span class="px-2 py-1 rounded-full text-xs font-medium"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': evento.estado === 'ACTIVO',
+                  'bg-yellow-100 text-yellow-800': evento.estado === 'PLANIFICADO',
+                  'bg-red-100 text-red-800': evento.estado === 'CANCELADO'
+                }">
+            {{evento.estado}}
+          </span>
         </div>
-        <span [ngClass]="{
-          'bg-green-100 text-green-800': evento.estado === 'ACTIVO',
-          'bg-yellow-100 text-yellow-800': evento.estado === 'PLANIFICADO',
-          'bg-red-100 text-red-800': evento.estado === 'CANCELADO'
-        }" class="px-3 py-1 rounded-full text-sm font-medium">
-          {{evento.estado | titlecase}}
-        </span>
+        
+        <p class="mt-4 text-gray-700">{{evento.descripcion}}</p>
+        <p class="mt-2 text-gray-600">
+          <i class="fas fa-map-marker-alt mr-2"></i>{{evento.ubicacion}}
+        </p>
+        <p class="mt-2 text-gray-600">
+          <i class="fas fa-clock mr-2"></i>{{evento.horaInicio}} - {{evento.horaFin}}
+        </p>
+        
+        <div class="mt-4 flex justify-end space-x-2">
+          <button (click)="editarEvento(evento)"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+            Editar
+          </button>
+          
+          <button *ngIf="evento"
+                  (click)="eliminarEvento(evento)"
+                  class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">
+            Eliminar
+          </button>
+        </div>
       </div>
-      
-      <p class="mt-4 text-gray-700">{{evento.descripcion}}</p>
-      <p class="mt-2 text-gray-600">
-        <i class="fas fa-map-marker-alt mr-2"></i>{{evento.ubicacion}}
-      </p>
     </div>
   </div>
-
   <!-- Modal para fechas -->
   <div *ngIf="modalAbierto" class="fixed inset-0 z-50 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
