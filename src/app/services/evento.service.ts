@@ -30,12 +30,9 @@ export class EventoService{
             'Authorization': `Bearer ${token}`
         });
         if (evento.diasSemana && typeof evento.diasSemana === 'string') {
-            // Convertir string a array
             evento.diasSemana = (evento.diasSemana as string)
-              .replace(/[\[\] ]/g, '') // Eliminar corchetes y espacios
               .split(',');
           } else if (!evento.diasSemana) {
-            // Asignar valor por defecto si es undefined/null
             evento.diasSemana = [];
           }
         const formData = new FormData();
