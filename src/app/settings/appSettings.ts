@@ -34,5 +34,6 @@ export const appSettings={
     apiEliminarEventos:"http://localhost:8080/eliminarEvento",
     apiActualizarEvento: "http://localhost:8080/actualizarEvento",
     apiEventosFuturosOrg: "http://localhost:8080/eventosFuturosOrg",
+    apiProximosEquipos: "http://localhost:8080/proximosEquipos",
 
 }

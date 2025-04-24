@@ -1,114 +1,110 @@
-<div class="p-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Evento</h2>
-  
-    <form [formGroup]="eventoForm" (ngSubmit)="onSubmit()" class="space-y-4">
-      <!-- Sección básica -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Nombre del Evento *</label>
-          <input type="text" formControlName="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-        </div>
-      </div>
-  
-      <!-- Fechas y horarios -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Fecha de Inicio *</label>
-          <input type="date" formControlName="fecha" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Fecha de Fin</label>
-          <input type="date" formControlName="fechaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-        </div>
-      </div>
-  
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Hora de Inicio *</label>
-          <input type="time" formControlName="horaInicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Hora de Fin *</label>
-          <input type="time" formControlName="horaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-        </div>
-      </div>
-  
-      <!-- Ubicación y descripción -->
+<div class="p-4 max-w-3xl mx-auto">
+  <h2 class="text-xl font-semibold text-gray-800 mb-4">Editar Evento</h2>
+
+  <form [formGroup]="eventoForm" (ngSubmit)="onSubmit()" class="space-y-3">
+    <!-- Sección básica -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Ubicación *</label>
-        <input type="text" formControlName="ubicacion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+        <label class="block text-xs font-medium text-gray-600">Nombre *</label>
+        <input type="text" formControlName="nombre" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
       </div>
-      
       <div>
-        <label class="block text-sm font-medium text-gray-700">Descripción *</label>
-        <textarea formControlName="descripcion" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+        <label class="block text-xs font-medium text-gray-600">Ubicación *</label>
+        <input type="text" formControlName="ubicacion" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
       </div>
-  
-      <!-- Configuraciones adicionales -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    </div>
+
+    <!-- Fechas y horarios -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div>
+        <label class="block text-xs font-medium text-gray-600">Inicio *</label>
+        <input type="date" formControlName="fecha" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600">Hora *</label>
+        <input type="time" formControlName="horaInicio" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600">Fin</label>
+        <input type="date" formControlName="fechaFin" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600">Hora Fin *</label>
+        <input type="time" formControlName="horaFin" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div>
+      <label class="block text-xs font-medium text-gray-600">Descripción *</label>
+      <textarea formControlName="descripcion" rows="2" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border"></textarea>
+    </div>
+
+    <!-- Configuraciones -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-xs font-medium text-gray-600">Estado *</label>
+        <select formControlName="estado" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+          <option value="PLANIFICADO">Planificado</option>
+          <option value="ACTIVO">Activo</option>
+          <option value="CANCELADO">Cancelado</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600">Contacto *</label>
+        <input type="text" formControlName="contactoOrganizador" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+      </div>
+      <div class="flex items-end">
+        <label class="flex items-center text-xs">
+          <input type="checkbox" formControlName="recurrente" class="rounded text-blue-600 mr-2">
+          Evento recurrente
+        </label>
+      </div>
+    </div>
+
+    <!-- Opciones recurrentes -->
+    <div *ngIf="eventoForm.get('recurrente')?.value" class="bg-gray-50 p-3 rounded space-y-2">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Estado *</label>
-          <select formControlName="estado" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-            <option value="PLANIFICADO">Planificado</option>
-            <option value="ACTIVO">Activo</option>
-            <option value="CANCELADO">Cancelado</option>
+          <label class="block text-xs font-medium text-gray-600">Frecuencia</label>
+          <select formControlName="frecuencia" class="mt-1 block w-full text-sm rounded border-gray-300 shadow-sm p-2 border">
+            <option value="DIARIO">Diario</option>
+            <option value="SEMANAL">Semanal</option>
+            <option value="MENSUAL">Mensual</option>
+            <option value="ANUAL">Anual</option>
           </select>
         </div>
         
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Contacto del Organizador *</label>
-          <input type="text" formControlName="contactoOrganizador" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-        </div>
-      </div>
-  
-      <!-- Opciones recurrentes -->
-      <div class="space-y-2">
-        <div class="flex items-center">
-          <input type="checkbox" formControlName="recurrente" id="recurrente" class="rounded text-blue-600">
-          <label for="recurrente" class="ml-2 text-sm text-gray-700">Evento recurrente</label>
-        </div>
-        
-        <div *ngIf="eventoForm.get('recurrente')?.value" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Frecuencia</label>
-            <select formControlName="frecuencia" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-              <option value="DIARIO">Diario</option>
-              <option value="SEMANAL">Semanal</option>
-              <option value="MENSUAL">Mensual</option>
-              <option value="ANUAL">Anual</option>
-            </select>
-          </div>
-          
-          <div *ngIf="eventoForm.get('frecuencia')?.value === 'SEMANAL'">
-            <label class="block text-sm font-medium text-gray-700">Días de la semana</label>
-            <label *ngFor="let dia of diasDisponibles" class="flex items-center">
-                <input type="checkbox" [checked]="diasSemana.includes(dia.value)" 
-                       (change)="toggleDiaSeleccionado(dia.value)" 
-                       class="mr-1">
-                {{dia.label}}
-              </label>
-          </div>
-          
-          <div class="flex items-center">
-            <input type="checkbox" formControlName="excluirFines" id="excluirFines" class="rounded text-blue-600">
-            <label for="excluirFines" class="ml-2 text-sm text-gray-700">Excluir fines de semana</label>
+        <div *ngIf="eventoForm.get('frecuencia')?.value === 'SEMANAL'" class="md:col-span-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Días</label>
+          <div class="flex flex-wrap gap-2">
+            <label *ngFor="let dia of diasDisponibles" class="flex items-center text-xs">
+              <input type="checkbox" [checked]="diasSemana.includes(dia.value)" 
+                     (change)="toggleDiaSeleccionado(dia.value)" 
+                     class="mr-1 rounded text-blue-600">
+              {{dia.label}}
+            </label>
           </div>
         </div>
       </div>
-  
-      <!-- Botones -->
-      <div class="flex justify-end space-x-3 pt-4">
-        <button type="button" (click)="onCancel()" 
-                class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors">
-          Cancelar
-        </button>
-        <button type="submit" [disabled]="!eventoForm.valid"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors">
-          <span *ngIf="!cargando">Guardar Cambios</span>
-          <span *ngIf="cargando">Guardando...</span>
-        </button>
+      
+      <div class="flex items-center">
+        <input type="checkbox" formControlName="excluirFines" id="excluirFines" class="rounded text-blue-600 mr-2">
+        <label for="excluirFines" class="text-xs">Excluir fines de semana</label>
       </div>
-    </form>
-  </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end space-x-2 pt-2">
+      <button type="button" (click)="onCancel()" 
+              class="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+        Cancelar
+      </button>
+      <button type="submit" [disabled]="!eventoForm.valid"
+              class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300 transition-colors">
+        <span *ngIf="!cargando">Guardar</span>
+        <span *ngIf="cargando">Guardando...</span>
+      </button>
+    </div>
+  </form>
+</div>

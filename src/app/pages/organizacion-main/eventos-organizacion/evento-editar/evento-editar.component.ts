@@ -92,6 +92,7 @@ export class EventoEditarComponent implements OnInit {
   cargarDatosIniciales(): void {
     if (this.data.evento) {
       const evento = this.data.evento;
+      const diasSemana = evento.diasSemana || [];
       this.eventoForm.patchValue({
         nombre: evento.nombre,
         numMaxEquipos: evento.numMaxEquipos,
@@ -106,18 +107,32 @@ export class EventoEditarComponent implements OnInit {
         contactoOrganizador: evento.contactoOrganizador,
         recurrente: evento.recurrente || false,
         frecuencia: evento.frecuencia || '',
-        diasSemana: evento.diasSemana || [],
-        excluirFines: evento.excluirFines === 'true' || false,
-      });
+        diasSemana: diasSemana,
+        excluirFines: evento.excluirFines  || false,
+      }); 
+      this.diasSemana = [...diasSemana];
     }
   }
 
   toggleDiaSeleccionado(dia: string): void {
-    const index = this.diasSemana.indexOf(dia);
-    if (index > -1) {
-      this.diasSemana.splice(index, 1);
-    } else {
-      this.diasSemana.push(dia);
+    try {
+      let currentDias = this.eventoForm.get('diasSemana')?.value;
+      if (!Array.isArray(currentDias)) {
+        currentDias = [];
+      }
+      const newDias = [...currentDias];
+      const index = newDias.indexOf(dia);
+  
+      if (index > -1) {
+        newDias.splice(index, 1);
+      } else {
+        newDias.push(dia);
+      }
+      this.eventoForm.get('diasSemana')?.setValue(newDias);
+      console.log(this.eventoForm.get('diasSemana'))
+      this.diasSemana = newDias;
+    } catch (error) {
+      console.error('Error en toggleDiaSeleccionado:', error);
     }
   }
   onSubmit(): void {
@@ -128,7 +143,7 @@ export class EventoEditarComponent implements OnInit {
       }
       this.cargando = true;
       const formValue = this.eventoForm.value;
-      
+      console.log(formValue.diasSemana)
       const eventoActualizado: EventoDTO = {
         ...this.data.evento,
         nombre: formValue.nombre || '',
@@ -168,9 +183,5 @@ export class EventoEditarComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
-  onDeporteSeleccionado(deporte: Deporte): void {
-    this.eventoForm.patchValue({
-      deporte: deporte
-    });
-  }
+
 }

@@ -71,7 +71,7 @@ export class CrearEventoComponent implements OnInit {
               ubicacion: this.ubicacion,
               horaInicio: this.horaInicio,
               horaFin: this.horaFin,
-              estado: "Planificado",
+              estado: "PLANIFICADO",
               contactoOrganizador:this.correo,
               recurrente:this.recurrente,
               frecuencia:this.frecuencia,

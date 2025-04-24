@@ -20,7 +20,7 @@ export interface Evento{
     recurrente: boolean;
     frecuencia:string;
     diasSemana: string[];
-    excluirFines: string;
+    excluirFines: boolean;
     imagen:string
 
 }
