@@ -71,11 +71,11 @@ export class EventoService{
         });
         return this.http.get<EventoConEquipos[]>(`${appSettings.apiProximosEquipos}/${id}`,{ headers });
       }
-    getEstadisticasGenerales(token:string): Observable<any> {
+    getEstadisticasGenerales(token:string, id: number): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-          return this.http.get(`${appSettings.apiGeneral}/generalesorg`,{ headers }).pipe(
+          return this.http.get(`${appSettings.apiGeneral}/generalesorg/${id}`,{ headers }).pipe(
             map((response: any) => this.transformStatsData(response)),
             catchError(this.handleError)
           );

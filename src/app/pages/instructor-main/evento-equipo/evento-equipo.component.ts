@@ -12,6 +12,7 @@ import { EquipoService } from '../../../services/equipo.service';
 import { EventoEquipo } from '../../../models/eventoEquipo.model';
 @Component({
     selector: 'app-evento-equipo',
+    standalone: true,
     imports: [FormsModule, CommonModule, RouterModule],
     templateUrl: './evento-equipo.component.html',
     styleUrl: './evento-equipo.component.css'

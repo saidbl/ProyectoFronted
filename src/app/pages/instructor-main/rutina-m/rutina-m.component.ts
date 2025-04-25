@@ -27,6 +27,7 @@ import { RutinaDTO } from '../../../models/rutinaDTO.model';
 
 @Component({
     selector: 'app-rutina-m',
+    standalone:true,
     imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
         MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
         MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,

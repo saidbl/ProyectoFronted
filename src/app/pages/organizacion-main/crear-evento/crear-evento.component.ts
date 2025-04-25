@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { EventoService } from '../../../services/evento.service';
 @Component({
     selector: 'app-crear-evento',
+    standalone:true,
     imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: './crear-evento.component.html',
     styleUrl: './crear-evento.component.css'

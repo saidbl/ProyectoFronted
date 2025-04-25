@@ -13,6 +13,7 @@ import { InstructorService } from '../../services/instructor.service';
 
 @Component({
     selector: 'app-login',
+    standalone:true,
     imports: [CommonModule, ReactiveFormsModule, MatCardModule,
         MatFormFieldModule,
         MatInputModule,

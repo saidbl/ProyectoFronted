@@ -28,6 +28,7 @@ import { EjercicioRutinaDTO } from '../../../../models/ejercicioRutinaDTO.model'
 
 @Component({
     selector: 'app-ejercicios',
+    standalone:true,
     imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
         MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
         MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,

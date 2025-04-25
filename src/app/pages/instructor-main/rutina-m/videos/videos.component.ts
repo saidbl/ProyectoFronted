@@ -8,6 +8,7 @@ import { EjercicioRutinaService } from '../../../../services/ejerciciorutina.ser
 import { EjercicioRutina } from '../../../../models/ejercicioRutina.model';
 @Component({
     selector: 'app-videos',
+    standalone:true,
     imports: [FormsModule, CommonModule, RouterModule],
     templateUrl: './videos.component.html',
     styleUrl: './videos.component.css'

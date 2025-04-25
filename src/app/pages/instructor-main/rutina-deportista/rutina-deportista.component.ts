@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 @Component({
     selector: 'app-rutina-deportista',
     imports: [FormsModule, CommonModule, RouterModule],
+    standalone: true,
     templateUrl: './rutina-deportista.component.html',
     styleUrl: './rutina-deportista.component.css'
 })
