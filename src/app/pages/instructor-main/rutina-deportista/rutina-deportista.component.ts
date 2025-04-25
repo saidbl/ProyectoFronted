@@ -11,11 +11,10 @@ import { RutinaJugadorDTO } from '../../../models/rutinaJugadorDTO.model';
 import { forkJoin } from 'rxjs';
 import { RouterModule } from '@angular/router'; 
 @Component({
-  selector: 'app-rutina-deportista',
-  standalone: true,
-  imports: [FormsModule,CommonModule,RouterModule],
-  templateUrl: './rutina-deportista.component.html',
-  styleUrl: './rutina-deportista.component.css'
+    selector: 'app-rutina-deportista',
+    imports: [FormsModule, CommonModule, RouterModule],
+    templateUrl: './rutina-deportista.component.html',
+    styleUrl: './rutina-deportista.component.css'
 })
 export class RutinaDeportistaComponent implements OnInit{
   private dservice= inject(DeportistaService)

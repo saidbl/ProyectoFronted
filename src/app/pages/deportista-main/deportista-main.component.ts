@@ -7,11 +7,11 @@ import { RutinaService } from '../../services/rutina.service';
 import { RutinaDTOR } from '../../models/rutinaDTOr.model';
 
 @Component({
-  selector: 'app-deportista-main',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './deportista-main.component.html',
-  styleUrl: './deportista-main.component.css'
+    selector: 'app-deportista-main',
+    imports: [CommonModule, RouterModule],
+    standalone:true,
+    templateUrl: './deportista-main.component.html',
+    styleUrl: './deportista-main.component.css'
 })
 export class DeportistaMainComponent implements OnInit{
   private rservice = inject(RutinaService)

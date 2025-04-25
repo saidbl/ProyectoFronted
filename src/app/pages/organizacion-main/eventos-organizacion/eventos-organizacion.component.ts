@@ -10,11 +10,10 @@ import { EventoEditarComponent } from './evento-editar/evento-editar.component';
 import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
-  selector: 'app-eventos-organizacion',
-  standalone: true,
-  imports: [CommonModule,RouterModule,MatNativeDateModule],
-  templateUrl: './eventos-organizacion.component.html',
-  styleUrl: './eventos-organizacion.component.css'
+    selector: 'app-eventos-organizacion',
+    imports: [CommonModule, RouterModule, MatNativeDateModule],
+    templateUrl: './eventos-organizacion.component.html',
+    styleUrl: './eventos-organizacion.component.css'
 })
 export class EventosOrganizacionComponent {
   private eservice = inject(EventoService)

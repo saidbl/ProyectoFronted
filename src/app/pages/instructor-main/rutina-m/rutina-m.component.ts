@@ -26,14 +26,13 @@ import { RouterModule } from '@angular/router';
 import { RutinaDTO } from '../../../models/rutinaDTO.model';
 
 @Component({
-  selector: 'app-rutina-m',
-  standalone: true,
-  imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
-    MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
-    MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
-    MatDatepickerModule, MatNativeDateModule, FormsModule,CommonModule,RouterModule],
-  templateUrl: './rutina-m.component.html',
-  styleUrl: './rutina-m.component.css'
+    selector: 'app-rutina-m',
+    imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
+        MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
+        MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
+        MatDatepickerModule, MatNativeDateModule, FormsModule, CommonModule, RouterModule],
+    templateUrl: './rutina-m.component.html',
+    styleUrl: './rutina-m.component.css'
 })
 export class RutinaMComponent implements OnInit{
   private rservice= inject(RutinaService)

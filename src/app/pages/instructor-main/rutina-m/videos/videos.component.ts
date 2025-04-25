@@ -7,11 +7,10 @@ import { RouterModule } from '@angular/router';
 import { EjercicioRutinaService } from '../../../../services/ejerciciorutina.service';
 import { EjercicioRutina } from '../../../../models/ejercicioRutina.model';
 @Component({
-  selector: 'app-videos',
-  standalone: true,
-  imports: [FormsModule, CommonModule,RouterModule],
-  templateUrl: './videos.component.html',
-  styleUrl: './videos.component.css'
+    selector: 'app-videos',
+    imports: [FormsModule, CommonModule, RouterModule],
+    templateUrl: './videos.component.html',
+    styleUrl: './videos.component.css'
 })
 export class VideosComponent implements OnInit{
   private recursoService = inject(RecursoService)

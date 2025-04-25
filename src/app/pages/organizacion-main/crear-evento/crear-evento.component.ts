@@ -5,11 +5,10 @@ import { EventoDTO } from '../../../models/eventoDTO.model';
 import { RouterModule } from '@angular/router'; 
 import { EventoService } from '../../../services/evento.service';
 @Component({
-  selector: 'app-crear-evento',
-  standalone: true,
-  imports: [CommonModule,FormsModule,RouterModule],
-  templateUrl: './crear-evento.component.html',
-  styleUrl: './crear-evento.component.css'
+    selector: 'app-crear-evento',
+    imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './crear-evento.component.html',
+    styleUrl: './crear-evento.component.css'
 })
 export class CrearEventoComponent implements OnInit {
   private eservice = inject (EventoService)

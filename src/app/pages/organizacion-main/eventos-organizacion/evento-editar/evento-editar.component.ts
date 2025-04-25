@@ -35,11 +35,10 @@ interface EventoForm {
 }
 
 @Component({
-  selector: 'app-evento-editar',
-  standalone: true,
-  templateUrl: './evento-editar.component.html',
-  styleUrls: ['./evento-editar.component.css'],
-  imports: [ReactiveFormsModule,CommonModule,MatNativeDateModule]
+    selector: 'app-evento-editar',
+    templateUrl: './evento-editar.component.html',
+    styleUrls: ['./evento-editar.component.css'],
+    imports: [ReactiveFormsModule, CommonModule, MatNativeDateModule]
 })
 export class EventoEditarComponent implements OnInit {
   cargando = false;

@@ -13,11 +13,11 @@ import { JugadorEquipoService } from '../../../services/jugadorequipo.service';
 import { JugadorEquipo } from '../../../models/jugadorEquipo.model';
 
 @Component({
-  selector: 'app-equipo-org',
-  standalone: true,
-  imports: [FormsModule,CommonModule],
-  templateUrl: './equipo-org.component.html',
-  styleUrl: './equipo-org.component.css'
+    selector: 'app-equipo-org',
+    imports: [FormsModule, CommonModule],
+    templateUrl: './equipo-org.component.html',
+    styleUrl: './equipo-org.component.css',
+    standalone : true
 })
 export class EquipoOrgComponent implements OnInit {
   private eeservice= inject(EventoService)

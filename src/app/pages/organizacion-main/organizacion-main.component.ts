@@ -8,11 +8,10 @@ import { EventoService } from '../../services/evento.service';
 import { EventoConEquipos } from '../../models/eventoconEquipos.model';
 import { Equipo } from '../../models/equipo.model';
 @Component({
-  selector: 'app-organizacion-main',
-  standalone: true,
-  imports: [RouterModule,CommonModule ,FormsModule ],
-  templateUrl: './organizacion-main.component.html',
-  styleUrl: './organizacion-main.component.css'
+    selector: 'app-organizacion-main',
+    imports: [RouterModule, CommonModule, FormsModule],
+    templateUrl: './organizacion-main.component.html',
+    styleUrl: './organizacion-main.component.css'
 })
 export class OrganizacionMainComponent implements OnInit {
   private eservice = inject(EventoService)

@@ -23,14 +23,13 @@ import { RutinaService } from '../../services/rutina.service';
 import { Rutina } from '../../models/rutina.model';
 
 @Component({
-  selector: 'app-instructor-main',
-  standalone: true,
-  imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
-    MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
-    MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
-    MatDatepickerModule, MatNativeDateModule, FormsModule, RouterModule, CommonModule],
-  templateUrl: './instructor-main.component.html',
-  styleUrl: './instructor-main.component.css'
+    selector: 'app-instructor-main',
+    imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
+        MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
+        MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
+        MatDatepickerModule, MatNativeDateModule, FormsModule, RouterModule, CommonModule],
+    templateUrl: './instructor-main.component.html',
+    styleUrl: './instructor-main.component.css'
 })
 export class InstructorMainComponent implements OnInit {
   private rservice= inject(RutinaService)

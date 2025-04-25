@@ -28,12 +28,11 @@ interface ParticipacionEvento {
 }
 
 @Component({
-  selector: 'app-estadisticas-org',
-  standalone: true,
-  imports: [FormsModule, CommonModule,MatCardModule,MatButtonModule,MatIconModule,MatProgressSpinnerModule,MatTableModule],
-  providers: [DatePipe],
-  templateUrl: './estadisticas-org.component.html',
-  styleUrls: ['./estadisticas-org.component.css']
+    selector: 'app-estadisticas-org',
+    imports: [FormsModule, CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTableModule],
+    providers: [DatePipe],
+    templateUrl: './estadisticas-org.component.html',
+    styleUrls: ['./estadisticas-org.component.css']
 })
 export class EstadisticasOrgComponent implements OnInit {
   statsData: StatsData | null = null;

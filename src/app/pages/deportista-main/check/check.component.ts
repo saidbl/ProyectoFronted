@@ -7,11 +7,11 @@ import { CheckInRutinaService } from '../../../services/checkinrutina.service';
 import { CheckInRutinaDTO } from '../../../models/checkinRutinaDTO.model';
 
 @Component({
-  selector: 'app-check',
-  standalone: true,
-  imports: [CommonModule,RouterModule],
-  templateUrl: './check.component.html',
-  styleUrl: './check.component.css'
+    selector: 'app-check',
+    standalone: true,
+    imports: [CommonModule, RouterModule],
+    templateUrl: './check.component.html',
+    styleUrl: './check.component.css'
 })
 export class CheckComponent {
     rutinasHoy: RutinaDTOR[] = [];

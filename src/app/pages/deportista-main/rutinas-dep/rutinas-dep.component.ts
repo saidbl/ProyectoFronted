@@ -4,11 +4,11 @@ import { RutinaService } from '../../../services/rutina.service';
 import { RutinaDTO } from '../../../models/rutinaDTO.model';
 import { RutinaDTOR } from '../../../models/rutinaDTOr.model';
 @Component({
-  selector: 'app-rutinas-dep',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './rutinas-dep.component.html',
-  styleUrl: './rutinas-dep.component.css'
+    selector: 'app-rutinas-dep',
+    standalone:true,
+    imports: [CommonModule],
+    templateUrl: './rutinas-dep.component.html',
+    styleUrl: './rutinas-dep.component.css'
 })
 export class RutinasDepComponent implements OnInit{
   private rservice = inject(RutinaService)

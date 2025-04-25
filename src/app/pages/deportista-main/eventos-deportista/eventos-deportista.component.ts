@@ -5,11 +5,11 @@ import { EventoService } from '../../../services/evento.service';
 import { Evento } from '../../../models/evento.model';
 import { EventoFechaService } from '../../../services/eventoFecha.service';
 @Component({
-  selector: 'app-eventos-deportista',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './eventos-deportista.component.html',
-  styleUrl: './eventos-deportista.component.css'
+    selector: 'app-eventos-deportista',
+    standalone:true,
+    imports: [CommonModule],
+    templateUrl: './eventos-deportista.component.html',
+    styleUrl: './eventos-deportista.component.css'
 })
 export class EventosDeportistaComponent implements OnInit{
   private eservice = inject(EventoService)

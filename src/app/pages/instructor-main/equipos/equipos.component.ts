@@ -12,11 +12,11 @@ import { JugadorEquipoDTO } from '../../../models/jugadorEquipoDTO.model';
 import { EquipoDTO } from '../../../models/equipoDTO.model';
 import { RouterModule } from '@angular/router'; 
 @Component({
-  selector: 'app-equipos',
-  standalone: true,
-  imports: [FormsModule,CommonModule,RouterModule],
-  templateUrl: './equipos.component.html',
-  styleUrl: './equipos.component.css'
+    selector: 'app-equipos',
+    standalone:true,
+    imports: [FormsModule, CommonModule, RouterModule],
+    templateUrl: './equipos.component.html',
+    styleUrls: [ './equipos.component.css']
 })
 export class EquiposComponent implements OnInit{
   private eservice= inject(EquipoService)

@@ -4,11 +4,11 @@ import { CommonModule } from '@angular/common';
 import { CheckInRutinaService } from '../../../../services/checkinrutina.service';
 import { CheckInRutina } from '../../../../models/checkinRutina.model';
 @Component({
-  selector: 'app-completadas',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './completadas.component.html',
-  styleUrl: './completadas.component.css'
+    selector: 'app-completadas',
+    imports: [CommonModule],
+    standalone : true,
+    templateUrl: './completadas.component.html',
+    styleUrl: './completadas.component.css'
 })
 export class CompletadasComponent implements OnInit{
   private chservice = inject(CheckInRutinaService)

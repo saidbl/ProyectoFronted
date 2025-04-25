@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Equipo } from '../../../models/equipo.model';
 import { EquipoService } from '../../../services/equipo.service';
 @Component({
-  selector: 'app-equipos-deportista',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './equipos-deportista.component.html',
-  styleUrl: './equipos-deportista.component.css'
+    selector: 'app-equipos-deportista',
+    standalone:true,
+    imports: [CommonModule],
+    templateUrl: './equipos-deportista.component.html',
+    styleUrl: './equipos-deportista.component.css'
 })
 export class EquiposDeportistaComponent implements OnInit{
   private eservice = inject(EquipoService)

@@ -27,14 +27,13 @@ import { EjercicioRutinaService } from '../../../../services/ejerciciorutina.ser
 import { EjercicioRutinaDTO } from '../../../../models/ejercicioRutinaDTO.model';
 
 @Component({
-  selector: 'app-ejercicios',
-  standalone: true,
-  imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
-      MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
-      MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
-      MatDatepickerModule, MatNativeDateModule, FormsModule,CommonModule,RouterModule],
-  templateUrl: './ejercicios.component.html',
-  styleUrl: './ejercicios.component.css'
+    selector: 'app-ejercicios',
+    imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
+        MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
+        MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
+        MatDatepickerModule, MatNativeDateModule, FormsModule, CommonModule, RouterModule],
+    templateUrl: './ejercicios.component.html',
+    styleUrl: './ejercicios.component.css'
 }) 
 export class EjerciciosComponent implements OnInit{
   private rservice = inject(RutinaService)
