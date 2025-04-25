@@ -1,4 +1,5 @@
 export const appSettings={
+    apiGeneral:"http://localhost:8080",
     apiLogin:"http://localhost:8080/auth/login/deportista",
     apiLoginOrg:"http://localhost:8080/auth/login/organizacion",
     apiLoginInst:"http://localhost:8080/auth/login/instructor",

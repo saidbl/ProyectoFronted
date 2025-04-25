@@ -16,6 +16,8 @@ import { EquiposDeportistaComponent } from './pages/deportista-main/equipos-depo
 import { CrearEventoComponent } from './pages/organizacion-main/crear-evento/crear-evento.component';
 import { EventosDeportistaComponent } from './pages/deportista-main/eventos-deportista/eventos-deportista.component';
 import { EventosOrganizacionComponent } from './pages/organizacion-main/eventos-organizacion/eventos-organizacion.component';
+import { EquipoOrgComponent } from './pages/organizacion-main/equipo-org/equipo-org.component';
+import { EstadisticasOrgComponent } from './pages/organizacion-main/estadisticas-org/estadisticas-org.component';
 
 
 export const routes: Routes = [
@@ -37,6 +39,8 @@ export const routes: Routes = [
     { path: 'deportista/equipos', component: EquiposDeportistaComponent},
     { path: 'organizacion/crear-eventos', component: CrearEventoComponent},
     { path: 'organizacion/eventos', component: EventosOrganizacionComponent},
+    { path: 'organizacion/equipos-org', component: EquipoOrgComponent},
+    { path: 'organizacion/estadistica-org', component: EstadisticasOrgComponent},
     { path: '', redirectTo: '/rutinas', pathMatch: 'full' },
     { path: '**', component:LoginComponent },
 ];

@@ -1,15 +1,51 @@
-<div class="min-h-[calc(100vh-4rem)] bg-gray-950 p-6 text-white">
+<div class="min-h-[calc(100vh-4rem)] bg-gray-950 text-white">
   <!-- Encabezado con gradiente -->
-  <div class="mb-8 text-center">
+  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center">
+          <span class="text-xl font-bold text-blue-400">AllSports</span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-center space-x-8">
+            <a routerLink=".." class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-calendar-alt mr-2"></i> Principal
+            </a>
+            <a routerLink="crear-eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-plus-circle mr-2"></i> Crear Evento
+            </a>
+            <a routerLink="equipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users mr-2"></i> Equipos
+            </a>
+            <a routerLink="estadisticas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-chart-bar mr-2"></i> Estadísticas
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="relative ml-3">
+            <div class="flex items-center space-x-2 cursor-pointer" >
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
+              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Configuración</a>
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="mb-8 text-center p-20">
     <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
       Crear Nuevo Evento
     </h1>
     <p class="text-gray-400">Completa los detalles para organizar tu evento deportivo</p>
   </div>
 
-  <!-- Formulario mejorado -->
   <form (ngSubmit)="onSubmit()" class="max-w-4xl mx-auto bg-gray-900/50 border border-gray-800 rounded-xl p-6 shadow-2xl">
-    <!-- Sección de información básica -->
+
     <div class="mb-8">
       <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
         <i class="fas fa-info-circle mr-2"></i> Información Básica

@@ -1,0 +1,92 @@
+<div class="stats-container">
+  <div class="header">
+    <h1>Estadísticas Generales</h1>
+    <button mat-raised-button color="primary" (click)="refreshStats()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon>
+      Actualizar
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="primary" (click)="refreshStats()">
+      Reintentar
+    </button>
+  </div>
+
+  <div *ngIf="statsData && !loading" class="stats-content">
+    <!-- Sección Eventos por Mes -->
+    <div class="chart-card">
+      <div class="card-header">
+        <h2>Eventos por Mes</h2>
+        <p>Distribución mensual de eventos creados</p>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Sección Participación en Eventos -->
+    <div class="chart-card">
+      <div class="card-header">
+        <h2>Participación en Eventos</h2>
+        <p>Comparación entre equipos inscritos y capacidad máxima</p>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="participationChartData"
+          [options]="participationChartOptions"
+          [type]="participationChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Tabla detallada de participación -->
+    <div class="table-card">
+      <div class="card-header">
+        <h2>Detalle de Participación</h2>
+        <p>Porcentaje de ocupación por evento</p>
+      </div>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="statsData.participacionEventos" class="mat-elevation-z1">
+          <!-- Nombre Columna -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Evento</th>
+            <td mat-cell *matCellDef="let evento">{{evento.nombre}}</td>
+          </ng-container>
+
+          <!-- Equipos Inscritos Columna -->
+          <ng-container matColumnDef="inscritos">
+            <th mat-header-cell *matHeaderCellDef>Inscritos</th>
+            <td mat-cell *matCellDef="let evento">{{evento.equiposInscritos}} / {{evento.numMaxEquipos}}</td>
+          </ng-container>
+
+          <!-- Porcentaje Columna -->
+          <ng-container matColumnDef="porcentaje">
+            <th mat-header-cell *matHeaderCellDef>Ocupación</th>
+            <td mat-cell *matCellDef="let evento">
+              <div class="progress-container">
+                <div class="progress-bar" [style.width.%]="getFillPercentage(evento)">
+                  <span>{{getFillPercentage(evento)}}%</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['nombre', 'inscritos', 'porcentaje']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['nombre', 'inscritos', 'porcentaje'];"></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

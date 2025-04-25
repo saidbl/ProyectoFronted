@@ -1,7 +1,7 @@
 import { Injectable,inject } from "@angular/core";
 import { HttpClient, HttpHeaders} from "@angular/common/http";
 import { appSettings } from "../settings/appSettings";
-import { Observable } from "rxjs";
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { ResponseAPI } from "../models/ResponseAPI";
 import { Evento } from "../models/evento.model";
 import { EventoDTO } from "../models/eventoDTO.model";
@@ -70,5 +70,34 @@ export class EventoService{
             'Authorization': `Bearer ${token}`
         });
         return this.http.get<EventoConEquipos[]>(`${appSettings.apiProximosEquipos}/${id}`,{ headers });
+      }
+    getEstadisticasGenerales(token:string): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+          return this.http.get(`${appSettings.apiGeneral}/generalesorg`,{ headers }).pipe(
+            map((response: any) => this.transformStatsData(response)),
+            catchError(this.handleError)
+          );
+    }
+    private transformStatsData(data: any): any {
+        return {
+          eventosPorMes: data.eventosPorMes || [],
+          participacionEventos: data.participacionEventos || [],
+          jugadoresPorDeporte: data.jugadoresPorDeporte || [],
+          equiposActivosInactivos: data.equiposActivosInactivos || [],
+          asistenciasRutinas: data.asistenciasRutinas || []
+        };
+      }
+
+      private handleError(error: any) {
+        console.error('Error en EstadisticasService:', error);
+        let errorMessage = 'Error al cargar estadísticas';
+        if (error.error instanceof ErrorEvent) {
+          errorMessage = `Error: ${error.error.message}`;
+        } else {
+          errorMessage = `Código: ${error.status}\nMensaje: ${error.message}`;
+        }
+        return throwError(() => new Error(errorMessage));
       }
 }

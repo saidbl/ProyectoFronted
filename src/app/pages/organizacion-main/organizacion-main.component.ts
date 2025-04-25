@@ -52,33 +52,9 @@ export class OrganizacionMainComponent implements OnInit {
 
 
   private loadInitialData(token:string, id : number): void {
-    this.loadOrganizationData();
-    this.loadSports();
-    this.loadStatistics();
-    this.loadUpcomingEvents();
-    this.loadRecentTeams();
     this.loadAllEvents(token,id);
   }
 
-  private loadOrganizationData(): void {
-    // Implementar carga de datos de la organización
-  }
-
-  private loadSports(): void {
-    // Implementar carga de deportes disponibles
-  }
-
-  private loadStatistics(): void {
-    // Implementar carga de estadísticas generales
-  }
-
-  private loadUpcomingEvents(): void {
-    // Implementar carga de eventos próximos
-  }
-
-  private loadRecentTeams(): void {
-    // Implementar carga de equipos recientes
-  }
 
   private loadAllEvents(token: string, id:number): void {
     this.eservice.listEventosByOrganizacion(id,token).subscribe({

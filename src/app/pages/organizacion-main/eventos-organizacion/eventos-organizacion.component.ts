@@ -26,6 +26,16 @@ export class EventosOrganizacionComponent {
     cargandoFechas = false;
     fechasEvento: EventoFecha[] = [];
     eventoIdActual: number | null = null;
+    showUserDropdown: boolean = false;
+    tabs = [
+    { id: 'planificados', label: 'Planificados' },
+    { id: 'activos', label: 'Activos' },
+    { id: 'pasados', label: 'Pasados' }
+    ];
+  eventosPlanificados: Evento[] = [];
+  eventosActivos: Evento[] = [];
+  eventosPasados: Evento[] = [];
+  currentTab: string = 'planificados';
   
     ngOnInit(): void {
       const token = localStorage.getItem("token")
@@ -36,6 +46,7 @@ export class EventosOrganizacionComponent {
       this.eservice.listEventosByOrganizacion(id,token).subscribe({
         next:(data)=>{
           this.eventos=data
+          this.clasificarEventos(data);
           this.cargando = false;
         },
         error:(err)=>{
@@ -44,7 +55,31 @@ export class EventosOrganizacionComponent {
         }
       })
     }
+    clasificarEventos(eventos: Evento[]): void {
+      const ahora = new Date();
+      this.eventosPlanificados = eventos.filter(evento => {
+        const fechaEvento = new Date(evento.fecha);
+        return fechaEvento > ahora && evento.estado === 'PLANIFICADO';
+      });
   
+      this.eventosActivos = eventos.filter(evento => {
+        const fechaEvento = new Date(evento.fecha);
+        return fechaEvento <= ahora && evento.estado === 'ACTIVO';
+      });
+  
+      this.eventosPasados = eventos.filter(evento => {
+        const fechaEvento = new Date(evento.fecha);
+        return fechaEvento < ahora && evento.estado !== 'ACTIVO';
+      });
+    }
+    getEventCount(tabId: string): number {
+      switch(tabId) {
+        case 'planificados': return this.eventosPlanificados.length;
+        case 'activos': return this.eventosActivos.length;
+        case 'pasados': return this.eventosPasados.length;
+        default: return 0;
+      }
+    }
     abrirModalFechas(eventoId: number): void {
       const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
@@ -111,5 +146,8 @@ export class EventosOrganizacionComponent {
           }
         })
       }
+    }
+    logout(){
+
     }
 }

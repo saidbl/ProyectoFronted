@@ -2,12 +2,12 @@ import { Component, OnInit , inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EventoDTO } from '../../../models/eventoDTO.model';
-import { LocalTime } from '../../../models/LocalTime';
+import { RouterModule } from '@angular/router'; 
 import { EventoService } from '../../../services/evento.service';
 @Component({
   selector: 'app-crear-evento',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,RouterModule],
   templateUrl: './crear-evento.component.html',
   styleUrl: './crear-evento.component.css'
 })
@@ -26,6 +26,7 @@ export class CrearEventoComponent implements OnInit {
   frecuencia: string = 'SEMANAL';
   diasSemana: string[] = ['L', 'M', 'X', 'J', 'V'];
   archivo?: File;
+  showUserDropdown: boolean = false;
   diasDisponibles: any[] = [
     { value: 'L', label: 'Lunes' },
     { value: 'M', label: 'Martes' },
@@ -96,5 +97,8 @@ export class CrearEventoComponent implements OnInit {
   }
   seleccionarArchivo(event: any) {
     this.archivo = event.target.files[0];
+  }
+  logout(){
+
   }
 }
