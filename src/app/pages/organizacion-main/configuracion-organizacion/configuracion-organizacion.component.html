@@ -1,0 +1,89 @@
+<!-- components/organizacion/organizacion-edit.component.html -->
+<div class="edit-container">
+    <div class="header">
+      <h1>Editar Organización</h1>
+      <p>Actualiza la información de tu organización</p>
+    </div>
+  
+    <form [formGroup]="organizacionForm" (ngSubmit)="onSubmit()" class="form-container">
+      <!-- Nombre Organización -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Nombre de la organización</mat-label>
+        <input matInput formControlName="nombreOrganizacion" required>
+        <mat-error *ngIf="nombreOrganizacion?.invalid && nombreOrganizacion?.touched">
+          Nombre de la organización es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Representante -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Nombre del representante</mat-label>
+        <input matInput formControlName="nombre" required>
+        <mat-error *ngIf="nombre?.invalid && nombre?.touched">
+          Nombre del representante es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" required>
+        <mat-error *ngIf="email?.invalid && email?.touched">
+          {{ email?.errors?.['required'] ? 'Email es requerido' : 'Email no válido' }}
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Teléfono -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="telefono" required>
+        <mat-error *ngIf="telefono?.invalid && telefono?.touched">
+          Teléfono es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Dirección -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="direccion" required>
+        <mat-error *ngIf="direccion?.invalid && direccion?.touched">
+          Dirección es requerida
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Tipo -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Tipo de organización</mat-label>
+        <mat-select formControlName="tipo" required>
+          <mat-option *ngFor="let tipo of tiposOrganizacion" [value]="tipo">
+            {{ tipo }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="tipo?.invalid && tipo?.touched">
+          Tipo es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Botones -->
+      <div class="button-group">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          [disabled]="organizacionForm.invalid || isSaving"
+        >
+          <span *ngIf="!isSaving">Guardar cambios</span>
+          <mat-spinner *ngIf="isSaving" diameter="24"></mat-spinner>
+        </button>
+        
+        <button 
+          mat-stroked-button 
+          type="button" 
+          (click)="router.navigate(['/organizacion', organizacion.id])"
+          class="cancel-button"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>

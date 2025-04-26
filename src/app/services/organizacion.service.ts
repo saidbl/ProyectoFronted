@@ -1,8 +1,9 @@
 import { Injectable,inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { appSettings } from "../settings/appSettings";
 import { Observable } from "rxjs";
 import { Organizacion } from "../models/organizacion.model";
+import { OrganizacionDTO } from "../models/organizacionDTO.model";
 @Injectable({
     providedIn:"root"
 })
@@ -14,6 +15,19 @@ export class OrganizacionService{
     login (email:string, password:string):Observable<any>{
             return this.http.post<any>(this.apiLog,{email,password})
     }
+    getbyId(id: number, token: string):Observable<Organizacion>{
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.get<Organizacion>(`${appSettings.apiGeneral}/obtenerOrg/${id}`,{headers})
+    }
+
+    update(idOrg: number, org: OrganizacionDTO,token:string): Observable<Organizacion> {
+            const headers = new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            });
+            return this.http.put<Organizacion>(`${appSettings.apiActualizarOrg}/${idOrg}`, org,{ headers });
+        }
 
     logOut():void{
         if(typeof localStorage!=="undefined"){

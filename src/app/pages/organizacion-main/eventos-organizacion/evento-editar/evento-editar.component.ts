@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DateAdapter } from '@angular/material/core';
 import { EventoService } from '../../../../services/evento.service';
@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatNativeDateModule } from '@angular/material/core';
 import { EventoDTO } from '../../../../models/eventoDTO.model';
+import { FormsModule } from '@angular/forms';
 
 interface EventoForm {
   nombre: FormControl<string | null>;
@@ -38,7 +39,7 @@ interface EventoForm {
     selector: 'app-evento-editar',
     templateUrl: './evento-editar.component.html',
     styleUrls: ['./evento-editar.component.css'],
-    imports: [ReactiveFormsModule, CommonModule, MatNativeDateModule]
+    imports: [ReactiveFormsModule, CommonModule, MatNativeDateModule,FormsModule]
 })
 export class EventoEditarComponent implements OnInit {
   cargando = false;
@@ -53,6 +54,7 @@ export class EventoEditarComponent implements OnInit {
     { value: 'D', label: 'Domingo' }
   ];
   diasSemana: string[] = ['L', 'M', 'X', 'J', 'V'];
+  minDate: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -61,33 +63,122 @@ export class EventoEditarComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { evento: Evento, organizacion: Organizacion },
     private eservice: EventoService
   ) {
+    const today = new Date();
+    this.minDate = new Date(today.setDate(today.getDate() + 7));
     this.dateAdapter.setLocale('es-ES');
     this.eventoForm = this.fb.group<EventoForm>({
-      nombre: new FormControl('', Validators.required),
+      nombre: new FormControl('', {
+        validators:[
+        Validators.required,
+        Validators.maxLength(100),
+        this.noSqlInjectionValidator
+    ]}),
+
       organizador : new FormControl(null),
       deporte: new FormControl(null),
-      numMaxEquipos: new FormControl(null, [Validators.required, Validators.min(1)]),
-      fecha: new FormControl(null, Validators.required),
-      fechaFin: new FormControl(null),
+      numMaxEquipos: new FormControl(null, {
+        validators:[
+        Validators.required, 
+        Validators.min(1),
+        Validators.max(100)
+      ]}),
+      fecha:  new FormControl(null, {
+        validators:[Validators.required,this.futureDateValidator]
+      }),
+      fechaFin: new FormControl(null, [
+        this.validarFechaValida(),
+        this.validarFechaFin.bind(this)
+      ]),
       equiposInscritos:new FormControl(null,Validators.required),
-      descripcion: new FormControl('', Validators.required),
-      ubicacion: new FormControl('', Validators.required),
+      descripcion: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(500),
+        this.noSqlInjectionValidator
+      ]),
+      ubicacion:  new FormControl('', {
+        validators:[
+        Validators.required,
+        Validators.maxLength(200),
+        this.noSqlInjectionValidator
+      ]}),
       horaInicio: new FormControl(null, Validators.required),
-      horaFin: new FormControl(null, Validators.required),
+      horaFin: new FormControl(null, [
+        Validators.required
+      ]),
       estado: new FormControl('PLANIFICADO', Validators.required),
-      contactoOrganizador: new FormControl('', Validators.required),
+      contactoOrganizador:  new FormControl('',{
+        validators: [
+        Validators.required,
+        Validators.maxLength(100),
+        this.noSqlInjectionValidator
+      ]}),
       recurrente: new FormControl(false),
       frecuencia: new FormControl(''),
       diasSemana: new FormControl([]),
       excluirFines: new FormControl(false),
       imagen: new FormControl('')
     });
+    this.eventoForm.get('fecha')?.valueChanges.subscribe(() => {
+      this.eventoForm.get('fechaFin')?.updateValueAndValidity();
+    });
   }
 
   ngOnInit(): void {
     this.cargarDatosIniciales();
   }
+  futureDateValidator(control: FormControl): { [key: string]: any } | null {
+    const selectedDate = new Date(control.value);
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + 7);
+    
+    return selectedDate < minDate ? { minDate: true } : null;
+  }
+  validarFechaValida(): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      const fecha = control.value;
+      if (!fecha) return null; // Permitir campo vacío si no es requerido
+      
+      const esFechaValida = !isNaN(new Date(fecha).getTime());
+      return esFechaValida ? null : { fechaInvalida: true };
+    };
+  }
+  
+  validarFechaFin(control: AbstractControl): {[key: string]: any} | null {
+    if (!control.value) return null; 
+    
+    const fechaFin = new Date(control.value);
+    const fechaInicio = this.eventoForm?.get('fecha')?.value;
+    if (isNaN(fechaFin.getTime())) {
+      return { fechaInvalida: true };
+    }
+    if (fechaInicio) {
+      const fechaInicioDate = new Date(fechaInicio);
+      fechaFin.setHours(0, 0, 0, 0);
+      fechaInicioDate.setHours(0, 0, 0, 0);
+      if (fechaFin < fechaInicioDate) {
+        return { fechaFinAnterior: true };
+      }
+    }
+    
+    return null;
+  }
+  
 
+  noSqlInjectionValidator(control: FormControl): { [key: string]: any } | null {
+    const value = control.value;
+    if (!value) return null;
+    
+    const sqlKeywords = [
+      'select', 'insert', 'update', 'delete', 'drop', 
+      'truncate', '--', ';', '/*', '*/', 'xp_'
+    ];
+    
+    const containsSql = sqlKeywords.some(keyword => 
+      value.toLowerCase().includes(keyword)
+    );
+    
+    return containsSql ? { sqlInjection: true } : null;
+  }
   cargarDatosIniciales(): void {
     if (this.data.evento) {
       const evento = this.data.evento;
@@ -133,6 +224,53 @@ export class EventoEditarComponent implements OnInit {
     } catch (error) {
       console.error('Error en toggleDiaSeleccionado:', error);
     }
+  }
+  getErrorMessage(controlName: string): string {
+    const control = this.eventoForm.get(controlName);
+    
+    if (control?.hasError('required')) {
+      return 'Este campo es obligatorio';
+    }
+    
+    if (control?.hasError('min')) {
+      return `El valor mínimo es ${control.errors?.['min'].min}`;
+    }
+    
+    if (control?.hasError('max')) {
+      return `El valor máximo es ${control.errors?.['max'].max}`;
+    }
+    
+    if (control?.hasError('maxLength')) {
+      return `Máximo ${control.errors?.['maxLength'].requiredLength} caracteres`;
+    }
+    
+    if (control?.hasError('sqlInjection')) {
+      return 'El texto contiene caracteres no permitidos';
+    }
+    
+    if (control?.hasError('minDate')) {
+      return 'La fecha debe ser al menos una semana en el futuro';
+    }
+    
+    if (control?.hasError('fechaFinInvalida')) {
+      return 'La fecha final no puede ser anterior a la fecha de inicio';
+    }
+    if (control?.hasError('fechaInvalida')) {
+      return 'Por favor ingrese una fecha válida';
+    }
+    
+    if (control?.hasError('fechaFinAnterior')) {
+      return 'La fecha final no puede ser anterior a la fecha de inicio';
+    }
+    if (control?.hasError('horaInvalida')) {
+      return 'Por favor ingrese una hora válida en formato HH:MM';
+    }
+    
+    if (control?.hasError('horaFinAnterior')) {
+      return 'La hora final debe ser posterior a la hora de inicio';
+    }
+    
+    return '';
   }
   onSubmit(): void {
     if (this.eventoForm.valid) {

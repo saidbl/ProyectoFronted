@@ -1,71 +1,61 @@
-.stats-container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 2rem;
-  background-color: #f9f9fb;
+.table-container {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
 }
 
-.header h1 {
-  font-size: 2rem;
+thead {
+  background-color: #f8f9fa;
   font-weight: bold;
   color: #333;
 }
 
-.chart-card {
-  margin-bottom: 2rem;
-  border-radius: 12px;
-  padding: 1rem;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  color: #444;
-}
-
-.section-subtitle {
-  font-size: 0.9rem;
-  color: #777;
-  margin-top: -0.5rem;
-}
-
-.chart {
-  height: 350px;
-  margin-top: 1rem;
-}
-
-.no-data {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #888;
-  font-style: italic;
-}
-
-.stats-table {
-  margin-top: 1rem;
-}
-
-.custom-table th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-}
-
-.progress-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.loading-container,
-.error-container {
+th, td {
   text-align: center;
-  padding: 2rem;
-  color: #555;
+  padding: 16px;
+  background: #fefefe;
+  border: none;
 }
+
+tbody tr {
+  background-color: #ffffff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+.progress-bar {
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+
+.progress {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.progress.green {
+  background-color: #28a745;
+}
+
+.progress.yellow {
+  background-color: #ffc107;
+}
+
+.progress.red {
+  background-color: #dc3545;
+}
+
