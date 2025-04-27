@@ -1,89 +1,154 @@
-<!-- components/organizacion/organizacion-edit.component.html -->
-<div class="edit-container">
-    <div class="header">
-      <h1>Editar Organización</h1>
-      <p>Actualiza la información de tu organización</p>
+<div class="min-h-screen bg-gray-950 font-sans flex items-center justify-center p-6">
+  <!-- Contenedor principal con mejor contraste -->
+  <div class="w-full max-w-4xl bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
+    <!-- Encabezado con borde definido -->
+    <div class="bg-gray-800 border-b border-gray-700 p-6">
+      <div class="flex items-center space-x-3">
+        <button mat-icon-button routerLink=".."
+                class="text-gray-300 hover:text-white transition-colors">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <h1 class="text-2xl font-bold text-white">Editar Organización</h1>
+          <p class="text-gray-300 text-sm">Actualiza los datos de tu organización deportiva</p>
+        </div>
+      </div>
     </div>
-  
-    <form [formGroup]="organizacionForm" (ngSubmit)="onSubmit()" class="form-container">
-      <!-- Nombre Organización -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Nombre de la organización</mat-label>
-        <input matInput formControlName="nombreOrganizacion" required>
-        <mat-error *ngIf="nombreOrganizacion?.invalid && nombreOrganizacion?.touched">
-          Nombre de la organización es requerido
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Representante -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Nombre del representante</mat-label>
-        <input matInput formControlName="nombre" required>
-        <mat-error *ngIf="nombre?.invalid && nombre?.touched">
-          Nombre del representante es requerido
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Email -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" required>
-        <mat-error *ngIf="email?.invalid && email?.touched">
-          {{ email?.errors?.['required'] ? 'Email es requerido' : 'Email no válido' }}
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Teléfono -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="telefono" required>
-        <mat-error *ngIf="telefono?.invalid && telefono?.touched">
-          Teléfono es requerido
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Dirección -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Dirección</mat-label>
-        <input matInput formControlName="direccion" required>
-        <mat-error *ngIf="direccion?.invalid && direccion?.touched">
-          Dirección es requerida
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Tipo -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Tipo de organización</mat-label>
-        <mat-select formControlName="tipo" required>
-          <mat-option *ngFor="let tipo of tiposOrganizacion" [value]="tipo">
-            {{ tipo }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="tipo?.invalid && tipo?.touched">
-          Tipo es requerido
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Botones -->
-      <div class="button-group">
+
+    <!-- Formulario con correcciones definitivas -->
+    <form [formGroup]="organizacionForm" (ngSubmit)="onSubmit()" class="p-6 md:p-8 bg-gray-900">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Columna izquierda -->
+        <div class="space-y-6">
+          <!-- Nombre Organización - Versión final corregida -->
+          <div class="mat-form-field-wrapper">
+            <mat-label class="text-gray-300 block mb-1">Nombre organización*</mat-label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">groups</mat-icon>
+              <input matInput formControlName="nombreOrganizacion" required 
+                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <mat-error *ngIf="nombreOrganizacion?.invalid && nombreOrganizacion?.touched" 
+                      class="text-red-400 text-sm mt-1 block">
+              Nombre requerido
+            </mat-error>
+          </div>
+
+          <!-- Email - Versión final corregida -->
+          <div class="mat-form-field-wrapper">
+            <mat-label class="text-gray-300 block mb-1">Email*</mat-label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">email</mat-icon>
+              <input matInput type="email" formControlName="email" required 
+                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <mat-error *ngIf="email?.invalid && email?.touched" 
+                      class="text-red-400 text-sm mt-1 block">
+              {{ email?.errors?.['required'] ? 'Email requerido' : 'Email inválido' }}
+            </mat-error>
+          </div>
+
+          <!-- Tipo de organización - Versión final corregida -->
+          <div class="mat-form-field-wrapper">
+            <mat-label class="text-gray-300 block mb-1">Tipo de organización*</mat-label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">category</mat-icon>
+              <mat-select formControlName="tipo" required 
+                        class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500">
+                <mat-option *ngFor="let tipo of tiposOrganizacion" [value]="tipo" class="text-gray-800">
+                  {{ tipo }}
+                </mat-option>
+              </mat-select>
+            </div>
+            <mat-error *ngIf="tipo?.invalid && tipo?.touched" 
+                      class="text-red-400 text-sm mt-1 block">
+              Selección requerida
+            </mat-error>
+          </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="space-y-6">
+          <!-- Representante - Versión final corregida -->
+          <div class="mat-form-field-wrapper">
+            <mat-label class="text-gray-300 block mb-1">Representante*</mat-label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">person</mat-icon>
+              <input matInput formControlName="nombre" required 
+                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <mat-error *ngIf="nombre?.invalid && nombre?.touched" 
+                      class="text-red-400 text-sm mt-1 block">
+              Nombre requerido
+            </mat-error>
+          </div>
+
+          <!-- Teléfono - Versión final corregida -->
+          <div class="mat-form-field-wrapper">
+            <mat-label class="text-gray-300 block mb-1">Teléfono*</mat-label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">phone</mat-icon>
+              <input matInput formControlName="telefono" required 
+                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <mat-error *ngIf="telefono?.invalid && telefono?.touched" 
+                      class="text-red-400 text-sm mt-1 block">
+              Teléfono requerido
+            </mat-error>
+          </div>
+
+          <!-- Dirección - Versión final corregida -->
+          <div class="mat-form-field-wrapper">
+            <mat-label class="text-gray-300 block mb-1">Dirección*</mat-label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">location_on</mat-icon>
+              <input matInput formControlName="direccion" required 
+                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <mat-error *ngIf="direccion?.invalid && direccion?.touched" 
+                      class="text-red-400 text-sm mt-1 block">
+              Dirección requerida
+            </mat-error>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones con mejor espaciado -->
+      <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-700">
+        <button 
+          mat-stroked-button 
+          type="button" 
+          (click)="router.navigate(['/organizacion', organizacion.id])"
+          class="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors px-5 py-2.5"
+        >
+          Cancelar
+        </button>
+        
         <button 
           mat-raised-button 
           color="primary" 
           type="submit" 
           [disabled]="organizacionForm.invalid || isSaving"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 transition-colors shadow-md"
         >
-          <span *ngIf="!isSaving">Guardar cambios</span>
-          <mat-spinner *ngIf="isSaving" diameter="24"></mat-spinner>
-        </button>
-        
-        <button 
-          mat-stroked-button 
-          type="button" 
-          (click)="router.navigate(['/organizacion', organizacion.id])"
-          class="cancel-button"
-        >
-          Cancelar
+          <span *ngIf="!isSaving" class="flex items-center">
+            <mat-icon class="mr-1">save</mat-icon>
+            Guardar cambios
+          </span>
+          <span *ngIf="isSaving" class="flex items-center">
+            <mat-spinner diameter="20" strokeWidth="3" class="mr-2"></mat-spinner>
+            Guardando...
+          </span>
         </button>
       </div>
     </form>
   </div>
+
+  <!-- Notificación flotante mejorada -->
+  <div *ngIf="showNotification" class="fixed bottom-6 right-6 z-50 animate-fade-in">
+    <div class="bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center border border-green-400">
+      <mat-icon class="mr-2 text-white">check_circle</mat-icon>
+      <span>{{notificationMessage}}</span>
+    </div>
+  </div>
+</div>

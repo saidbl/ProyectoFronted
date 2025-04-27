@@ -17,6 +17,7 @@ import { Organizacion } from '../../../models/organizacion.model';
 import { Deporte } from '../../../models/deporte.model';
 import { OrganizacionService } from '../../../services/organizacion.service';
 import { OrganizacionDTO } from '../../../models/organizacionDTO.model';
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-configuracion-organizacion',
   imports: [
@@ -29,6 +30,7 @@ import { OrganizacionDTO } from '../../../models/organizacionDTO.model';
     MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatIcon
   ],
   templateUrl: './configuracion-organizacion.component.html',
   styleUrl: './configuracion-organizacion.component.css'
@@ -43,6 +45,8 @@ export class ConfiguracionOrganizacionComponent {
   private route = inject(ActivatedRoute)
   private oservice = inject(OrganizacionService)
 
+  notificationMessage = ""
+  showNotification = ""
   constructor(
     private fb: FormBuilder,
     public router: Router,
