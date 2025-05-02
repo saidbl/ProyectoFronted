@@ -7,6 +7,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TipoMetricaDTO } from '../../../models/tipoMetricaDTO.model';
 import { TipoMetricaService } from '../../../services/tipoMetrica.service';
 import { TipoMetrica } from '../../../models/tipoMetrica.model';
+import { RegistroRendimientoDTO } from '../../../models/registroRendimientoDTO.model';
+import { RegistroRendimientoService } from '../../../services/registroRendimiento.service';
+import { RegistroRendimiento } from '../../../models/registroRendimiento.model';
+import { forkJoin } from 'rxjs';
+import { ObjetivoRendimientoDTO } from '../../../models/objetivoRendimientoDTO.model';
+import { ObjetivoRendimiento } from '../../../models/objetivoRendimiento.model';
+import { ObjetivoRendimientoService } from '../../../services/objetivoRendimiento.service';
 
 @Component({
   selector: 'app-rendimiento',
@@ -16,7 +23,11 @@ import { TipoMetrica } from '../../../models/tipoMetrica.model';
 })
 export class RendimientoComponent implements OnInit{
   private tmservice = inject(TipoMetricaService)
+  private rrservice = inject(RegistroRendimientoService)
+  private orservice= inject (ObjetivoRendimientoService)
   currentView: 'metrics' | 'records' | 'goals' = 'metrics';
+  showrendimientoForm= false
+  showgoalsForm= false
   loading = true;
   metricForm: FormGroup ;
   recordForm: FormGroup;
@@ -24,8 +35,8 @@ export class RendimientoComponent implements OnInit{
   sports: any[] = [];
   metrics: TipoMetrica[] = [];
   athleteMetrics: any[] = [];
-  records: any[] = [];
-  goals: any[] = [];
+  records: RegistroRendimiento[] = [];
+  goals: ObjetivoRendimiento[] = [];
   filteredRecords: any[] = [];
   athleteProfile: any;
   selectedMetric: any = null;
@@ -41,17 +52,16 @@ export class RendimientoComponent implements OnInit{
       esObjetivo: [false]
     });
     this.recordForm = this.fb.group({
-      metricId: ['', Validators.required],
-      value: ['', [Validators.required, Validators.min(0)]],
-      date: [new Date(), Validators.required],
-      comments: ['']
+      idmetrica: [null, Validators.required],
+      valor: ['', [Validators.required, Validators.min(0)]],
+      fecha: [new Date(), Validators.required],
+      comentarios: ['']
     });
     this.goalForm = this.fb.group({
-      metricId: ['', Validators.required],
-      targetValue: ['', [Validators.required, Validators.min(0)]],
-      targetDate: ['', Validators.required],
-      priority: [1, [Validators.min(1), Validators.max(5)]],
-      comments: ['']
+      idmetrica: ['', Validators.required],
+      valorObjetivo: ['', [Validators.required, Validators.min(0)]],
+      fechaObjetivo: ['', Validators.required],
+      prioridad: [1, [Validators.min(1), Validators.max(5)]],
     });
   }
 
@@ -59,8 +69,14 @@ export class RendimientoComponent implements OnInit{
     this.loadInitialData();
   }
 
+  mostrarFormRendimiento(){
+    this.showrendimientoForm= true
+  }
   mostrarFormMetrica(){
     this.showmetricaForm=true
+  }
+  mostrarFormObjetivos(){
+    this.showgoalsForm=true
   }
   cancelar(){
     this.showmetricaForm=false
@@ -71,17 +87,22 @@ export class RendimientoComponent implements OnInit{
     if(!token) {
       throw new Error("Not Token Found")
     }
-    this.tmservice.list(Number(id),token).subscribe({
-      next:(data)=>{
-        this.metrics = data
-        console.log(data)
-        this.loading = false;
-      },
-      error:(err)=>{
-        console.log(err)
-        this.loading = false;
-      }
-    })
+    forkJoin({
+                metrics: this.tmservice.list(Number(id), token),
+                records: this.rrservice.list(Number(id), token),
+                goals : this.orservice.list(Number(id),token)
+              }).subscribe({
+                next: (data) => {
+                  this.metrics = data.metrics;
+                  this.records = data.records;
+                  this.goals = data.goals
+                  this.loading= false
+                },
+                error: (err) => {
+                  console.error("Error loading data", err);
+                  this.loading=false
+                }
+              });
   }
 
   filterRecords(): void {
@@ -119,39 +140,49 @@ export class RendimientoComponent implements OnInit{
         console.error(err)
       }
     })
-
   }
 
-  async addRecord(): Promise<void> {
+  async addRecord(){
+    console.log("hola")
+    const token =localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    console.log("hola")
     if (this.recordForm.invalid) return;
-    
-    const newRecord = {
-      ...this.recordForm.value,
-      id: this.records.length + 1,
-      athleteId: this.athleteProfile.id
-    };
-    
-    this.records.push(newRecord);
-    this.filterRecords();
-    
-    this.recordForm.reset({ date: new Date() });
-    this.showSuccess('Registro agregado correctamente');
+    console.log("hola")
+    const newRecord : RegistroRendimientoDTO= this.recordForm.value
+    newRecord.iddeportista = Number(localStorage.getItem("id"))
+    console.log(newRecord)
+    this.rrservice.add(newRecord,token).subscribe({
+      next:(data)=>{
+        console.log(data)
+
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
   }
 
-  async addGoal(): Promise<void> {
+  async addGoal(){
+    console.log("hola")
+    const token =localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
     if (this.goalForm.invalid) return;
-    
-    const newGoal = {
-      ...this.goalForm.value,
-      id: this.goals.length + 1,
-      athleteId: this.athleteProfile.id,
-      establishedDate: new Date(),
-      completed: false
-    };
-    
-    this.goals.push(newGoal);
-    this.goalForm.reset({ priority: 1 });
-    this.showSuccess('Objetivo agregado correctamente');
+    const newGoal : ObjetivoRendimientoDTO= this.goalForm.value
+    newGoal.iddeportista = Number(localStorage.getItem("id"))
+    this.orservice.add(newGoal,token).subscribe({
+      next:(data)=>{
+        console.log(data)
+
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
   }
 
   toggleGoalCompletion(goal: any): void {

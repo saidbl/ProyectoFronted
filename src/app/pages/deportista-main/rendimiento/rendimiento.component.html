@@ -198,6 +198,7 @@
               Registros de Rendimiento
             </h3>
             <button 
+              (click)="mostrarFormRendimiento()"
               class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -239,13 +240,13 @@
           </div>
   
           <!-- Formulario de registro -->
-          <div *ngIf="recordForm.dirty" class="bg-gray-800 rounded-xl shadow-lg p-6">
+          <div *ngIf="showrendimientoForm" class="bg-gray-800 rounded-xl shadow-lg p-6">
             <form [formGroup]="recordForm" (ngSubmit)="addRecord()" class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-300 mb-1">Métrica</label>
                   <select 
-                    formControlName="metricId"
+                    formControlName="idmetrica"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="">Seleccionar métrica</option>
                     <option *ngFor="let metric of metrics" [value]="metric.id">{{ metric.nombre }} ({{ metric.unidad }})</option>
@@ -256,7 +257,7 @@
                   <input 
                     type="number" 
                     step="0.01" 
-                    formControlName="value" 
+                    formControlName="valor" 
                     placeholder="Ingrese el valor"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
@@ -267,14 +268,14 @@
                   <label class="block text-sm font-medium text-gray-300 mb-1">Fecha</label>
                   <input 
                     type="date" 
-                    formControlName="date"
+                    formControlName="fecha"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-300 mb-1">Comentarios</label>
                   <input 
                     type="text" 
-                    formControlName="comments" 
+                    formControlName="comentarios" 
                     placeholder="Opcional"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
@@ -282,6 +283,7 @@
               
               <div class="flex justify-end space-x-3 pt-2">
                 <button 
+                  (click)="this.showrendimientoForm=false"
                   type="button" 
                   class="px-4 py-2 border border-gray-600 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 transition-colors">
                   Cancelar
@@ -312,16 +314,16 @@
                   </tr>
                 </thead>
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
-                  <tr *ngFor="let record of filteredRecords" class="hover:bg-gray-750">
+                  <tr *ngFor="let record of records" class="hover:bg-gray-750">
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-medium"></div>
-                      <div class="text-xs text-gray-400"></div>
+                      <div class="text-sm font-medium">{{record.metrica.nombre}}</div>
+                      <div class="text-xs text-gray-400">{{record.metrica.unidad}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-mono">{{ record.value }}</div>
+                      <div class="text-sm font-mono">{{ record.valor }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm">{{ record.date | date:'dd/MM/yyyy' }}</div>
+                      <div class="text-sm">{{ record.fecha| date:'dd/MM/yyyy' }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button 
@@ -354,7 +356,7 @@
               Objetivos de Rendimiento
             </h3>
             <button 
-              (click)="goalForm.reset({ priority: 1 })"
+              (click)="mostrarFormObjetivos()"
               class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -364,13 +366,13 @@
           </div>
   
           <!-- Formulario de objetivo -->
-          <div *ngIf="goalForm.dirty || goals.length === 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
+          <div *ngIf="showgoalsForm" class="bg-gray-800 rounded-xl shadow-lg p-6">
             <form [formGroup]="goalForm" (ngSubmit)="addGoal()" class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-300 mb-1">Métrica</label>
                   <select 
-                    formControlName="metricId"
+                    formControlName="idmetrica"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="">Seleccionar métrica</option>
                     <option *ngFor="let metric of metrics" [value]="metric.id">
@@ -383,7 +385,7 @@
                   <input 
                     type="number" 
                     step="0.01" 
-                    formControlName="targetValue" 
+                    formControlName="valorObjetivo" 
                     placeholder="Valor a alcanzar"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
@@ -394,7 +396,7 @@
                   <label class="block text-sm font-medium text-gray-300 mb-1">Fecha objetivo</label>
                   <input 
                     type="date" 
-                    formControlName="targetDate"
+                    formControlName="fechaObjetivo"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
@@ -403,20 +405,10 @@
                     type="number" 
                     min="1" 
                     max="5" 
-                    formControlName="priority"
+                    formControlName="prioridad"
                     class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
               </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Comentarios</label>
-                <textarea 
-                  formControlName="comments" 
-                  placeholder="Descripción del objetivo"
-                  rows="3"
-                  class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-              </div>
-              
               <div class="flex justify-end space-x-3 pt-2">
                 <button 
                   type="button" 
@@ -440,7 +432,7 @@
           <!-- Listado de objetivos -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div *ngFor="let goal of goals" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                 [class.ring-2]="goal.completed" [class.ring-green-500]="goal.completed">
+                 [class.ring-2]="goal.completado" [class.ring-green-500]="goal.completado">
               <div class="p-6">
                 <div class="flex justify-between items-start">
                   <div>
@@ -450,8 +442,8 @@
                   <div class="flex space-x-1">
                     <span *ngFor="let i of [1,2,3,4,5]" 
                           class="text-lg"
-                          [class.text-yellow-400]="i <= goal.priority"
-                          [class.text-gray-600]="i > goal.priority">★</span>
+                          [class.text-yellow-400]="i <= goal.prioridad"
+                          [class.text-gray-600]="i > goal.prioridad">★</span>
                   </div>
                 </div>
                 
@@ -463,8 +455,8 @@
                   <div class="w-full bg-gray-700 rounded-full h-2.5">
                     <div 
                       class="h-2.5 rounded-full"
-                      [class.bg-green-500]="goal.completed"
-                      [class.bg-indigo-500]="!goal.completed"
+                      [class.bg-green-500]="goal.completado"
+                      [class.bg-indigo-500]="!goal.completado"
                       [style.width]=" '%'"></div>
                   </div>
                 </div>
@@ -472,23 +464,20 @@
                 <div class="mt-4 space-y-2">
                   <div class="flex justify-between">
                     <span class="text-sm text-gray-400">Objetivo:</span>
-                    <span class="text-sm font-mono">{{ goal.targetValue }}</span>
+                    <span class="text-sm font-mono">{{ goal.valorObjetivo }}</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-sm text-gray-400">Fecha límite:</span>
-                    <span class="text-sm">{{ goal.targetDate | date:'dd/MM/yyyy' }}</span>
-                  </div>
-                  <div *ngIf="goal.comments" class="pt-2 border-t border-gray-700">
-                    <p class="text-sm text-gray-300">{{ goal.comments }}</p>
+                    <span class="text-sm">{{ goal.fechaObjetivo | date:'dd/MM/yyyy' }}</span>
                   </div>
                 </div>
                 
                 <div class="mt-4 flex justify-between items-center">
                   <button 
                     (click)="toggleGoalCompletion(goal)"
-                    [class]="goal.completed ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-700 hover:bg-gray-600'"
+                    [class]="goal.completado"
                     class="px-3 py-1 rounded-md text-xs font-medium transition-colors">
-                    {{ goal.completed ? 'Completado' : 'Pendiente' }}
+                    {{ goal.completado ? 'Completado' : 'Pendiente' }}
                   </button>
                   <button 
                     (click)="deleteItem('goal', goal.id)"

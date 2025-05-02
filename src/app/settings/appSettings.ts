@@ -39,5 +39,9 @@ export const appSettings={
     apiActualizarOrg: "http://localhost:8080/actualizarOrg",
     apiMetricasJugador: "http://localhost:8080/metricasJugador",
     apiAgregarMetrica: "http://localhost:8080/agregarMetrica",
+    apiAgregarRecord: "http://localhost:8080/agregarRecord",
+    apiRecordsJugador: "http://localhost:8080/recordsJugador",
+    apiAgregarGoal: "http://localhost:8080/agregarGoal",
+    apiGoalsJugador: "http://localhost:8080/goalsJugador",
 
 }
