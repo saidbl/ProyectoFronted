@@ -37,5 +37,7 @@ export const appSettings={
     apiEventosFuturosOrg: "http://localhost:8080/eventosFuturosOrg",
     apiProximosEquipos: "http://localhost:8080/proximosEquipos",
     apiActualizarOrg: "http://localhost:8080/actualizarOrg",
+    apiMetricasJugador: "http://localhost:8080/metricasJugador",
+    apiAgregarMetrica: "http://localhost:8080/agregarMetrica",
 
 }

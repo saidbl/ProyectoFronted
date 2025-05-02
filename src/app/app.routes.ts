@@ -19,6 +19,7 @@ import { EventosOrganizacionComponent } from './pages/organizacion-main/eventos-
 import { EquipoOrgComponent } from './pages/organizacion-main/equipo-org/equipo-org.component';
 import { EstadisticasOrgComponent } from './pages/organizacion-main/estadisticas-org/estadisticas-org.component';
 import { ConfiguracionOrganizacionComponent } from './pages/organizacion-main/configuracion-organizacion/configuracion-organizacion.component';
+import { RendimientoComponent } from './pages/deportista-main/rendimiento/rendimiento.component';
 
 
 export const routes: Routes = [
@@ -38,6 +39,7 @@ export const routes: Routes = [
     { path: 'deportista/check/completadas', component: CompletadasComponent},
     { path: 'deportista/proximoseventos', component: EventosDeportistaComponent},
     { path: 'deportista/equipos', component: EquiposDeportistaComponent},
+    { path: 'deportista/rendimiento', component: RendimientoComponent},
     { path: 'organizacion/crear-eventos', component: CrearEventoComponent},
     { path: 'organizacion/eventos', component: EventosOrganizacionComponent},
     { path: 'organizacion/equipos-org', component: EquipoOrgComponent},
