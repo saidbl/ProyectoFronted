@@ -1,503 +1,764 @@
 <!-- metricas-rendimiento.component.html -->
-<div class="min-h-screen bg-gray-900 text-gray-100" *ngIf="!loading; else loadingTemplate">
-    <!-- Header y perfil -->
-    <div class="container mx-auto px-4 py-6">
-      <div class="flex flex-col lg:flex-row gap-6 mb-6">
-        <!-- Tarjeta de atleta -->
-        <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden flex-1">
-          <div class="p-6 flex items-start space-x-4">
-            <div class="flex-shrink-0">
-              <div class="h-16 w-16 rounded-full bg-indigo-600 flex items-center justify-center text-2xl font-bold">
+<div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100" *ngIf="!loading; else loadingTemplate">
+  <!-- Header principal -->
+  <header class="bg-gray-800/50 backdrop-blur-md border-b border-gray-700">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold flex items-center">
+          <svg class="w-6 h-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          Mi Rendimiento
+        </h1>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm bg-indigo-600/30 px-3 py-1 rounded-full flex items-center">
+            <span class="w-2 h-2 bg-indigo-400 rounded-full mr-2 animate-pulse"></span>
+            Activo
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Sección superior: Perfil y gráfico rápido -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Tarjeta de perfil -->
+      <div class="bg-gray-800/70 rounded-2xl shadow-xl border border-gray-700/50 overflow-hidden transition-all hover:border-indigo-400/30 hover:shadow-indigo-500/10">
+        <div class="p-6">
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <div class="h-16 w-16 rounded-full bg-indigo-600/20 flex items-center justify-center text-2xl font-bold border-2 border-indigo-500/30">
+                <span class="text-indigo-300">JD</span>
               </div>
+              <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-800"></span>
             </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-xl font-bold truncate"></h2>
-              <p class="text-indigo-400 text-sm"></p>
-              <div class="mt-3 flex flex-wrap gap-4">
-                <div class="text-center">
-                  <p class="text-2xl font-mono"><span class="text-sm text-gray-400">kg</span></p>
-                  <p class="text-xs text-gray-400">Peso</p>
-                </div>
-                <div class="text-center">
-                  <p class="text-2xl font-mono"><span class="text-sm text-gray-400">cm</span></p>
-                  <p class="text-xs text-gray-400">Estatura</p>
-                </div>
-                <div class="text-center">
-                  <p class="text-2xl font-mono"></p>
-                  <p class="text-xs text-gray-400">IMC</p>
-                </div>
-              </div>
+            <div>
+              <h2 class="text-xl font-bold">Juan Deportista</h2>
+              <p class="text-indigo-300 text-sm">Fútbol - Delantero</p>
             </div>
           </div>
-        </div>
-  
-        <!-- Gráfico de rendimiento -->
-        <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden flex-1">
-          <div class="p-6">
-            <h3 class="text-lg font-semibold mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-              Evolución del Rendimiento
-            </h3>
-            <div class="h-64">
-              <canvas id="performanceChart" class="w-full h-full"></canvas>
+          
+          <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+            <div class="bg-gray-700/50 rounded-lg p-3">
+              <p class="text-2xl font-mono font-bold">72<span class="text-sm text-gray-400 ml-1">kg</span></p>
+              <p class="text-xs text-gray-400 mt-1">Peso</p>
+            </div>
+            <div class="bg-gray-700/50 rounded-lg p-3">
+              <p class="text-2xl font-mono font-bold">175<span class="text-sm text-gray-400 ml-1">cm</span></p>
+              <p class="text-xs text-gray-400 mt-1">Estatura</p>
+            </div>
+            <div class="bg-gray-700/50 rounded-lg p-3">
+              <p class="text-2xl font-mono font-bold">23.5</p>
+              <p class="text-xs text-gray-400 mt-1">IMC</p>
             </div>
           </div>
         </div>
       </div>
-  
-      <!-- Navegación por pestañas -->
-      <div class="mb-6 border-b border-gray-700">
-        <nav class="flex space-x-2">
-          <button 
-            [class]="currentView === 'metrics' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300'"
-            class="py-4 px-6 border-b-2 font-medium text-sm flex items-center"
-            (click)="currentView = 'metrics'">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+      <!-- Resumen rápido de objetivos -->
+      <div class="bg-gray-800/70 rounded-2xl shadow-xl border border-gray-700/50 p-6 col-span-2">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Mis Objetivos
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div *ngFor="let goal of goals.slice(0,2)" class="bg-gray-700/30 rounded-xl p-4 border-l-4 border-indigo-500">
+            <div class="flex justify-between items-start">
+              <h4 class="font-medium">{{goal.metrica.nombre}}</h4>
+              <span class="text-xs px-2 py-1 rounded-full" 
+                    [class.bg-green-500]="goal.completado"
+                    [class.text-green-400]="goal.completado"
+                    [class.bg-indigo-500]="!goal.completado"
+                    [class.text-indigo-400]="!goal.completado">
+                {{goal.completado ? 'Completado' : goal.completado}}
+              </span>
+            </div>
+            <div class="mt-2">
+              <div class="w-full bg-gray-700 rounded-full h-2">
+                <div class="h-2 rounded-full" 
+                     [class.bg-green-500]="goal.completado"
+                     [class.bg-indigo-500]="!goal.completado"
+                     [style.width]="goal.completado"></div>
+              </div>
+            </div>
+            <div class="mt-2 flex justify-between text-xs text-gray-400">
+              <span>{{goal.valorObjetivo}}/{{goal.valorObjetivo}} {{goal.metrica.unidad}}</span>
+              <span>{{goal.fechaObjetivo | date}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navegación por pestañas estilizada -->
+    <nav class="flex space-x-1 bg-gray-800/50 rounded-xl p-1 mb-8 border border-gray-700/50">
+      <button 
+        [class]="currentView === 'metrics' ? 'bg-gray-700 shadow-md text-indigo-400' : 'text-gray-400 hover:bg-gray-700/50'"
+        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm flex items-center justify-center transition-all"
+        (click)="currentView = 'metrics'">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        Métricas
+      </button>
+      <button 
+        [class]="currentView === 'records' ? 'bg-gray-700 shadow-md text-indigo-400' : 'text-gray-400 hover:bg-gray-700/50'"
+        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm flex items-center justify-center transition-all"
+        (click)="currentView = 'records'">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Registros
+      </button>
+      <button 
+        [class]="currentView === 'goals' ? 'bg-gray-700 shadow-md text-indigo-400' : 'text-gray-400 hover:bg-gray-700/50'"
+        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm flex items-center justify-center transition-all"
+        (click)="currentView = 'goals'">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Objetivos
+      </button>
+    </nav>
+
+    <!-- Sección de contenido dinámico -->
+    <section class="mb-10">
+      <!-- Vista de Métricas -->
+      <div *ngIf="currentView === 'metrics'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold flex items-center">
+            <svg class="w-6 h-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
-            Métricas
-          </button>
+            Métricas de Rendimiento
+          </h3>
           <button 
-            [class]="currentView === 'records' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300'"
-            class="py-4 px-6 border-b-2 font-medium text-sm flex items-center"
-            (click)="currentView = 'records'">
+            (click)="mostrarFormMetrica()"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors shadow-md hover:shadow-indigo-500/20">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
-            Registros
+            Nueva Métrica
           </button>
-          <button 
-            [class]="currentView === 'goals' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300'"
-            class="py-4 px-6 border-b-2 font-medium text-sm flex items-center"
-            (click)="currentView = 'goals'">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Objetivos
-          </button>
-        </nav>
-      </div>
-  
-      <!-- Contenido dinámico -->
-      <div class="mb-10">
-        <!-- Vista de Métricas -->
-        <div *ngIf="currentView === 'metrics'" class="space-y-6">
-          <div class="flex justify-between items-center">
-            <h3 class="text-xl font-bold flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-              Métricas de Rendimiento
-            </h3>
-            <button 
-              (click)="mostrarFormMetrica()"
-              class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Nueva Métrica
-            </button>
-          </div>
-  
-          <!-- Formulario de métrica -->
-          <div *ngIf="this.showmetricaForm==true" class="bg-gray-800 rounded-xl shadow-lg p-6">
-            <form [formGroup]="metricForm" (ngSubmit)="addMetric()" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Nombre de la métrica</label>
-                  <input 
-                    type="text" 
-                    formControlName="nombre" 
-                    placeholder="Ej: Velocidad 40m"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Unidad de medida</label>
-                  <input 
-                    type="text" 
-                    formControlName="unidad" 
-                    placeholder="Ej: seg, cm, kg"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-              </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="flex items-end">
-                  <label class="inline-flex items-center mt-1">
-                    <input 
-                      type="checkbox" 
-                      formControlName="esObjetivo"
-                      class="rounded bg-gray-700 border-gray-600 text-indigo-600 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-gray-300">¿Puede ser objetivo?</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div class="flex justify-end space-x-3 pt-2">
-                <button 
-                  type="button" 
-                  (click)="cancelar()"
-                  class="px-4 py-2 border border-gray-600 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 transition-colors">
-                  Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  [disabled]="metricForm.invalid"
-                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                  <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Guardar Métrica
-                </button>
-              </div>
-            </form>
-          </div>
-  
-          <!-- Listado de métricas -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div *ngFor="let metric of metrics" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-              <div class="p-4">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h4 class="font-bold text-lg">{{ metric.nombre }}</h4>
-                    <span class="text-xs text-indigo-400 font-mono">{{ metric.unidad }}</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button 
-                      [matTooltip]="metric.esObjetivo ? 'Puede ser objetivo' : 'No aplica para objetivos'"
-                      class="p-1 rounded-full"
-                      [class.text-green-400]="metric.esObjetivo"
-                      [class.text-gray-500]="!metric.esObjetivo">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                    </button>
-                    <button 
-                      (click)="deleteItem('metric', metric.id)"
-                      class="p-1 rounded-full text-red-400 hover:bg-gray-700">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-  
-        <!-- Vista de Registros -->
-        <div *ngIf="currentView === 'records'" class="space-y-6">
-          <div class="flex justify-between items-center">
-            <h3 class="text-xl font-bold flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              Registros de Rendimiento
-            </h3>
-            <button 
-              (click)="mostrarFormRendimiento()"
-              class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Nuevo Registro
-            </button>
-          </div>
-  
-          <!-- Filtros -->
-          <div class="bg-gray-800 rounded-xl shadow-lg p-6">
+
+        <!-- Formulario de métrica -->
+        <div *ngIf="showmetricaForm" class="bg-gray-800/70 rounded-2xl shadow-lg p-6 border border-gray-700/50">
+          <form [formGroup]="metricForm" (ngSubmit)="addMetric()" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Filtrar por métrica</label>
-                <select 
-                  [(ngModel)]="selectedMetric" 
-                  (change)="filterRecords()"
-                  class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  <option [value]="null">Todas las métricas</option>
-                  <option *ngFor="let metric of metrics" [value]="metric">{{ metric.nombre }}</option>
-                </select>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la métrica</label>
+                <input 
+                  type="text" 
+                  formControlName="nombre" 
+                  placeholder="Ej: Velocidad 40m"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Rango de fechas</label>
-                <div class="flex items-center space-x-2">
-                  <input 
-                    type="date" 
-                    [(ngModel)]="dateRange.start" 
-                    (change)="filterRecords()"
-                    class="flex-1 bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  <span class="text-gray-400">a</span>
-                  <input 
-                    type="date" 
-                    [(ngModel)]="dateRange.end" 
-                    (change)="filterRecords()"
-                    class="flex-1 bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Unidad de medida</label>
+                <input 
+                  type="text" 
+                  formControlName="unidad" 
+                  placeholder="Ej: seg, cm, kg"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
               </div>
             </div>
-          </div>
-  
-          <!-- Formulario de registro -->
-          <div *ngIf="showrendimientoForm" class="bg-gray-800 rounded-xl shadow-lg p-6">
-            <form [formGroup]="recordForm" (ngSubmit)="addRecord()" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Métrica</label>
-                  <select 
-                    formControlName="idmetrica"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Seleccionar métrica</option>
-                    <option *ngFor="let metric of metrics" [value]="metric.id">{{ metric.nombre }} ({{ metric.unidad }})</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Valor</label>
-                  <input 
-                    type="number" 
-                    step="0.01" 
-                    formControlName="valor" 
-                    placeholder="Ingrese el valor"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-              </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Fecha</label>
-                  <input 
-                    type="date" 
-                    formControlName="fecha"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Comentarios</label>
-                  <input 
-                    type="text" 
-                    formControlName="comentarios" 
-                    placeholder="Opcional"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-              </div>
-              
-              <div class="flex justify-end space-x-3 pt-2">
-                <button 
-                  (click)="this.showrendimientoForm=false"
-                  type="button" 
-                  class="px-4 py-2 border border-gray-600 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 transition-colors">
-                  Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  [disabled]="recordForm.invalid"
-                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                  <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Guardar Registro
-                </button>
-              </div>
-            </form>
-          </div>
-  
-          <!-- Listado de registros -->
-          <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-gray-700">
-                  <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Métrica</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Valor</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fecha</th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-gray-800 divide-y divide-gray-700">
-                  <tr *ngFor="let record of records" class="hover:bg-gray-750">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-medium">{{record.metrica.nombre}}</div>
-                      <div class="text-xs text-gray-400">{{record.metrica.unidad}}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-mono">{{ record.valor }}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm">{{ record.fecha| date:'dd/MM/yyyy' }}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button 
-                        (click)="deleteItem('record', record.id)"
-                        class="text-red-400 hover:text-red-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr *ngIf="filteredRecords.length === 0">
-                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-400">
-                      No se encontraron registros con los filtros aplicados
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            
+            <div class="flex items-center">
+              <label class="inline-flex items-center">
+                <input 
+                  type="checkbox" 
+                  formControlName="esObjetivo"
+                  class="rounded bg-gray-700/50 border-gray-600/50 text-indigo-600 focus:ring-indigo-500">
+                <span class="ml-2 text-sm text-gray-300">Puede ser objetivo de rendimiento</span>
+              </label>
             </div>
-          </div>
+            
+            <div class="flex justify-end space-x-3 pt-4">
+              <button 
+                type="button" 
+                (click)="cancelar()"
+                class="px-4 py-2 border border-gray-600/50 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700/50 transition-colors">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                [disabled]="metricForm.invalid"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-indigo-500/20">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Guardar Métrica
+              </button>
+            </div>
+          </form>
         </div>
-  
-        <!-- Vista de Objetivos -->
-        <div *ngIf="currentView === 'goals'" class="space-y-6">
-          <div class="flex justify-between items-center">
-            <h3 class="text-xl font-bold flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              Objetivos de Rendimiento
-            </h3>
-            <button 
-              (click)="mostrarFormObjetivos()"
-              class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Nuevo Objetivo
-            </button>
-          </div>
-  
-          <!-- Formulario de objetivo -->
-          <div *ngIf="showgoalsForm" class="bg-gray-800 rounded-xl shadow-lg p-6">
-            <form [formGroup]="goalForm" (ngSubmit)="addGoal()" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Listado de métricas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div *ngFor="let metric of metrics" class="bg-gray-800/70 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all border border-gray-700/30 hover:border-indigo-400/30">
+            <div class="p-5">
+              <div class="flex justify-between items-start">
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Métrica</label>
-                  <select 
-                    formControlName="idmetrica"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Seleccionar métrica</option>
-                    <option *ngFor="let metric of metrics" [value]="metric.id">
-                      {{ metric.nombre }} ({{ metric.unidad }})
-                    </option>
-                  </select>
+                  <h4 class="font-bold text-lg text-gray-100">{{ metric.nombre }}</h4>
+                  <span class="text-xs font-mono px-2 py-1 mt-1 inline-block rounded-full bg-indigo-500/10 text-indigo-400">
+                    {{ metric.unidad }}
+                  </span>
                 </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Valor objetivo</label>
-                  <input 
-                    type="number" 
-                    step="0.01" 
-                    formControlName="valorObjetivo" 
-                    placeholder="Valor a alcanzar"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-              </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Fecha objetivo</label>
-                  <input 
-                    type="date" 
-                    formControlName="fechaObjetivo"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-1">Prioridad (1-5)</label>
-                  <input 
-                    type="number" 
-                    min="1" 
-                    max="5" 
-                    formControlName="prioridad"
-                    class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-              </div>
-              <div class="flex justify-end space-x-3 pt-2">
-                <button 
-                  type="button" 
-                  (click)="goalForm.reset({ priority: 1 })"
-                  class="px-4 py-2 border border-gray-600 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 transition-colors">
-                  Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  [disabled]="goalForm.invalid"
-                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                  <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Guardar Objetivo
-                </button>
-              </div>
-            </form>
-          </div>
-  
-          <!-- Listado de objetivos -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div *ngFor="let goal of goals" class="bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                 [class.ring-2]="goal.completado" [class.ring-green-500]="goal.completado">
-              <div class="p-6">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h4 class="font-bold text-lg"></h4>
-                    <span class="text-xs text-indigo-400 font-mono"></span>
-                  </div>
-                  <div class="flex space-x-1">
-                    <span *ngFor="let i of [1,2,3,4,5]" 
-                          class="text-lg"
-                          [class.text-yellow-400]="i <= goal.prioridad"
-                          [class.text-gray-600]="i > goal.prioridad">★</span>
-                  </div>
-                </div>
-                
-                <div class="mt-4">
-                  <div class="flex justify-between text-sm mb-1">
-                    <span class="text-gray-400">Progreso</span>
-                    <span class="font-mono">%</span>
-                  </div>
-                  <div class="w-full bg-gray-700 rounded-full h-2.5">
-                    <div 
-                      class="h-2.5 rounded-full"
-                      [class.bg-green-500]="goal.completado"
-                      [class.bg-indigo-500]="!goal.completado"
-                      [style.width]=" '%'"></div>
-                  </div>
-                </div>
-                
-                <div class="mt-4 space-y-2">
-                  <div class="flex justify-between">
-                    <span class="text-sm text-gray-400">Objetivo:</span>
-                    <span class="text-sm font-mono">{{ goal.valorObjetivo }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-sm text-gray-400">Fecha límite:</span>
-                    <span class="text-sm">{{ goal.fechaObjetivo | date:'dd/MM/yyyy' }}</span>
-                  </div>
-                </div>
-                
-                <div class="mt-4 flex justify-between items-center">
+                <div class="flex space-x-2">
+                  <span *ngIf="metric.esObjetivo" class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 flex items-center">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Objetivo
+                  </span>
                   <button 
-                    (click)="toggleGoalCompletion(goal)"
-                    [class]="goal.completado"
-                    class="px-3 py-1 rounded-md text-xs font-medium transition-colors">
-                    {{ goal.completado ? 'Completado' : 'Pendiente' }}
-                  </button>
-                  <button 
-                    (click)="deleteItem('goal', goal.id)"
-                    class="p-1 rounded-full text-red-400 hover:bg-gray-700">
+                    (click)="deleteItem('metric', metric.id)"
+                    class="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-gray-700/50 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                     </svg>
                   </button>
                 </div>
               </div>
+              <div class="mt-4 flex justify-between items-center">
+                <span class="text-xs text-gray-400">Último registro:</span>
+                <span class="text-sm font-mono text-gray-300">15.2 {{metric.unidad}}</span>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista de Registros -->
+      <div *ngIf="currentView === 'records'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold flex items-center">
+            <svg class="w-6 h-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Registros de Rendimiento
+          </h3>
+          <button 
+            (click)="mostrarFormRendimiento()"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors shadow-md hover:shadow-indigo-500/20">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Nuevo Registro
+          </button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 border border-gray-700/50">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Filtrar por métrica</label>
+              <select 
+                [(ngModel)]="selectedMetric" 
+                (change)="filterRecords()"
+                class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                <option [value]="null">Todas las métricas</option>
+                <option *ngFor="let metric of metrics" [value]="metric">{{ metric.nombre }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Rango de fechas</label>
+              <div class="flex items-center space-x-2">
+                <input 
+                  type="date" 
+                  [(ngModel)]="dateRange.start" 
+                  (change)="filterRecords()"
+                  class="flex-1 bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                <span class="text-gray-400">a</span>
+                <input 
+                  type="date" 
+                  [(ngModel)]="dateRange.end" 
+                  (change)="filterRecords()"
+                  class="flex-1 bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de registro -->
+        <div *ngIf="showrendimientoForm" class="bg-gray-800/70 rounded-2xl shadow-lg p-6 border border-gray-700/50">
+          <form [formGroup]="recordForm" (ngSubmit)="addRecord()" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Métrica</label>
+                <select 
+                  formControlName="idmetrica"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                  <option value="">Seleccionar métrica</option>
+                  <option *ngFor="let metric of metrics" [value]="metric.id">{{ metric.nombre }} ({{ metric.unidad }})</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Valor</label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  formControlName="valor" 
+                  placeholder="Ingrese el valor"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Fecha</label>
+                <input 
+                  type="date" 
+                  formControlName="fecha"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Comentarios</label>
+                <input 
+                  type="text" 
+                  formControlName="comentarios" 
+                  placeholder="Opcional"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 pt-4">
+              <button 
+                (click)="this.showrendimientoForm=false"
+                type="button" 
+                class="px-4 py-2 border border-gray-600/50 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700/50 transition-colors">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                [disabled]="recordForm.invalid"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-indigo-500/20">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Guardar Registro
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Listado de registros -->
+        <div class="bg-gray-800/70 rounded-2xl shadow-lg overflow-hidden border border-gray-700/50">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700/50">
+              <thead class="bg-gray-700/50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Métrica</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Valor</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fecha</th>
+                  <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-700/30">
+                <tr *ngFor="let record of filteredRecords" class="hover:bg-gray-700/30 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                      </div>
+                      <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-100">{{record.metrica.nombre}}</div>
+                        <div class="text-xs text-gray-400">{{record.metrica.unidad}}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-mono text-gray-100">{{ record.valor }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-300">{{ record.fecha | date:'dd/MM/yyyy' }}</div>
+                    <div class="text-xs text-gray-500">{{ record.fecha | date:'HH:mm' }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button 
+                      (click)="deleteItem('record', record.id)"
+                      class="text-red-400 hover:text-red-300 p-1 rounded-lg hover:bg-gray-700/50 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredRecords.length === 0">
+                  <td colspan="4" class="px-6 py-8 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-300">No se encontraron registros</h3>
+                    <p class="mt-1 text-sm text-gray-500">Intenta ajustar los filtros o agregar nuevos registros.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista de Objetivos -->
+      <div *ngIf="currentView === 'goals'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold flex items-center">
+            <svg class="w-6 h-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Mis Objetivos
+          </h3>
+          <button 
+            (click)="mostrarFormObjetivos()"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors shadow-md hover:shadow-indigo-500/20">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Nuevo Objetivo
+          </button>
+        </div>
+
+        <!-- Formulario de objetivo -->
+        <div *ngIf="showgoalsForm" class="bg-gray-800/70 rounded-2xl shadow-lg p-6 border border-gray-700/50">
+          <form [formGroup]="goalForm" (ngSubmit)="addGoal()" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Métrica</label>
+                <select 
+                  formControlName="idmetrica"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                  <option value="">Seleccionar métrica</option>
+                  <option *ngFor="let metric of metrics" [value]="metric.id">
+                    {{ metric.nombre }} ({{ metric.unidad }})
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Valor objetivo</label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  formControlName="valorObjetivo" 
+                  placeholder="Valor a alcanzar"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Fecha objetivo</label>
+                <input 
+                  type="date" 
+                  formControlName="fechaObjetivo"
+                  class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Prioridad (1-5)</label>
+                <div class="flex items-center space-x-2">
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="5" 
+                    step="1" 
+                    formControlName="prioridad"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                  <span class="text-sm font-mono w-8 text-center bg-gray-700/50 rounded-lg py-1">
+                    {{goalForm.value.prioridad || 1}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+              <button 
+                type="button" 
+                (click)="goalForm.reset({ priority: 1 })"
+                class="px-4 py-2 border border-gray-600/50 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700/50 transition-colors">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                [disabled]="goalForm.invalid"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-indigo-500/20">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Guardar Objetivo
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Listado de objetivos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div *ngFor="let goal of goals" 
+               class="bg-gray-800/70 rounded-2xl shadow-lg overflow-hidden border border-gray-700/50 hover:border-indigo-400/30 transition-all"
+               [class.ring-2]="goal.completado" [class.ring-green-500]="goal.completado">
+            <div class="p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-lg text-gray-100">{{goal.metrica.nombre}}</h4>
+                  <span class="text-xs font-mono px-2 py-1 mt-1 inline-block rounded-full bg-indigo-500/10 text-indigo-400">
+                    {{goal.metrica.unidad}}
+                  </span>
+                </div>
+                <div class="flex space-x-1">
+                  <span *ngFor="let i of [1,2,3,4,5]" 
+                        class="text-lg"
+                        [class.text-yellow-400]="i <= goal.prioridad"
+                        [class.text-gray-600]="i > goal.prioridad">★</span>
+                </div>
+              </div>
+              
+              <div class="mt-6">
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="text-gray-400">Progreso</span>
+                  <span class="font-mono">{{goal.completado}}%</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2.5">
+                  <div 
+                    class="h-2.5 rounded-full"
+                    [class.bg-green-500]="goal.completado"
+                    [class.bg-indigo-500]="!goal.completado"
+                    [style.width]="goal.completado + '%'"></div>
+                </div>
+              </div>
+              
+              <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-gray-400">Valor actual:</p>
+                  <p class="font-mono text-gray-100">{{goal.valorObjetivo}}</p>
+                </div>
+                <div>
+                  <p class="text-gray-400">Objetivo:</p>
+                  <p class="font-mono text-gray-100">{{goal.valorObjetivo}}</p>
+                </div>
+                <div>
+                  <p class="text-gray-400">Fecha límite:</p>
+                  <p class="text-gray-100">{{goal.fechaObjetivo | date:'dd/MM/yyyy'}}</p>
+                </div>
+                <div>
+                  <p class="text-gray-400">Estado:</p>
+                  <span 
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class.bg-green-500]="goal.completado"
+                    [class.text-green-400]="goal.completado"
+                    [class.bg-indigo-500]="!goal.completado"
+                    [class.text-indigo-400]="!goal.completado">
+                    {{goal.completado ? 'Completado' : 'En progreso'}}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="mt-6 flex justify-between items-center">
+                <button 
+                  (click)="toggleGoalCompletion(goal)"
+                  class="px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                  [class.bg-green-500]="goal.completado"
+                  [class.text-green-400]="goal.completado"
+                  [class.hover:bg-green-500]="goal.completado"
+                  [class.bg-indigo-500]="!goal.completado"
+                  [class.text-indigo-400]="!goal.completado"
+                  [class.hover:bg-indigo-500]="!goal.completado">
+                  {{ goal.completado ? 'Completado' : 'Marcar como completado' }} >
+                </button>
+                <button 
+                  (click)="deleteItem('goal', goal.id)"
+                  class="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-gray-700/50 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje cuando no hay objetivos -->
+        <div *ngIf="goals.length === 0" class="bg-gray-800/70 rounded-2xl shadow-lg p-12 text-center border border-gray-700/50">
+          <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="mt-2 text-lg font-medium text-gray-300">No tienes objetivos registrados</h3>
+          <p class="mt-1 text-sm text-gray-500 mb-4">Comienza estableciendo tus metas de rendimiento para mejorar tus resultados.</p>
+          <button 
+            (click)="mostrarFormObjetivos()"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors shadow-md hover:shadow-indigo-500/20">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Crear primer objetivo
+          </button>
+        </div>
+      </div>
+    </section>
+    <!-- Reemplaza el bloque "Gráfico de rendimiento" con este código -->
+<div class="bg-gray-800/70 rounded-2xl shadow-xl border border-gray-700/50 overflow-hidden col-span-2">
+  <div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-lg font-semibold flex items-center text-gray-100">
+        <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        Evolución Física
+      </h3>
+      <div class="flex space-x-2">
+        <button *ngFor="let rango of rangos" 
+                class="px-3 py-1 text-xs rounded-lg transition-colors"
+                [class.bg-indigo-600]="rangoSeleccionado === rango.value"
+                [class.text-white]="rangoSeleccionado === rango.value"
+                [class.bg-gray-700]="rangoSeleccionado !== rango.value"
+                [class.text-gray-300]="rangoSeleccionado !== rango.value"
+                [class.hover:bg-gray-600]="rangoSeleccionado !== rango.value"
+                (click)="cambiarRango(rango.value)">
+          {{ rango.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="relative h-64">
+      <canvas id="evolucionChart"></canvas>
+    </div>
+  </div>
+</div>
+<!-- Añade este código en la vista de Métricas -->
+<div class="bg-gray-800/70 rounded-2xl shadow-xl border border-gray-700/50 overflow-hidden mt-6">
+  <div class="p-6">
+    <h3 class="text-lg font-semibold flex items-center text-gray-100 mb-6">
+      <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+      </svg>
+      Cumplimiento de Rutinas
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="h-64">
+        <canvas #rutinasChart></canvas>
+      </div>
+      <div>
+        <div class="bg-gray-700/30 rounded-xl p-4 mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-300">Progreso general</span>
+            <span class="text-sm font-mono">{{ datosC.porcentajeCompletadas }}%</span>
+          </div>
+          <div class="w-full bg-gray-600 rounded-full h-2.5">
+            <div class="h-2.5 rounded-full bg-green-500" [style.width]="datosC.porcentajeCompletadas + '%'"></div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gray-700/30 rounded-xl p-4">
+            <p class="text-2xl font-bold text-green-400">{{ datosC.completadas }}</p>
+            <p class="text-xs text-gray-400">Completadas</p>
+          </div>
+          <div class="bg-gray-700/30 rounded-xl p-4">
+            <p class="text-2xl font-bold text-red-400">{{ datosC.incompletas }}</p>
+            <p class="text-xs text-gray-400">Incompletas</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <ng-template #loadingTemplate>
-    <div class="min-h-screen bg-gray-900 flex flex-col items-center justify-center">
-      <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-      <p class="text-gray-300">Cargando datos de rendimiento...</p>
+</div>
+<!-- Reemplaza el contenido de la vista de Objetivos con este código -->
+<div *ngIf="currentView === 'goals'" class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h3 class="text-xl font-bold flex items-center">
+      <svg class="w-6 h-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      Mis Objetivos
+    </h3>
+    <button (click)="mostrarFormObjetivos()" class="btn-primary">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Nuevo Objetivo
+    </button>
+  </div>
+
+  <!-- Listado de objetivos -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div *ngFor="let obj of objetivos" class="bg-gray-800/70 rounded-xl shadow-lg p-6 border border-gray-700/50 hover:border-indigo-400/30 transition-all">
+      <div class="flex justify-between items-start mb-4">
+        <h4 class="text-lg font-bold text-gray-100">{{ obj.nombreObjetivo }}</h4>
+        <span class="text-xs px-2 py-1 rounded-full" 
+              [class.bg-green-500]="obj.completado"
+              [class.text-green-400]="obj.completado"
+              [class.bg-indigo-500]="!obj.completado"
+              [class.text-indigo-400]="!obj.completado">
+          {{ obj.completado ? 'Completado' : 'En progreso' }}
+        </span>
+      </div>
+      
+      <div class="mb-4">
+        <div class="flex justify-between text-sm mb-1">
+          <span class="text-gray-400">Progreso: {{ obj.valorActual | number:'1.1-1' }} / {{ obj.valorObjetivo | number:'1.1-1' }} {{ obj.unidad }}</span>
+          <span class="font-mono">{{ obj.porcentajeCompletado }}%</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-2">
+          <div class="h-2 rounded-full" 
+               [class.bg-green-500]="obj.completado"
+               [class.bg-indigo-500]="!obj.completado"
+               [style.width]="obj.porcentajeCompletado + '%'"></div>
+        </div>
+      </div>
+      
+      <div class="flex justify-between items-center text-sm">
+        <span class="text-gray-400" *ngIf="obj.fechaObjetivo">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          {{ obj.fechaObjetivo | date:'dd/MM/yyyy' }}
+        </span>
+        <button (click)="toggleGoalCompletion(obj)" class="text-xs px-3 py-1 rounded-md"
+                [class.bg-green-500]="obj.completado"
+                [class.text-green-400]="obj.completado"
+                [class.bg-indigo-500]="!obj.completado"
+                [class.text-indigo-400]="!obj.completado">
+          {{ obj.completado ? 'Completado' : 'Marcar como completado' }}
+        </button>
+      </div>
     </div>
-  </ng-template>
+  </div>
+
+  <!-- Mensaje cuando no hay objetivos -->
+  <div *ngIf="objetivos.length === 0" class="bg-gray-800/70 rounded-xl shadow-lg p-12 text-center border border-gray-700/50">
+    <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <h3 class="mt-2 text-lg font-medium text-gray-300">No tienes objetivos registrados</h3>
+    <p class="mt-1 text-sm text-gray-500 mb-4">Comienza estableciendo tus metas de rendimiento para mejorar tus resultados.</p>
+    <button (click)="mostrarFormObjetivos()" class="btn-primary">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Crear primer objetivo
+    </button>
+  </div>
+</div>
+  </main>
+</div>
+
+<!-- Loading template -->
+<ng-template #loadingTemplate>
+  <div class="min-h-screen bg-gray-900 flex flex-col items-center justify-center">
+    <div class="flex flex-col items-center">
+      <div class="relative">
+        <div class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg class="w-8 h-8 text-indigo-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-300">Cargando tu panel de rendimiento...</p>
+    </div>
+  </div>
+</ng-template>
