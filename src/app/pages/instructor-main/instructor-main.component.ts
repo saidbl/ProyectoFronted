@@ -21,6 +21,10 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router'; 
 import { RutinaService } from '../../services/rutina.service';
 import { Rutina } from '../../models/rutina.model';
+import { Equipo } from '../../models/equipo.model';
+import { EquipoService } from '../../services/equipo.service';
+import { DeportistaService } from '../../services/deportista.service';
+import { Deportista } from '../../models/deportista.model';
 
 @Component({
     selector: 'app-instructor-main',
@@ -34,8 +38,27 @@ import { Rutina } from '../../models/rutina.model';
 })
 export class InstructorMainComponent implements OnInit {
   private rservice= inject(RutinaService)
+  private eservice = inject(EquipoService)
+  private dservice = inject(DeportistaService)
   totalRutinas:number = 0
   rutinas : Rutina[] = []
+  nombre: string = '';
+  apellido: string = '';
+  fotoPerfil: string = 'assets/default-instructor.jpg';
+  especialidad: string = '';
+  experiencia: number = 0;
+  totalDeportistas: number = 0;
+  deportistasNuevos: number = 0;
+  totalEquipos: number = 0;
+  rutinasPendientes: number = 0;
+  deportistas:Deportista[]=[]
+  deportistasRecientes: Deportista[] = [];
+  equiposActivos: Equipo[] = [];
+  rutinasPendientesRevisar: any[] = [];
+  rutinaFilter: string = 'all';
+  showNotification: boolean = false;
+  notificationMessage: string = '';
+  showUserDropdown: boolean = false;
   ngOnInit(): void {
     try{
       const token=localStorage.getItem("token")
@@ -62,6 +85,30 @@ export class InstructorMainComponent implements OnInit {
         },
         error:(err)=>{
           console.log(err)
+        }
+      })
+      this.eservice.list(instructorId,token).subscribe({
+        next:(data)=>{
+          this.equiposActivos=data
+        },
+        error:(error)=>{
+          console.error(error)
+        }
+      })
+      this.dservice.list(instructorId,token).subscribe({
+        next:(data)=>{
+          this.deportistas=data
+          this.deportistasRecientes= this.deportistas.filter(deportista=>{
+            const hoy = new Date()
+            const fecha = new Date(deportista.fechaRegistro);
+            const haceUnMes = new Date();
+            haceUnMes.setMonth(hoy.getMonth() - 1);
+             return fecha >= haceUnMes && fecha <= hoy;
+          })
+
+        },
+        error:()=>{
+
         }
       })
     }catch(error:any){
@@ -110,6 +157,42 @@ export class InstructorMainComponent implements OnInit {
   }
 
   inscribirEquipoEvento(eventoId: number) {
+  }
+  cargarDatosInstructor(): void {
+  }
+
+  cargarEstadisticas(): void {
+
+  }
+
+  cargarDeportistasRecientes(): void {
+  }
+
+  cargarEquiposActivos(): void {
+
+  }
+
+  cargarRutinasPendientes(): void {
+
+  }
+
+  toggleUserDropdown(): void {
+    this.showUserDropdown = !this.showUserDropdown;
+  }
+
+  logout(): void {
+  }
+
+  editarRutina(rutinaId: number): void {
+  }
+
+  mostrarNotificacion(mensaje: string): void {
+    this.notificationMessage = mensaje;
+    this.showNotification = true;
+    
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 3000);
   }
   
 }

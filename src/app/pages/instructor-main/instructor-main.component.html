@@ -1,109 +1,289 @@
-<div class="min-h-screen bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-  <!-- Encabezado -->
-  <div class="max-w-7xl mx-auto text-center mb-12">
-    <h1 class="text-5xl font-bold text-gray-100 font-playfair">Gestión del Instructor</h1>
-    <p class="mt-4 text-xl text-gray-400 font-sans">Administra rutinas, deportistas, equipos y eventos de manera eficiente.</p>
-  </div>
-
-  <!-- Navegación -->
-  <div class="max-w-7xl mx-auto mb-12">
-    <nav class="flex justify-center space-x-6">
-      <a routerLink="rutinas" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
-        <i class="fas fa-dumbbell mr-2"></i> Rutinas
-      </a>
-      <a routerLink="rutinaDeportista" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
-        <i class="fas fa-users mr-2"></i> Deportistas
-      </a>
-      <a routerLink="crearEquipos" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
-        <i class="fas fa-users-cog mr-2"></i> Equipos
-      </a>
-      <a routerLink="equipoEvento" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
-        <i class="fas fa-calendar-alt mr-2"></i> Eventos
-      </a>
-      <a href="#" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-200 font-sans flex items-center">
-        <i class="fas fa-history mr-2"></i> Historial
-      </a>
-    </nav>
-  </div>
-
-  <!-- Sección de Tarjetas -->
-  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <!-- Tarjeta 1: Rutinas Activas -->
-    <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
-      <div class="p-8">
-        <div class="flex items-center mb-6">
-          <i class="fas fa-dumbbell text-3xl text-blue-400 mr-4"></i>
-          <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Rutinas Activas</h2>
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación superior -->
+  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center">
+          <span class="text-xl font-bold text-blue-400">AllSports - Instructor</span>
         </div>
-        <p class="mt-4 text-lg text-gray-400 font-sans">Total de rutinas asignadas: <span class="font-semibold text-blue-400">{{totalRutinas}}</span></p>
-        <p class="mt-2 text-lg text-gray-400 font-sans">Rutinas más populares: <span *ngFor="let rutina of rutinas" class="font-semibold text-blue-400">{{rutina.nombre}} | </span></p>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-center space-x-8">
+            <a routerLink="equipoEvento" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-calendar-alt mr-2"></i> Eventos
+            </a>
+            <a routerLink="deportistas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users mr-2"></i> Deportistas
+            </a>
+            <a routerLink="crearEquipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users-cog mr-2"></i> Equipos
+            </a>
+            <a routerLink="rutinas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-dumbbell mr-2"></i> Rutinas
+            </a>
+            <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-chart-bar mr-2"></i> Reportes
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="relative ml-3">
+            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
+              <span class="text-gray-300 text-sm">{{nombre}} {{apellido}}</span>
+              <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
+              <a routerLink="perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Mi Perfil</a>
+              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Configuración</a>
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Encabezado personalizado -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Panel de Instructor
+      </h1>
+      <p class="mt-4 text-lg text-gray-400">Bienvenido, {{nombre}}. Tu centro de gestión deportiva</p>
+      <div class="mt-2 flex justify-center items-center space-x-2">
+        <span class="text-sm text-gray-400">Especialidad: {{especialidad}}</span>
+        <span class="text-gray-600">•</span>
+        <span class="text-sm text-gray-400">{{experiencia}} años de experiencia</span>
       </div>
     </div>
 
-    <!-- Tarjeta 2: Deportistas Asignados -->
-    <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
-      <div class="p-8">
-        <div class="flex items-center mb-6">
-          <i class="fas fa-users text-3xl text-blue-400 mr-4"></i>
-          <h2 class="text-3xl font-bold text-gray-100 font-playfair">Deportistas Asignados</h2>
+    <!-- Tarjetas resumen -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <!-- Tarjeta Deportistas Activos -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-blue-500/30 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-gray-400">Deportistas Activos</p>
+            <h3 class="mt-1 text-3xl font-bold text-white">{{deportistas.length}}</h3>
+          </div>
+          <div class="p-3 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300">
+            <i class="fas fa-users text-blue-400 text-xl"></i>
+          </div>
         </div>
-        <p class="mt-4 text-lg text-gray-400 font-sans">Total de deportistas: <span class="font-semibold text-blue-400">0</span></p>
-        <p class="mt-2 text-lg text-gray-400 font-sans">Deportistas destacados: <span class="font-semibold text-blue-400">Ejemplo 1, Ejemplo 2</span></p>
+        <div class="mt-4">
+          <div class="flex items-center text-sm text-gray-400">
+            <span class="text-green-400 mr-1">{{deportistasRecientes.length}} nuevos este mes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Equipos Activos -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-green-500/30 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-gray-400">Equipos Activos</p>
+            <h3 class="mt-1 text-3xl font-bold text-white">{{equiposActivos.length}}</h3>
+          </div>
+          <div class="p-3 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-all duration-300">
+            <i class="fas fa-users-cog text-green-400 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Rutinas Asignadas -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-gray-400">Rutinas Activas</p>
+            <h3 class="mt-1 text-3xl font-bold text-white">{{totalRutinas}}</h3>
+          </div>
+          <div class="p-3 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-all duration-300">
+            <i class="fas fa-dumbbell text-purple-400 text-xl"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex items-center text-sm text-gray-400">
+            <span class="text-yellow-400">{{rutinasPendientes}} pendientes de revisión</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Acción Rápida -->
+      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/20 rounded-xl p-6 transition-all duration-300 group hover:border-blue-400/50">
+        <div class="flex flex-col h-full justify-between">
+          <div>
+            <p class="text-sm font-medium text-blue-300">Acción rápida</p>
+            <h3 class="mt-1 text-xl font-bold text-white">Crear nueva rutina</h3>
+          </div>
+          <button routerLink="rutinas/nueva" class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg border border-white/10 transition-all duration-300">
+            <i class="fas fa-plus"></i>
+            <span>Crear ahora</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Tarjeta 3: Eventos Futuros -->
-    <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-3xl">
-      <div class="p-8">
-        <div class="flex items-center mb-6">
-          <i class="fas fa-calendar-alt text-3xl text-blue-400 mr-4"></i>
-          <h2 class="text-3xl font-bold text-gray-100 font-merriweather">Eventos Futuros</h2>
+    <!-- Secciones principales -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+      <!-- Deportistas recientes -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-800">
+          <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+            <i class="fas fa-user-plus text-blue-400 mr-2"></i>
+            Deportistas Recientes
+          </h3>
         </div>
-        <p class="mt-4 text-lg text-gray-400 font-sans">Total de eventos programados: <span class="font-semibold text-blue-400">0</span></p>
-        <p class="mt-2 text-lg text-gray-400 font-sans">Próximo evento: <span class="font-semibold text-blue-400">Ejemplo 1</span></p>
+        <div class="divide-y divide-gray-800">
+          <div *ngFor="let deportista of deportistasRecientes.slice(0,3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <img class="h-10 w-10 rounded-full" [src]="deportista.genero" alt="Foto perfil">
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-white truncate">{{deportista.nombre}} {{deportista.apellido}}</p>
+                <p class="text-sm text-gray-400">{{deportista.deporte}} • {{deportista.posicion}}</p>
+                <div class="mt-1 flex items-center space-x-2">
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
+                    Registrado: {{deportista.fechaRegistro | date:'shortDate'}}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <button [routerLink]="['/deportistas', deportista.id]" class="text-blue-400 hover:text-blue-300">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 border-t border-gray-800 text-center">
+          <a routerLink="deportistas" class="text-sm text-blue-400 hover:text-blue-300">Ver todos mis deportistas</a>
+        </div>
+      </div>
+
+      <!-- Equipos bajo supervisión -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-800">
+          <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+            <i class="fas fa-users text-green-400 mr-2"></i>
+            Mis Equipos
+          </h3>
+        </div>
+        <div class="divide-y divide-gray-800">
+          <div *ngFor="let equipo of equiposActivos.slice(0, 3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/equipos', equipo.id]">
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                <div class="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <i class="fas fa-users text-green-400"></i>
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-white truncate">{{equipo.nombre}}</p>
+                <p class="text-sm text-gray-400">{{equipo.deporte.nombre}} • {{equipo.categoria}}</p>
+                <div class="mt-1 flex items-center space-x-2">
+                  <span class="text-xs text-gray-400">
+                    {{equipo.jugadoresAsociados}} jugadores
+                  </span>
+                  <span class="text-xs px-2 py-0.5 rounded-full" [ngClass]="{
+                    'bg-green-900/50 text-green-400': equipo.estado === 'activo',
+                    'bg-yellow-900/50 text-yellow-400': equipo.estado === 'inactivo'
+                  }">
+                    {{equipo.estado | lowercase}}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <i class="fas fa-chevron-right text-gray-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 border-t border-gray-800 text-center">
+          <a routerLink="equipos" class="text-sm text-green-400 hover:text-green-300">Gestionar todos mis equipos</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rutinas pendientes de revisión -->
+    <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden mb-12">
+      <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+          <i class="fas fa-clipboard-check text-purple-400 mr-2"></i>
+          Rutinas Mas Famosas
+        </h3>
+        <div class="flex space-x-2">
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-800">
+          <thead class="bg-gray-800">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Rutina
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Deportista
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Fecha Asignada
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Estado
+              </th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800">
+            <tr *ngFor="let rutina of rutinas" class="hover:bg-gray-800/50 transition-all duration-150">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <i class="fas fa-dumbbell text-purple-400"></i>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-white">{{rutina.nombre}}</div>
+                    <div class="text-sm text-gray-400">{{rutina.objetivo}} • {{rutina.descripcion}} min</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-white">{{rutina.nivel_dificultad}}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-white">{{rutina.dia}}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button [routerLink]="['/rutinas', rutina.id]" class="text-blue-400 hover:text-blue-300 mr-3">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button (click)="editarRutina(rutina.id)" class="text-yellow-400 hover:text-yellow-300">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="rutinas.length === 0">
+              <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                No hay rutinas pendientes de revisión
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="p-4 border-t border-gray-800 text-center">
+        <a routerLink="rutinas" class="text-sm text-purple-400 hover:text-purple-300">Gestionar todas las rutinas</a>
       </div>
     </div>
   </div>
 
-  <!-- Sección de Estadísticas -->
-  <div class="max-w-7xl mx-auto mt-12">
-    <h2 class="text-4xl font-bold text-center text-gray-100 font-playfair">Estadísticas Generales</h2>
-    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Estadística 1 -->
-      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
-        <i class="fas fa-check-circle text-4xl text-blue-400 mb-4"></i>
-        <p class="text-xl text-gray-400 font-sans">Rutinas Completadas</p>
-        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
-      </div>
-
-      <!-- Estadística 2 -->
-      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
-        <i class="fas fa-running text-4xl text-blue-400 mb-4"></i>
-        <p class="text-xl text-gray-400 font-sans">Deportistas en Actividad</p>
-        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
-      </div>
-
-      <!-- Estadística 3 -->
-      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
-        <i class="fas fa-calendar-check text-4xl text-blue-400 mb-4"></i>
-        <p class="text-xl text-gray-400 font-sans">Eventos Pasados</p>
-        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
-      </div>
-
-      <!-- Estadística 4 -->
-      <div class="bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-6 text-center hover:shadow-3xl transition-shadow duration-200">
-        <i class="fas fa-user-plus text-4xl text-blue-400 mb-4"></i>
-        <p class="text-xl text-gray-400 font-sans">Nuevos Deportistas</p>
-        <p class="mt-2 text-3xl font-bold text-blue-400">0</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sección de Gráficos -->
-  <div class="max-w-7xl mx-auto mt-12">
-    <h2 class="text-4xl font-bold text-center text-gray-100 font-playfair">Rendimiento de Rutinas</h2>
-    <div class="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl rounded-lg p-8">
-      <canvas id="rutinasChart"></canvas>
+  <!-- Notificaciones flotantes -->
+  <div *ngIf="showNotification" class="fixed bottom-4 right-4 z-50">
+    <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span>{{notificationMessage}}</span>
     </div>
   </div>
 </div>

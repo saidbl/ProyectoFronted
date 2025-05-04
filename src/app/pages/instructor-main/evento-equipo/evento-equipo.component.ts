@@ -30,6 +30,13 @@ export class EventoEquipoComponent implements OnInit{
   equiposDisponibles : Equipo[] = []
   equiposInscritos : EventoEquipo[] = []
   categoriaSeleccionada : string = ""
+  nombreInstructor: string = '';
+  fotoPerfil: string = '';
+  showUserDropdown: boolean = false;
+  eventosFiltrados: Evento[] = [];
+  filtroDeporte: string = '';
+  filtroEstado: string = '';
+  equipoSeleccionadoId: string | null = null;
   equipos : Equipo[]=[]
   ngOnInit(): void {
     try{
@@ -45,7 +52,9 @@ export class EventoEquipoComponent implements OnInit{
       }).subscribe({
         next: (data) => {
           this.eventos = data.eventos;
+          this.filtrarEventos()
           this.equipos = data.equipos
+          this.filtrarEquipos()
         },
         error: (err) => {
           console.error("Error loading data", err);
@@ -56,14 +65,10 @@ export class EventoEquipoComponent implements OnInit{
       alert(error.message)
     }
   }
-  filtrarEquipos(): void {
-    if (!this.terminoBusqueda) {
-      this.eventos = this.eventos;
-    } else {
-      this.eventos = this.eventos.filter((evento) =>
-        evento.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
-      );
-    }
+  filtrarEquipos():void{
+    this.equiposDisponibles=this.equipos.filter(equipo =>equipo.jugadoresAsociados==equipo.maxJugadores)
+    console.log(this.equipos)
+    console.log(this.equiposDisponibles)
   }
   verDetallesEvento(evento:Evento){
     this.eventoSeleccionado = evento
@@ -121,6 +126,57 @@ export class EventoEquipoComponent implements OnInit{
     }
     filtrarPorCategoria(categoria  : string){
 
+    }
+    cargarDatosUsuario(): void {
+      
+    }
+  
+    cargarEventos(): void {
+      
+    }
+  
+    cargarEquiposDisponibles(): void {
+     
+    }
+  
+    cargarDeportes(): void {
+
+    }
+  
+    filtrarEventos(): void {
+      this.eventosFiltrados = this.eventos.filter(evento => {
+        const coincideBusqueda = !this.terminoBusqueda || 
+          evento.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+          evento.descripcion.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
+        
+        // Filtro por estado
+        const coincideEstado = !this.filtroEstado || 
+          evento.estado === this.filtroEstado;
+        
+        return coincideBusqueda && coincideEstado;
+      });
+    }
+  
+    
+
+  
+  
+    getImagenEvento(evento: Evento): string {
+      return evento.imagen 
+        ? `http://localhost:8080/${evento.imagen}`
+        : 'assets/default-event.jpg';
+    }
+  
+    toggleUserDropdown(): void {
+      this.showUserDropdown = !this.showUserDropdown;
+    }
+  
+    logout(): void {
+    }
+  
+    mostrarNotificacion(mensaje: string, esError: boolean = false): void {
+      // Implementar lógica de notificación (usar toast service o similar)
+      alert(mensaje); // Temporal - reemplazar con sistema de notificaciones
     }
 
 }

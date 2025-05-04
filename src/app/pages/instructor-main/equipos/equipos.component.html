@@ -1,121 +1,463 @@
-<div class="min-h-screen bg-gray-950 py-12 px-6 lg:px-8 font-sans flex">
-
-
-  <!-- Contenido Principal -->
-  <div class="flex-1 max-w-7xl mx-auto px-6">
-    
-    <!-- Encabezado -->
-    <div class="text-center mb-8">
-      <h1 class="text-5xl font-bold text-gray-100 font-playfair">Gestión de Equipos</h1>
-      <p class="mt-4 text-lg text-gray-400">Crea y gestiona equipos de manera eficiente.</p>
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación -->
+  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center">
+          <span class="text-xl font-bold text-blue-400">AllSports</span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-center space-x-8">
+            <a routerLink="/instructor" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-home mr-2"></i> Inicio
+            </a>
+            <a routerLink="/instructor/deportistas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users mr-2"></i> Deportistas
+            </a>
+            <a routerLink="/instructor/equipos" class="text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users-cog mr-2"></i> Equipos
+            </a>
+            <a routerLink="/instructor/eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-calendar-alt mr-2"></i> Eventos
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="relative ml-3">
+            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
+              <span class="text-gray-300 text-sm">{{nombreInstructor}}</span>
+              <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </div>
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
+              <a routerLink="/instructor/perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Mi Perfil</a>
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    
-
-     <!-- Navegación mejorada con subrayado animado -->
-  <nav class="max-w-7xl mx-auto mb-12 flex justify-center space-x-6 border-b border-gray-800 pb-4">
-    <a routerLink=".." class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-300 relative after:absolute after:bg-blue-500 after:h-0.5 after:w-0 after:bottom-0 after:left-1/2 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">Principal</a>
-    <a routerLink="../rutinaDeportista" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-300 relative after:absolute after:bg-blue-500 after:h-0.5 after:w-0 after:bottom-0 after:left-1/2 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">Deportistas</a>
-    <a routerLink="../crearEquipos" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-300 relative after:absolute after:bg-blue-500 after:h-0.5 after:w-0 after:bottom-0 after:left-1/2 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">Equipos</a>
-    <a routerLink="../equipoEvento" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-300 relative after:absolute after:bg-blue-500 after:h-0.5 after:w-0 after:bottom-0 after:left-1/2 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">Eventos</a>
-    <a href="#" class="text-lg font-medium text-gray-300 hover:text-blue-400 transition duration-300 relative after:absolute after:bg-blue-500 after:h-0.5 after:w-0 after:bottom-0 after:left-1/2 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">Historial</a>
   </nav>
 
-    <!-- Barra de búsqueda -->
-    <div class="flex justify-between items-center mb-6">
-      <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarEquipos()" placeholder="Buscar equipo..." class="w-1/3 px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-500">
-      <button (click)="mostrarModalCrearEquipo = true" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:scale-105 transition duration-200">
-        + Nuevo Equipo
+  <!-- Contenido principal -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Encabezado -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Gestión de Equipos
+      </h1>
+      <p class="mt-3 text-lg text-gray-400">Administra tus equipos deportivos</p>
+    </div>
+
+    <!-- Filtros y acciones -->
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-search text-gray-500"></i>
+        </div>
+        <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarEquipos()" 
+               class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+               placeholder="Buscar equipos...">
+      </div>
+      <div>
+        <select [(ngModel)]="filtroDeporte" (change)="filtrarEquipos()" class="block w-full pl-3 pr-10 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option value="">Todos los deportes</option>
+          <option *ngFor="let deporte of deportes" [value]="deporte.id">{{deporte.nombre}}</option>
+        </select>
+      </div>
+      <div>
+        <button (click)="abrirModalCrearEquipo()" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center">
+          <i class="fas fa-plus mr-2"></i> Nuevo Equipo
+        </button>
+      </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-4 hover:border-blue-500/30 transition-all duration-300">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-sm text-gray-400">Total de equipos</p>
+            <h3 class="text-2xl font-bold text-white">{{equipos.length}}</h3>
+          </div>
+          <div class="p-2 rounded-lg bg-blue-500/10">
+            <i class="fas fa-users text-blue-400"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listado de equipos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let equipo of equiposFiltrados" class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/30 transition-all duration-300 group">
+        <div class="p-6">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0">
+              <div class="h-14 w-14 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <i class="fas fa-users text-blue-400 text-xl"></i>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-xl font-bold text-white truncate">{{equipo.nombre}}</h3>
+              <p class="text-sm text-gray-400">{{equipo.deporte.nombre}} • {{equipo.categoria}}</p>
+              
+              <div class="mt-3 flex flex-wrap gap-2">
+                <span class="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+                  <i class="fas fa-users mr-1"></i>
+                  {{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}} jugadores
+                </span>
+                <span class="text-xs px-2 py-1 rounded-full" [ngClass]="{
+                  'bg-green-900/50 text-green-400': equipo.estado === 'ACTIVO',
+                  'bg-yellow-900/50 text-yellow-400': equipo.estado === 'INACTIVO'
+                }">
+                  {{equipo.estado | lowercase | titlecase}}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 flex items-center justify-between">
+            <div>
+              <p class="text-xs text-gray-500">
+                <i class="fas fa-calendar-alt mr-1"></i>
+                Creado: {{equipo.fechaCreacion}}
+              </p>
+            </div>
+            <div class="flex space-x-2">
+              <button (click)="verDetallesEquipo(equipo)" class="text-blue-400 hover:text-blue-300 text-sm">
+                <i class="fas fa-eye">Ver detalles</i>
+              </button>
+              <button (click)="editarEquipo(equipo)" class="text-yellow-400 hover:text-yellow-300 text-sm">
+                <i class="fas fa-edit">edicion</i>
+              </button>
+              <button (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:text-green-300 text-sm">
+                <i class="fas fa-user-plus">asociar</i>
+              </button>
+              <button (click)="confirmarEliminarEquipo(equipo)" class="text-red-400 hover:text-red-300 text-sm">
+                <i class="fas fa-trash-alt">eliminar</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando no hay equipos -->
+    <div *ngIf="equiposFiltrados.length === 0" class="text-center py-12">
+      <i class="fas fa-users-slash text-4xl text-gray-600 mb-4"></i>
+      <h3 class="text-xl font-medium text-gray-300">No se encontraron equipos</h3>
+      <p class="text-gray-500 mt-1">No hay equipos que coincidan con tus criterios de búsqueda</p>
+      <button (click)="abrirModalCrearEquipo()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg inline-flex items-center">
+        <i class="fas fa-plus mr-2"></i> Crear primer equipo
       </button>
     </div>
 
-    <!-- Grid de Equipos -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div *ngFor="let equipo of equipos" class="bg-gray-900 rounded-lg p-4 shadow-lg hover:shadow-xl transition duration-200">
-        <div class="flex items-center space-x-4">
-          <img [src]="equipo" alt="Logo del equipo" class="w-14 h-14 rounded-full">
-          <div>
-            <h3 class="text-xl font-bold text-gray-100">{{ equipo.nombre }}</h3>
-            <p class="text-gray-400 text-sm">{{ equipo.deporte.nombre }}</p>
+    <!-- Modal para crear/editar equipo -->
+    <div *ngIf="mostrarModalEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-white">
+              <i class="fas fa-users-cog mr-2 text-blue-400"></i>
+              {{equipoEditando ? 'Editar Equipo' : 'Nuevo Equipo'}}
+            </h2>
+            <button (click)="cerrarModalEquipo()" class="text-gray-400 hover:text-gray-300">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
-        </div>
-        <p class="mt-2 text-gray-300">{{ equipo }}</p>
-        <div class="flex justify-between mt-4">
-          <button (click)="verDetallesEquipo(equipo)" class="text-blue-400 hover:underline">Detalles</button>
-          <button (click)="editarEquipo(equipo)" class="text-yellow-400 hover:underline">Editar</button>
-          <button (click)="eliminarEquipo(equipo)" class="text-red-400 hover:underline">Eliminar</button>
-          <button (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:underline">Asociar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal para Crear Equipo -->
-    <div *ngIf="mostrarModalCrearEquipo" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-lg font-bold mb-4 text-gray-100">Crear Nuevo Equipo</h2>
-        <form (ngSubmit)="crearEquipo()">
-          <div class="mb-4">
-            <label class="block text-gray-300">Nombre del Equipo:</label>
-            <input [(ngModel)]="nuevoEquipo.nombre" name="nombre" class="w-full p-2 border border-gray-700 rounded-lg bg-gray-700 text-gray-100" required>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-300">Máximo de Jugadores:</label>
-            <input [(ngModel)]="nuevoEquipo.maxJugadores" name="max_jugadores" type="number" class="w-full p-2 border border-gray-700 rounded-lg bg-gray-700 text-gray-100" required>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-300">Seleccionar Categoría:</label>
-            <select [(ngModel)]="nuevoEquipo.categoria" name="categoria" class="w-full p-2 border border-gray-700 rounded-lg bg-gray-700 text-gray-100" required>
-              <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
-            </select>
-          </div>
-          <div class="mt-4 flex justify-end">
-            <button type="submit" class="bg-blue-600 px-4 py-2 rounded-lg text-white hover:bg-blue-700">Guardar</button>
-            <button (click)="mostrarModalCrearEquipo = false" type="button" class="ml-2 bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal para asociar jugadores a un equipo -->
-    <div *ngIf="mostrarModalAsociarJugador" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-lg font-bold mb-4 text-gray-100">Asociar Jugador al Equipo {{ equipoSeleccionado?.nombre }}</h2>
-        <form (ngSubmit)="asociarJugador()">
-          <div class="mb-4">
-            <label class="block text-gray-300">Seleccionar Jugador:</label>
-            <select [(ngModel)]="jugadorSeleccionado" name="jugador" class="w-full p-2 border border-gray-700 rounded-lg bg-gray-700 text-gray-100" required>
-              <option *ngFor="let jugador of jugadoresDisponibles" [value]="jugador.id">{{ jugador.nombre }} {{ jugador.apellido }}</option>
-            </select>
-          </div>
-          <div class="mt-4 flex justify-end">
-            <button type="submit" class="bg-blue-600 px-4 py-2 rounded-lg text-white hover:bg-blue-700">Asociar</button>
-            <button (click)="mostrarModalAsociarJugador = false" type="button" class="ml-2 bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal para ver detalles del equipo -->
-    <div *ngIf="mostrarDetallesEquipo" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-lg font-bold mb-4 text-gray-100">Detalles del Equipo {{ equipoSeleccionado?.nombre }}</h2>
-        <div class="text-gray-300">
-          <p><strong>Descripción:</strong> {{ equipoSeleccionado?.descripcion }}</p>
-          <p><strong>Instructor:</strong> {{ equipoSeleccionado?.instructor?.nombre }}</p>
-          <p><strong>Deporte:</strong> {{ equipoSeleccionado?.deporte?.nombre }}</p>
-          <p><strong>Máximo de Jugadores:</strong> {{ equipoSeleccionado?.maxJugadores }}</p>
-          <p><strong>Fecha de Creación:</strong> {{ equipoSeleccionado?.fechaCreacion | date:'shortDate' }}</p>
-          <p><strong>Jugadores:</strong></p>
-          <ul>
-            <li *ngFor="let jugador of jugadoresAsociados">{{ jugador.deportista.nombre }} {{ jugador.deportista.apellido }}-({{jugador.deportista.posicion.nombre}})</li>
-          </ul>
-          <p><strong>Logo:</strong></p>
-          <img [src]="equipoSeleccionado?.logo" alt="Logo del equipo" class="w-20 h-20 rounded-full">
-        </div>
-        <div class="mt-4 flex justify-end">
-          <button (click)="mostrarDetallesEquipo = false" class="bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">Cerrar</button>
+          
+          <form (ngSubmit)="guardarEquipo()" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Nombre del equipo</label>
+              <input [(ngModel)]="formEquipo.nombre" name="nombre" 
+                     class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Deporte</label>
+                <select [(ngModel)]="formEquipo.id_deporte" name="deporte" 
+                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                  <option value="" disabled selected>Seleccionar deporte</option>
+                  <option *ngFor="let deporte of deportes" [value]="deporte.id">{{deporte.nombre}}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Categoría</label>
+                <select [(ngModel)]="formEquipo.categoria" name="categoria" 
+                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                  <option value="" disabled selected>Seleccionar categoría</option>
+                  <option *ngFor="let categoria of categorias" [value]="categoria">{{categoria}}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Máx. jugadores</label>
+                <input [(ngModel)]="formEquipo.max_jugadores" name="max_jugadores" type="number" min="1"
+                       class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Estado</label>
+                <select [(ngModel)]="formEquipo.estado" name="estado" 
+                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                  <option value="ACTIVO">Activo</option>
+                  <option value="INACTIVO">Inactivo</option>
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Logo (URL)</label>
+              <input [(ngModel)]="formEquipo.imagen" name="imagen" type="url" 
+                     class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 pt-4">
+              <button type="button" (click)="cerrarModalEquipo()" 
+                      class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                Cancelar
+              </button>
+              <button type="submit" 
+                      class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                <i class="fas fa-save mr-2"></i>
+                {{equipoEditando ? 'Actualizar' : 'Crear'}}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
+    <!-- Modal para asociar jugadores -->
+    <div *ngIf="mostrarModalAsociarJugador" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-white">
+              <i class="fas fa-user-plus mr-2 text-green-400"></i>
+              Asociar Jugadores a {{equipoSeleccionado?.nombre}}
+            </h2>
+            <button (click)="cerrarModalAsociar()" class="text-gray-400 hover:text-gray-300">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="mb-4">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-500"></i>
+              </div>
+              <input type="text" [(ngModel)]="busquedaJugador" (input)="filtrarJugadoresDisponibles()" 
+                     class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                     placeholder="Buscar jugadores...">
+            </div>
+          </div>
+          
+          <div class="space-y-3 max-h-96 overflow-y-auto">
+            <div *ngFor="let jugador of jugadoresDisponibles" 
+                 class="flex items-center justify-between p-3 border border-gray-700 rounded-lg hover:bg-gray-700/50">
+              <div class="flex items-center space-x-3">
+                <img [src]="jugador || 'assets/default-avatar.png'" alt="Foto" class="w-10 h-10 rounded-full">
+                <div>
+                  <p class="text-sm font-medium text-white">{{jugador.nombre}} {{jugador.apellido}}</p>
+                  <p class="text-xs text-gray-400">{{jugador.posicion.nombre}}</p>
+                </div>
+              </div>
+              <button *ngIf="equipoSeleccionado"
+              (click)="asociarJugador(jugador)" 
+                      class="text-green-400 hover:text-green-300 text-sm p-1"
+                      [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores">
+                <i class="fas fa-plus">asociar</i>
+              </button>
+            </div>
+            
+            <div *ngIf="jugadoresFiltrados.length === 0" class="text-center py-4 text-gray-500">
+              No se encontraron jugadores disponibles
+            </div>
+          </div>
+          
+          <div class="mt-6 pt-4 border-t border-gray-700">
+            <h3 class="text-sm font-medium text-gray-300 mb-2">Jugadores asociados</h3>
+            <div *ngIf="jugadoresAsociados.length > 0; else sinJugadores" class="space-y-2">
+              <div *ngFor="let jugador of jugadoresAsociados" 
+                   class="flex items-center justify-between p-2 bg-gray-700/50 rounded-lg">
+                <div class="flex items-center space-x-2">
+                  <img [src]="jugador.deportista || 'assets/default-avatar.png'" alt="Foto" class="w-8 h-8 rounded-full">
+                  <span class="text-sm text-white">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
+                </div>
+                <button (click)="desasociarJugador(jugador.id)" class="text-red-400 hover:text-red-300 text-sm">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <ng-template #sinJugadores>
+              <p class="text-sm text-gray-500">No hay jugadores asociados aún</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div *ngIf="mostrarConfirmacionEliminar" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-white">
+              <i class="fas fa-exclamation-triangle mr-2 text-yellow-400"></i>
+              Confirmar eliminación
+            </h2>
+            <button (click)="mostrarConfirmacionEliminar = false" class="text-gray-400 hover:text-gray-300">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <p class="text-gray-300 mb-6">¿Estás seguro que deseas eliminar el equipo <strong>{{equipoAEliminar?.nombre}}</strong>? Esta acción no se puede deshacer.</p>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <button (click)="mostrarConfirmacionEliminar = false" 
+                    class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+              Cancelar
+            </button>
+            <button (click)="eliminarEquipo(equipoAEliminar)" 
+                    class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center">
+              <i class="fas fa-trash-alt mr-2"></i>
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de detalles del equipo -->
+    <div *ngIf="mostrarDetallesEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="relative">
+          <div class="h-48 bg-gradient-to-r from-blue-900/30 to-purple-900/30 flex items-center justify-center">
+            <div class="h-24 w-24 rounded-full bg-gray-700/80 flex items-center justify-center shadow-lg">
+              <i class="fas fa-users text-3xl text-white"></i>
+            </div>
+          </div>
+          <button (click)="mostrarDetallesEquipo = false" class="absolute top-4 right-4 bg-gray-900/50 hover:bg-gray-900/80 rounded-full p-2 text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-2xl font-bold text-white">{{equipoSeleccionado?.nombre}}</h2>
+              <div class="flex items-center mt-2 space-x-2">
+                <span class="text-sm px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+                  {{equipoSeleccionado?.deporte?.nombre}}
+                </span>
+                <span class="text-sm px-2 py-1 rounded-full" 
+                      [ngClass]="{
+                        'bg-green-900/50 text-green-400': equipoSeleccionado?.estado === 'ACTIVO',
+                        'bg-yellow-900/50 text-yellow-400': equipoSeleccionado?.estado === 'INACTIVO'
+                      }">
+                  {{equipoSeleccionado?.estado | lowercase | titlecase}}
+                </span>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-gray-400">Creado: {{equipoSeleccionado?.fechaCreacion| date:'mediumDate'}}</p>
+              <p class="text-gray-300">{{equipoSeleccionado?.jugadoresAsociados}}/{{equipoSeleccionado?.maxJugadores}} jugadores</p>
+            </div>
+          </div>
+          
+          <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-200 mb-4 flex items-center">
+                <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                Información del equipo
+              </h3>
+              
+              <div class="space-y-3">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 pt-1">
+                    <i class="fas fa-tag text-gray-400 w-5"></i>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm text-gray-400">Categoría</p>
+                    <p class="text-gray-300">{{equipoSeleccionado?.categoria || 'No especificada'}}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 pt-1">
+                    <i class="fas fa-user-tie text-gray-400 w-5"></i>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm text-gray-400">Instructor</p>
+                    <p class="text-gray-300" *ngIf="equipoSeleccionado">{{equipoSeleccionado.instructor.nombre}} {{equipoSeleccionado.instructor.apellido}}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 pt-1">
+                    <i class="fas fa-calendar-alt text-gray-400 w-5"></i>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm text-gray-400">Eventos inscritos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+                  <i class="fas fa-users text-green-400 mr-2"></i>
+                  Jugadores ({{equipoSeleccionado?.jugadoresAsociados}})
+                </h3>
+                <button *ngIf="equipoSeleccionado" (click)="abrirModalAsociarJugador(equipoSeleccionado)" 
+                        class="text-xs bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded flex items-center"
+                        [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores">
+                  <i class="fas fa-plus mr-1"></i> Agregar
+                </button>
+              </div>
+              
+              <div *ngIf="jugadoresAsociados.length > 0; else sinJugadores" class="space-y-2">
+                <div *ngFor="let jugador of jugadoresAsociados" 
+                     class="flex items-center p-3 border border-gray-700 rounded-lg hover:bg-gray-700/50">
+                  <img [src]="jugador.deportista|| 'assets/default-avatar.png'" alt="Foto" class="w-10 h-10 rounded-full">
+                  <div class="ml-3 flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</p>
+                    <p class="text-xs text-gray-400">{{jugador.deportista.posicion.nombre}}</p>
+                  </div>
+                  <button (click)="desasociarJugador(jugador.id)" class="text-red-400 hover:text-red-300 text-sm p-1">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <ng-template #sinJugadores>
+                <div class="text-center py-4 bg-gray-700/30 rounded-lg">
+                  <i class="fas fa-users-slash text-2xl text-gray-500 mb-2"></i>
+                  <p class="text-sm text-gray-400">No hay jugadores asociados</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+          
+          <div class="mt-8 pt-6 border-t border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-200 mb-4 flex items-center">
+              <i class="fas fa-calendar-check text-purple-400 mr-2"></i>
+              Eventos próximos
+            </h3>
+            
+            
+            <ng-template #sinEventos>
+              <div class="text-center py-4 bg-gray-700/30 rounded-lg">
+                <i class="fas fa-calendar-times text-2xl text-gray-500 mb-2"></i>
+                <p class="text-sm text-gray-400">No hay eventos próximos</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
