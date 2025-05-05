@@ -52,6 +52,11 @@ export class RutinaMComponent implements OnInit{
   public dias:string[]=["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
   public dificultades:string[]=["Basico","Intermedio","Avanzado"]
   public objetivos : string[] = ["FUERZA","RESISTENCIA","VELOCIDAD","FLEXIBIDAD","TECNICA"]
+  mostrarConfirmacionEliminar: boolean = false;
+  rutinaAEliminar: Rutina | null = null;
+  showUserDropdown: boolean = false;
+  nombreInstructor: string = 'Nombre Instructor';
+  fotoPerfil: string = 'https://randomuser.me/api/portraits/men/32.jpg';
   ngOnInit(): void {
     try{
       const token=localStorage.getItem("token")
@@ -91,6 +96,18 @@ export class RutinaMComponent implements OnInit{
       alert(error.message)
     }
   }
+  onPosicionChange(event: any): void {
+    this.posicion = event.target.value;
+  }
+  logout(): void {
+  }
+  confirmarEliminarRutina(rutina: Rutina): void {
+    this.rutinaAEliminar = rutina;
+    this.mostrarConfirmacionEliminar = true;
+  }
+  toggleUserDropdown(): void {
+    this.showUserDropdown = !this.showUserDropdown;
+  }
   agregarRutina(){
     const token=localStorage.getItem("token")
     if(!token) {
@@ -101,12 +118,14 @@ export class RutinaMComponent implements OnInit{
       nombre: this.nombre,
       dia: this.dia,
       idInstructor: this.idInstructor,
-      idPosicion: this.posicion?.id ?? 0,
+      idPosicion: this.posicion?.id ??0,
       descripcion: this.descripcion,
       nivel_dificultad : this.nivelDificultad,
       duracion_esperada : this.duracion,
       objetivo : this.objetivo
     };
+    console.log(this.posicion?.nombre)
+    console.log(nuevaRutina)
     this.rservice.add(nuevaRutina, token).subscribe({
       next:(data)=>{
         alert("Rutina agregada correctamente");
@@ -120,12 +139,12 @@ export class RutinaMComponent implements OnInit{
   editarRutina(rutina: Rutina){
 
   }
-  eliminarRutina(rutina: Rutina){
+  eliminarRutina(rutina:Rutina){
+    if (this.rutinaAEliminar) {
     const token=localStorage.getItem("token")
     if(!token) {
       throw new Error("Not Token Found")
     }
-    if(confirm("Deseas Eliminar la rutina: "+rutina.id)){
       this.rservice.delete(rutina.id, token).subscribe({
         next:(data)=>{
           this.rutinas = this.rutinas.filter(r => r !== rutina);

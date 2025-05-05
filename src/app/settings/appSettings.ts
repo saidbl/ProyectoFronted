@@ -45,6 +45,7 @@ export const appSettings={
     apiGoalsJugador: "http://localhost:8080/goalsJugador",
     apiEvolucion: "http://localhost:8080/evolucion",
     apiCumplimiento: "http://localhost:8080/cumplimiento",
-    apiProgresoObjetivos :"http://localhost:8080/progresoObjetivos"
+    apiProgresoObjetivos :"http://localhost:8080/progresoObjetivos",
+    apiDesasociar:"http://localhost:8080/desasociar"
 
 }

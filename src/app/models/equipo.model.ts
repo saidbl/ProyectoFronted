@@ -11,4 +11,5 @@ export interface Equipo{
     estado : string
     categoria : string
     jugadoresAsociados : number
+    img : string
 }

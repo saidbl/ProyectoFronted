@@ -89,58 +89,67 @@
 
     <!-- Listado de equipos -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let equipo of equiposFiltrados" class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/30 transition-all duration-300 group">
+      <div *ngFor="let equipo of equiposFiltrados"
+           class="bg-gray-900/60 border border-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-blue-500/20 transition-all duration-300 group">
+        
         <div class="p-6">
-          <div class="flex items-start space-x-4">
-            <div class="flex-shrink-0">
-              <div class="h-14 w-14 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <i class="fas fa-users text-blue-400 text-xl"></i>
-              </div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-xl font-bold text-white truncate">{{equipo.nombre}}</h3>
-              <p class="text-sm text-gray-400">{{equipo.deporte.nombre}} • {{equipo.categoria}}</p>
-              
-              <div class="mt-3 flex flex-wrap gap-2">
-                <span class="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
-                  <i class="fas fa-users mr-1"></i>
-                  {{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}} jugadores
-                </span>
-                <span class="text-xs px-2 py-1 rounded-full" [ngClass]="{
-                  'bg-green-900/50 text-green-400': equipo.estado === 'ACTIVO',
-                  'bg-yellow-900/50 text-yellow-400': equipo.estado === 'INACTIVO'
-                }">
-                  {{equipo.estado | lowercase | titlecase}}
-                </span>
-              </div>
-            </div>
-          </div>
           
-          <div class="mt-4 flex items-center justify-between">
-            <div>
-              <p class="text-xs text-gray-500">
-                <i class="fas fa-calendar-alt mr-1"></i>
-                Creado: {{equipo.fechaCreacion}}
-              </p>
-            </div>
-            <div class="flex space-x-2">
-              <button (click)="verDetallesEquipo(equipo)" class="text-blue-400 hover:text-blue-300 text-sm">
-                <i class="fas fa-eye">Ver detalles</i>
-              </button>
-              <button (click)="editarEquipo(equipo)" class="text-yellow-400 hover:text-yellow-300 text-sm">
-                <i class="fas fa-edit">edicion</i>
-              </button>
-              <button (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:text-green-300 text-sm">
-                <i class="fas fa-user-plus">asociar</i>
-              </button>
-              <button (click)="confirmarEliminarEquipo(equipo)" class="text-red-400 hover:text-red-300 text-sm">
-                <i class="fas fa-trash-alt">eliminar</i>
-              </button>
-            </div>
+          <!-- Logo del equipo -->
+          <div class="flex justify-center mb-4">
+            <img 
+              [src]="'http://localhost:8080/' + equipo.img"
+              alt="Logo del equipo"
+              class="h-24 w-24 rounded-full border-4 border-gray-700 object-cover shadow-md">
           </div>
+    
+          <!-- Info principal -->
+          <div class="text-center">
+            <h3 class="text-2xl font-semibold text-white">{{equipo.nombre}}</h3>
+            <p class="text-sm text-gray-400 mt-1">
+              {{equipo.deporte.nombre}} • {{equipo.categoria}}
+            </p>
+          </div>
+    
+          <!-- Estado y jugadores -->
+          <div class="mt-4 flex justify-center gap-2 flex-wrap">
+            <span class="text-xs px-3 py-1 rounded-full bg-gray-700 text-gray-300 flex items-center gap-1">
+              <i class="fas fa-users"></i> {{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}} jugadores
+            </span>
+            <span class="text-xs px-3 py-1 rounded-full flex items-center gap-1"
+                  [ngClass]="{
+                    'bg-green-900/60 text-green-400': equipo.estado === 'ACTIVO',
+                    'bg-yellow-900/60 text-yellow-400': equipo.estado === 'INACTIVO'
+                  }">
+              <i class="fas fa-circle"></i> {{equipo.estado | lowercase | titlecase}}
+            </span>
+          </div>
+    
+          <!-- Fecha de creación -->
+          <p class="text-xs text-gray-500 mt-4 text-center">
+            <i class="fas fa-calendar-alt mr-1"></i> Creado: {{equipo.fechaCreacion | date:'mediumDate'}}
+          </p>
+    
+          <!-- Acciones -->
+          <div class="mt-4 flex justify-center space-x-4">
+            <button (click)="verDetallesEquipo(equipo)" class="text-blue-400 hover:text-blue-300 text-sm" title="Ver">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button (click)="editarEquipo(equipo)" class="text-yellow-400 hover:text-yellow-300 text-sm" title="Editar">
+              <span class="material-icons">edit</span>
+            </button>
+            <button (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:text-green-300 text-sm" title="Asociar Jugador">
+              <span class="material-icons">person_add</span>
+            </button>
+            <button (click)="confirmarEliminarEquipo(equipo)" class="text-red-400 hover:text-red-300 text-sm" title="Eliminar">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+    
         </div>
       </div>
     </div>
+    
+    
 
     <!-- Mensaje cuando no hay equipos -->
     <div *ngIf="equiposFiltrados.length === 0" class="text-center py-12">
@@ -175,14 +184,6 @@
             
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Deporte</label>
-                <select [(ngModel)]="formEquipo.id_deporte" name="deporte" 
-                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                  <option value="" disabled selected>Seleccionar deporte</option>
-                  <option *ngFor="let deporte of deportes" [value]="deporte.id">{{deporte.nombre}}</option>
-                </select>
-              </div>
-              <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Categoría</label>
                 <select [(ngModel)]="formEquipo.categoria" name="categoria" 
                         class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
@@ -198,20 +199,17 @@
                 <input [(ngModel)]="formEquipo.max_jugadores" name="max_jugadores" type="number" min="1"
                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Estado</label>
-                <select [(ngModel)]="formEquipo.estado" name="estado" 
-                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                  <option value="ACTIVO">Activo</option>
-                  <option value="INACTIVO">Inactivo</option>
-                </select>
-              </div>
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-300 mb-1">Logo (URL)</label>
-              <input [(ngModel)]="formEquipo.imagen" name="imagen" type="url" 
+              <label class="block text-sm font-medium text-gray-300 mb-1">Logo</label>
+              <input type="file"
+                     accept="image/*"
+                     (change)="onImageSelected($event)"
                      class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <div *ngIf="imagenPreview" class="mt-2">
+                <img [src]="imagenPreview" alt="Vista previa del logo" class="h-24 object-contain border rounded-lg" />
+              </div>
             </div>
             
             <div class="grid grid-cols-2 gap-4 pt-4">
@@ -288,7 +286,7 @@
                   <span class="text-sm text-white">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
                 </div>
                 <button (click)="desasociarJugador(jugador.id)" class="text-red-400 hover:text-red-300 text-sm">
-                  <i class="fas fa-times"></i>
+                  <i class="fas fa-times">desasociar</i>
                 </button>
               </div>
             </div>
@@ -337,7 +335,10 @@
         <div class="relative">
           <div class="h-48 bg-gradient-to-r from-blue-900/30 to-purple-900/30 flex items-center justify-center">
             <div class="h-24 w-24 rounded-full bg-gray-700/80 flex items-center justify-center shadow-lg">
-              <i class="fas fa-users text-3xl text-white"></i>
+              <i class="fas fa-users text-3xl text-white"><img 
+                [src]="'http://localhost:8080/' + equipoSeleccionado?.img"
+                alt="Logo del equipo"
+                class="h-24 w-24 rounded-full border-4 border-gray-700 object-cover shadow-md"></i>
             </div>
           </div>
           <button (click)="mostrarDetallesEquipo = false" class="absolute top-4 right-4 bg-gray-900/50 hover:bg-gray-900/80 rounded-full p-2 text-white">

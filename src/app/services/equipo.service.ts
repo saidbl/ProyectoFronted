@@ -23,11 +23,16 @@ export class EquipoService{
             });
             return this.http.delete<ResponseAPI>(`${appSettings.apiEliminarEquipos}/${id}`,{ headers })
         }
-    add(equipo:EquipoDTO, token: string):Observable<Equipo>{
+    add(equipo:EquipoDTO, token: string, archivo:File):Observable<Equipo>{
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${token}`
             });
-            return this.http.post<Equipo>(`${appSettings.apiAgregarEquipos}`,equipo,{ headers })
+            const formData = new FormData();
+        formData.append('archivo', archivo);
+        console.log(archivo)
+        const equipoBlob = new Blob([JSON.stringify(equipo)], { type: 'application/json' });
+        formData.append('equipo', equipoBlob);
+            return this.http.post<Equipo>(`${appSettings.apiAgregarEquipos}`,formData,{ headers })
         }
 
     listByIdDeportista( id: number,token: string): Observable<Equipo[]> {

@@ -11,7 +11,7 @@
             <a routerLink="equipoEvento" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
               <i class="fas fa-calendar-alt mr-2"></i> Eventos
             </a>
-            <a routerLink="deportistas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+            <a routerLink="rutinaDeportista" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
               <i class="fas fa-users mr-2"></i> Deportistas
             </a>
             <a routerLink="crearEquipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
@@ -175,10 +175,14 @@
           <div *ngFor="let equipo of equiposActivos.slice(0, 3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/equipos', equipo.id]">
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <div class="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <i class="fas fa-users text-green-400"></i>
+                <div class="h-14 w-14 rounded-full bg-green-500/10 flex items-center justify-center border border-gray-700 overflow-hidden">
+                  <img 
+                    [src]="'http://localhost:8080/' + equipo.img"
+                    alt="Logo del equipo"
+                    class="h-full w-full object-cover rounded-full">
                 </div>
               </div>
+              
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">{{equipo.nombre}}</p>
                 <p class="text-sm text-gray-400">{{equipo.deporte.nombre}} • {{equipo.categoria}}</p>

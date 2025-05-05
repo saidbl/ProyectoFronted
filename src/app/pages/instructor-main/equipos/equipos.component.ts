@@ -54,13 +54,16 @@ export class EquiposComponent implements OnInit{
   mostrarConfirmacionEliminar: boolean = false;
   equipoAEliminar: any = null;
   equipoEditando: boolean = false;
+  imagenPreview: string | ArrayBuffer | null = null;
+  
+
   formEquipo: any = {
     nombre: '',
     id_deporte: '',
     categoria: '',
     max_jugadores: 10,
     estado: 'ACTIVO',
-    imagen: ''
+    imagen:null
   };
   constructor() {
     this.nuevoEquipo = {
@@ -101,6 +104,20 @@ export class EquiposComponent implements OnInit{
           alert(error.message)
         }
   }
+
+  onImageSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
+      this.formEquipo.imagen = file; 
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagenPreview = reader.result; 
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   cargarDatosUsuario(): void {
     
   }
@@ -175,7 +192,29 @@ export class EquiposComponent implements OnInit{
   }
 
   guardarEquipo(): void {
-    
+    const token=localStorage.getItem("token")
+    if(!token) {
+          throw new Error("Not Token Found")
+    }
+    const nuevoEquipo: EquipoDTO = {
+      nombre: this.formEquipo.nombre,
+      idinstructor: Number(localStorage.getItem("id")),
+      iddeporte: Number(localStorage.getItem("idDeporte")),
+      maxJugadores: this.formEquipo.max_jugadores,
+      fechaCreacion: new Date(),
+      estado : "Activo",
+      categoria : this.formEquipo.categoria,
+      jugadoresAsociados: 0
+    };
+    console.log(this.formEquipo.img)
+    this.eservice.add(nuevoEquipo,token,this.formEquipo.imagen).subscribe({
+      next:(data)=>{
+        alert("agregado"+ data)
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
   }
 
 
@@ -186,7 +225,22 @@ export class EquiposComponent implements OnInit{
 
 
   desasociarJugador(asociacionId: number): void {
-    
+    const token=localStorage.getItem("token")
+    if(!token) {
+            throw new Error("Not Token Found")
+    }
+    this.jeservice.delete(asociacionId,token).subscribe({
+      next:(data)=>{
+        if(data.success){
+          alert("Desasociado")
+        }else{
+          alert("No se pudo eliminar")
+        }
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
   }
 
 
@@ -247,30 +301,10 @@ export class EquiposComponent implements OnInit{
       }
     });
     this.mostrarDetallesEquipo = true
+    this.equipoSeleccionado=equipo
   }
   crearEquipo(){
-    const token=localStorage.getItem("token")
-        if(!token) {
-          throw new Error("Not Token Found")
-        }
-        const nuevoEquipo: EquipoDTO = {
-          nombre: this.nuevoEquipo.nombre,
-          idinstructor: Number(localStorage.getItem("id")),
-          iddeporte: Number(localStorage.getItem("idDeporte")),
-          maxJugadores: this.nuevoEquipo.maxJugadores,
-          fechaCreacion: new Date(),
-          estado : "Activo",
-          categoria : this.nuevoEquipo.categoria,
-          jugadoresAsociados: 0
-        };
-        this.eservice.add(nuevoEquipo, token).subscribe({
-          next:(data)=>{
-            alert("Equipo agregado correctamente");
-          },
-          error:(err)=>{
-            console.error("Error al agregar equipo", err);
-          }
-        })
+
   }
   abrirModalAsociarJugador(equipo:Equipo){
     const token=localStorage.getItem("token")
