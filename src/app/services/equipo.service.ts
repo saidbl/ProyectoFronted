@@ -34,6 +34,20 @@ export class EquipoService{
         formData.append('equipo', equipoBlob);
             return this.http.post<Equipo>(`${appSettings.apiAgregarEquipos}`,formData,{ headers })
         }
+    update(equipoDTO: EquipoDTO, token: string, imagen?: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('equipo', new Blob([JSON.stringify(equipoDTO)], {
+      type: 'application/json'
+    }));
+    if (imagen) {
+      formData.append('imagen', imagen);
+    }
+    return this.http.put(`${appSettings.apiActualizarEquipo}/${equipoDTO.id}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
 
     listByIdDeportista( id: number,token: string): Observable<Equipo[]> {
             const headers = new HttpHeaders({

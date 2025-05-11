@@ -46,6 +46,8 @@ export const appSettings={
     apiEvolucion: "http://localhost:8080/evolucion",
     apiCumplimiento: "http://localhost:8080/cumplimiento",
     apiProgresoObjetivos :"http://localhost:8080/progresoObjetivos",
-    apiDesasociar:"http://localhost:8080/desasociar"
+    apiDesasociar:"http://localhost:8080/desasociar",
+    apiEquiposEvento:"http://localhost:8080/eventosEquipo/listar",
+    apiActualizarEquipo:"http://localhost:8080/equipos/editar"
 
 }

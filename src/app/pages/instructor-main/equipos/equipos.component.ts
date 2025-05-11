@@ -11,6 +11,7 @@ import { JugadorEquipo } from '../../../models/jugadorEquipo.model';
 import { JugadorEquipoDTO } from '../../../models/jugadorEquipoDTO.model';
 import { EquipoDTO } from '../../../models/equipoDTO.model';
 import { RouterModule } from '@angular/router'; 
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-equipos',
     standalone:true,
@@ -54,14 +55,13 @@ export class EquiposComponent implements OnInit{
   mostrarConfirmacionEliminar: boolean = false;
   equipoAEliminar: any = null;
   equipoEditando: boolean = false;
+  imagenCambiada: boolean = false;
   imagenPreview: string | ArrayBuffer | null = null;
-  
-
   formEquipo: any = {
     nombre: '',
     id_deporte: '',
     categoria: '',
-    max_jugadores: 10,
+    max_jugadores: 0,
     estado: 'ACTIVO',
     imagen:null
   };
@@ -97,6 +97,7 @@ export class EquiposComponent implements OnInit{
             },
             error: (err) => {
               console.error("Error loading data", err);
+              this.mostrarErrorSweetAlert('Error', 'No se pudieron cargar los datos iniciales');
             }
           });
           
@@ -117,33 +118,6 @@ export class EquiposComponent implements OnInit{
       reader.readAsDataURL(file);
     }
   }
-
-  cargarDatosUsuario(): void {
-    
-  }
-
-  cargarEquipos(): void {
-    
-  }
-
-  cargarDeportes(): void {
-    
-  }
-
-  cargarEstadisticas(): void {
-    
-  }
-
-  actualizarEstadisticas(): void {
-  }
-
-  cargarJugadoresDisponibles(): void {
-    this.cargarJugadoresAsociados();
-  }
-
-  cargarJugadoresAsociados(): void {
-  }
-
   filtrarEquipos(): void {
     this.equiposFiltrados = this.equipos.filter(equipo => {
       const coincideBusqueda = !this.terminoBusqueda || 
@@ -174,16 +148,28 @@ export class EquiposComponent implements OnInit{
       nombre: '',
       id_deporte: '',
       categoria: '',
-      max_jugadores: 10,
+      max_jugadores: 0,
       estado: 'ACTIVO',
       imagen: ''
     };
+    this.imagenPreview = null;
+    this.imagenCambiada = false;
     this.mostrarModalEquipo = true;
   }
 
-  abrirModalEditarEquipo(equipo: any): void {
+  abrirModalEditarEquipo(equipo: Equipo): void {
     this.equipoEditando = true;
-    this.formEquipo = { ...equipo };
+    this.formEquipo = { 
+      id: equipo.id,
+      nombre: equipo.nombre,
+      id_deporte: equipo.deporte.id.toString(),
+      categoria: equipo.categoria,
+      max_jugadores: equipo.maxJugadores,
+      estado: equipo.estado,
+    };
+    console.log(equipo.id)
+    console.log(equipo.img)
+    this.imagenPreview = this.getLogoEquipo(equipo);
     this.mostrarModalEquipo = true;
   }
 
@@ -192,11 +178,13 @@ export class EquiposComponent implements OnInit{
   }
 
   guardarEquipo(): void {
+    if (!this.validarFormularioEquipo()) return;
     const token=localStorage.getItem("token")
     if(!token) {
           throw new Error("Not Token Found")
     }
     const nuevoEquipo: EquipoDTO = {
+      id: this.formEquipo.id,
       nombre: this.formEquipo.nombre,
       idinstructor: Number(localStorage.getItem("id")),
       iddeporte: Number(localStorage.getItem("idDeporte")),
@@ -206,16 +194,42 @@ export class EquiposComponent implements OnInit{
       categoria : this.formEquipo.categoria,
       jugadoresAsociados: 0
     };
-    console.log(this.formEquipo.img)
-    this.eservice.add(nuevoEquipo,token,this.formEquipo.imagen).subscribe({
-      next:(data)=>{
-        alert("agregado"+ data)
-      },
-      error:(err)=>{
-        console.error(err)
-      }
-    })
+    if (this.equipoEditando) {
+      this.editarEquipo(nuevoEquipo, token);
+    } else {
+      this.crearEquipo(nuevoEquipo, token);
+    }
   }
+
+  crearEquipo(equipoDTO: EquipoDTO, token: string): void {
+    this.eservice.add(equipoDTO, token, this.formEquipo.imagen).subscribe({
+      next: (data) => {
+        this.mostrarExitoSweetAlert('Equipo creado', 'El equipo se ha creado correctamente');
+        this.mostrarModalEquipo = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.mostrarErrorSweetAlert('Error', 'No se pudo crear el equipo');
+      }
+    });
+  }
+  editarEquipo(equipoDTO: EquipoDTO, token: string){
+     this.eservice.update(
+      equipoDTO, 
+      token, 
+       this.formEquipo.imagen 
+    ).subscribe({
+      next: (data) => {
+        this.mostrarExitoSweetAlert('Equipo actualizado', 'El equipo se ha actualizado correctamente');
+        this.mostrarModalEquipo = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.mostrarErrorSweetAlert('Error', 'No se pudo actualizar el equipo');
+      }
+    });
+  }
+
 
 
   cerrarModalAsociar(): void {
@@ -225,22 +239,38 @@ export class EquiposComponent implements OnInit{
 
 
   desasociarJugador(asociacionId: number): void {
-    const token=localStorage.getItem("token")
-    if(!token) {
-            throw new Error("Not Token Found")
+    Swal.fire({
+      title: '¿Desasociar jugador?',
+      text: '¿Estás seguro de desasociar este jugador del equipo?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, desasociar',
+      cancelButtonText: 'Cancelar',
+      background: '#1f2937',
+      color: '#fff',
+      iconColor: '#3b82f6'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const token = localStorage.getItem("token");
+        if(!token) {
+          throw new Error("Not Token Found")
     }
-    this.jeservice.delete(asociacionId,token).subscribe({
-      next:(data)=>{
-        if(data.success){
-          alert("Desasociado")
-        }else{
-          alert("No se pudo eliminar")
-        }
-      },
-      error:(err)=>{
-        console.error(err)
+        this.jeservice.delete(asociacionId, token).subscribe({
+          next: (data) => {
+            this.mostrarExitoSweetAlert('Jugador desasociado', 'El jugador se ha desasociado del equipo');
+            if (this.equipoSeleccionado) {
+              this.verDetallesEquipo(this.equipoSeleccionado);
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            this.mostrarErrorSweetAlert('Error', 'No se pudo desasociar el jugador');
+          }
+        });
       }
-    })
+    });
   }
 
 
@@ -256,12 +286,10 @@ export class EquiposComponent implements OnInit{
   logout(): void {
   }
 
-  getLogoEquipo(equipo: any): string {
-    return equipo.imagen || 'assets/default-team.png';
+  getLogoEquipo(equipo: Equipo): string {
+    return 'http://localhost:8080/'+equipo.img || 'assets/default-team.png';
   }
-  editarEquipo(equipo:any){
 
-  }
   eliminarEquipo(equipo:Equipo){
     const token=localStorage.getItem("token")
     if(!token) {
@@ -272,19 +300,34 @@ export class EquiposComponent implements OnInit{
           this.equipos = this.equipos.filter(e => e !== equipo);
           if(data.success){
             console.log("eliminado")
+            this.mostrarExitoSweetAlert('Equipo eliminado', 'El equipo se ha eliminado correctamente');
           }else{
             alert("No se pudo eliminar")
           }
         },
         error:(err)=>{
           if (err.status === 0) {
-            console.error('No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
+            this.mostrarErrorSweetAlert('Error de conexión', 'No se pudo conectar con el servidor. Verifica tu conexión a Internet.');
           } else {
-            console.error('Error al eliminar la persona', err);
+             this.mostrarErrorSweetAlert('Error', 'No se pudo eliminar el equipo');
           }
         }
       })
     }
+  
+  validarFormularioEquipo(): boolean {
+    if (!this.formEquipo.nombre || !this.formEquipo.categoria || !this.formEquipo.max_jugadores) {
+      this.mostrarAdvertenciaSweetAlert('Campos requeridos', 'Debes completar todos los campos obligatorios');
+      return false;
+    }
+
+    if (this.formEquipo.max_jugadores < 1) {
+      this.mostrarAdvertenciaSweetAlert('Valor inválido', 'El número máximo de jugadores debe ser al menos 1');
+      return false;
+    }
+
+    return true;
+  }
   verDetallesEquipo(equipo:Equipo){
     const token=localStorage.getItem("token")
     if(!token) {
@@ -298,14 +341,13 @@ export class EquiposComponent implements OnInit{
       },
       error: (err) => {
         console.error("Error loading data", err);
+        this.mostrarErrorSweetAlert('Error', 'No se pudieron cargar los jugadores del equipo');
       }
     });
     this.mostrarDetallesEquipo = true
     this.equipoSeleccionado=equipo
   }
-  crearEquipo(){
 
-  }
   abrirModalAsociarJugador(equipo:Equipo){
     const token=localStorage.getItem("token")
     if(!token) {
@@ -320,15 +362,19 @@ export class EquiposComponent implements OnInit{
       },
       error: (err) => {
         console.error("Error loading data", err);
+        this.mostrarErrorSweetAlert('Error', 'No se pudieron cargar los jugadores disponibles');
       }
     });
     this.mostrarModalAsociarJugador = true
     this.equipoSeleccionado = equipo
   }
   asociarJugador(jugador:Deportista){
-    if(this.equipoSeleccionado?.jugadoresAsociados == this.equipoSeleccionado?.maxJugadores){
-      console.error("Equipo lleno")
-    }else{
+    if (!this.equipoSeleccionado) return;
+
+    if (this.equipoSeleccionado.jugadoresAsociados >= this.equipoSeleccionado.maxJugadores) {
+      this.mostrarAdvertenciaSweetAlert('Equipo completo', 'Este equipo ya alcanzó el máximo de jugadores permitidos');
+      return;
+    }
     if (jugador.id !== null) {
       const token=localStorage.getItem("token")
           if(!token) {
@@ -341,10 +387,12 @@ export class EquiposComponent implements OnInit{
           console.log(nuevaVinculacion.idJugador)
           this.jeservice.add(nuevaVinculacion, token).subscribe({
                 next:(data)=>{
-                  alert("Rutina vinculada correctamente");
+                  this.mostrarExitoSweetAlert('Jugador asociado', 'El jugador se ha asociado correctamente al equipo');
+                  this.mostrarModalAsociarJugador = false;
                 },
                 error:(err)=>{
-                  console.error("Error al vincular rutina", err);
+                  console.error("Error al vincular jugador", err);
+                  this.mostrarErrorSweetAlert('Error', 'No se pudo asociar el jugador al equipo');
                 }
               })
       
@@ -352,7 +400,6 @@ export class EquiposComponent implements OnInit{
     } else {
       console.error('No se ha seleccionado ningún jugador');
     }
-  }
   }
   borrarRepetidas(jugadorEquipo: JugadorEquipo[], deportistas: Deportista[], genero:string): Deportista[] {
       var gen= ""
@@ -366,4 +413,41 @@ export class EquiposComponent implements OnInit{
       const jugadoresFiltrados=deportistas.filter(r => !nombresEnComun.has(r.nombre));
       return jugadoresFiltrados.filter(r => r.genero==gen)
     }
+      mostrarExitoSweetAlert(titulo: string, mensaje: string): void {
+    Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'success',
+      confirmButtonColor: '#10b981',
+      background: '#1f2937',
+      color: '#fff',
+      iconColor: '#10b981',
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+
+  mostrarErrorSweetAlert(titulo: string, mensaje: string): void {
+    Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'error',
+      confirmButtonColor: '#ef4444',
+      background: '#1f2937',
+      color: '#fff',
+      iconColor: '#ef4444'
+    });
+  }
+
+  mostrarAdvertenciaSweetAlert(titulo: string, mensaje: string): void {
+    Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'warning',
+      confirmButtonColor: '#f59e0b',
+      background: '#1f2937',
+      color: '#fff',
+      iconColor: '#f59e0b'
+    });
+  }
 }

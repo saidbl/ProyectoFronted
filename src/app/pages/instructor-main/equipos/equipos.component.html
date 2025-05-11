@@ -59,20 +59,13 @@
                class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                placeholder="Buscar equipos...">
       </div>
-      <div>
-        <select [(ngModel)]="filtroDeporte" (change)="filtrarEquipos()" class="block w-full pl-3 pr-10 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          <option value="">Todos los deportes</option>
-          <option *ngFor="let deporte of deportes" [value]="deporte.id">{{deporte.nombre}}</option>
-        </select>
-      </div>
+      
       <div>
         <button (click)="abrirModalCrearEquipo()" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center">
           <i class="fas fa-plus mr-2"></i> Nuevo Equipo
         </button>
       </div>
     </div>
-
-    <!-- Estadísticas rápidas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-4 hover:border-blue-500/30 transition-all duration-300">
         <div class="flex justify-between items-center">
@@ -117,8 +110,8 @@
             </span>
             <span class="text-xs px-3 py-1 rounded-full flex items-center gap-1"
                   [ngClass]="{
-                    'bg-green-900/60 text-green-400': equipo.estado === 'ACTIVO',
-                    'bg-yellow-900/60 text-yellow-400': equipo.estado === 'INACTIVO'
+                    'bg-green-900/60 text-green-400': equipo.estado === 'Activo',
+                    'bg-yellow-900/60 text-yellow-400': equipo.estado === 'Inactivo'
                   }">
               <i class="fas fa-circle"></i> {{equipo.estado | lowercase | titlecase}}
             </span>
@@ -130,17 +123,17 @@
           </p>
     
           <!-- Acciones -->
-          <div class="mt-4 flex justify-center space-x-4">
+          <div  class="mt-4 flex justify-center space-x-4">
             <button (click)="verDetallesEquipo(equipo)" class="text-blue-400 hover:text-blue-300 text-sm" title="Ver">
               <span class="material-icons">visibility</span>
             </button>
-            <button (click)="editarEquipo(equipo)" class="text-yellow-400 hover:text-yellow-300 text-sm" title="Editar">
+            <button (click)="abrirModalEditarEquipo(equipo)" class="text-yellow-400 hover:text-yellow-300 text-sm" title="Editar">
               <span class="material-icons">edit</span>
             </button>
-            <button (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:text-green-300 text-sm" title="Asociar Jugador">
+            <button *ngIf="equipo.estado==='Activo'" (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:text-green-300 text-sm" title="Asociar Jugador">
               <span class="material-icons">person_add</span>
             </button>
-            <button (click)="confirmarEliminarEquipo(equipo)" class="text-red-400 hover:text-red-300 text-sm" title="Eliminar">
+            <button *ngIf="equipo.estado==='Activo'" (click)="confirmarEliminarEquipo(equipo)" class="text-red-400 hover:text-red-300 text-sm" title="Eliminar">
               <span class="material-icons">delete</span>
             </button>
           </div>
