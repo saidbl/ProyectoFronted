@@ -4,6 +4,7 @@ import { appSettings } from "../settings/appSettings";
 import { Observable } from "rxjs";
 import { Deportista } from "../models/deportista.model";
 import { Rutina } from "../models/rutina.model";
+import { DeportistaRendimiento } from "../models/deportistaRendimiento.model";
 @Injectable({
     providedIn:"root"
 })
@@ -21,6 +22,12 @@ export class DeportistaService{
                 'Authorization': `Bearer ${token}`
             });
             return this.http.get<Deportista[]>(`${appSettings.apiDeportistas}?id=${id}`, { headers });
+        }
+    listCheckRenObj( id: number,token: string): Observable<DeportistaRendimiento[]> {
+            const headers = new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            });
+            return this.http.get<DeportistaRendimiento[]>(`${appSettings.apiDeportistas}/CheckRendObj?id=${id}`, { headers });
         }
 
       logOut():void{

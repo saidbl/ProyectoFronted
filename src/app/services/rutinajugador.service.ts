@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { appSettings } from "../settings/appSettings";
 import { RutinaJugador } from "../models/rutinajugador.model";
 import { RutinaJugadorDTO } from "../models/rutinaJugadorDTO.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 
 @Injectable({
     providedIn:"root"
@@ -24,5 +25,11 @@ export class RutinaJugadorService{
             });
             console.log(rutina.idJugador)
             return this.http.post<RutinaJugador>(`${appSettings.apiVincularRutinas}`,rutina,{ headers })
+    }
+    delete(id: number, token: string): Observable<ResponseAPI>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.delete<ResponseAPI>(`${appSettings.apiRutinasJugador}/desvincular/${id}`,{ headers })
     }
 }
