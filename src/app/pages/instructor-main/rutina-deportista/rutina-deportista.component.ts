@@ -13,10 +13,9 @@ import { RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { PosicionService } from '../../../services/posicion.service';
 import { DeportistaRendimiento } from '../../../models/deportistaRendimiento.model';
-import { ObjetivoRendimientoService } from '../../../services/objetivoRendimiento.service';
 import { ObjetivoRendimiento } from '../../../models/objetivoRendimiento.model';
-import { RegistroRendimiento } from '../../../models/registroRendimiento.model';
 import { EvolucionFisicaDTO } from '../../../models/evolucionFisicaDTO.model';
+import Swal from 'sweetalert2';
 Chart.register(...registerables);
 @Component({
     selector: 'app-rutina-deportista',
@@ -30,7 +29,9 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   private rservice = inject(RutinaJugadorService)
   private rtservice = inject(RutinaService)
   private pservice = inject(PosicionService)
+  @ViewChild('rutinasChart') private chartRef!: ElementRef;
   deportistas: DeportistaRendimiento[] = [];
+  rutinasF : Rutina[]=[]
   rutinasJugador: RutinaJugador[] = [];
   rutinas: Rutina[] = []
   jugadorSeleccionado: DeportistaRendimiento|null = null;
@@ -41,7 +42,14 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   rutinasFiltradas : Rutina[]=[]
   mostrarRutinas = false;
   mostrarPerfil = false;
+  datosC: any = { 
+  porcentajeCompletadas: 0, 
+  completadas: 0, 
+  incompletas: 0 
+};
+contadorProgresos: number = 0;
   searchTerm = '';
+  chart2!: Chart;
   filtroPosicion: string = '';
   filtroEstadoFisico: string = '';
   filtroUltimaActividad: string = '';
@@ -81,6 +89,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
       const id = Number(localStorage.getItem("id"))
       const deporte = Number(localStorage.getItem("idDeporte"))
       if(!token) {
+        this.showAuthError();
         throw new Error("Not Token Found")
       }
       forkJoin({
@@ -97,10 +106,14 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
           this.posiciones= data.posiciones
           this.deportistasFiltrados = this.deportistas
           this.renderizarGrafico()
+          this.renderizarGrafico2();
           console.log(this.deportistas)
+          
         },
         error: (err) => {
           console.error("Error loading data", err);
+          Swal.fire('Error', err.message, 'error');
+
         }
       });
       
@@ -111,6 +124,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
 
   ngAfterViewInit() {
   this.renderizarGrafico();
+  this.renderizarGrafico2();
 }
   filtrarDeportistas() {
     this.deportistasFiltrados = this.deportistas.filter(d => {
@@ -136,18 +150,28 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   }
   return edad;
 }
-    calcularProgreso(objetivosTotales:ObjetivoRendimiento[],objetivosIncompletos:ObjetivoRendimiento[],totalRutinas:number,rutinasCompletadas:number):number{
-      console.log(objetivosTotales)
-       console.log(objetivosIncompletos)
-        console.log(totalRutinas)
-         console.log(rutinasCompletadas)
-      let objetivosCompletos = objetivosTotales.length-objetivosIncompletos.length
-      console.log(objetivosCompletos)
-      let total = objetivosTotales.length+ totalRutinas
-      let progreso = objetivosCompletos + rutinasCompletadas
-      let porcentaje = (progreso/ total)*100
-      return Math.round(porcentaje)
+    calcularProgreso(objetivosTotales: ObjetivoRendimiento[], objetivosIncompletos: ObjetivoRendimiento[], totalRutinas: number, rutinasCompletadas: number): number {
+        if (totalRutinas === 0 && objetivosTotales.length === 0) {
+            Swal.fire('Advertencia', 'El jugador no tiene objetivos ni rutinas asignadas', 'warning');
+            return 0;
+        }
+
+        const objetivosCompletos = objetivosTotales.length - objetivosIncompletos.length;
+        const total = objetivosTotales.length + totalRutinas;
+        
+        if (total === 0) return 0;
+        
+        const porcentaje = (objetivosCompletos + rutinasCompletadas) / total * 100;
+        const porcentajeRedondeado = Math.round(porcentaje);
+        this.progresoPromedio += porcentajeRedondeado;
+        this.contadorProgresos++;
+
+        return porcentajeRedondeado;
     }
+    getProgresoPromedioFinal(): number {
+  if (this.contadorProgresos === 0) return 0;
+  return Math.round(this.progresoPromedio / this.contadorProgresos);
+}
    normalizarProgreso(progreso: number): number {
     return Math.min(Math.max(progreso || 0, 0), 100);
   }
@@ -175,11 +199,17 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     this.filtrarDeportistas();
     this.mostrarFiltros = false;
   }
-  async abrirModalPerfil(deportista: DeportistaRendimiento) {
-    this.jugadorSeleccionado = deportista;
-    this.mostrarModalPerfil = true
-    setTimeout(() => this.renderizarGrafico(), 0);
-  }
+  abrirModalPerfil(deportistaR: DeportistaRendimiento) {
+  this.jugadorSeleccionado = deportistaR;
+      this.datosC = { 
+        porcentajeCompletadas: (deportistaR.rutinasCompletadas/deportistaR.totalRutinas)*100, 
+        completadas: deportistaR.rutinasCompletadas, 
+        incompletas: deportistaR.totalRutinas - deportistaR.rutinasCompletadas
+      }
+   setTimeout(() => this.renderizarGrafico(), 0);
+    setTimeout(() => this.renderizarGrafico2(), 0);
+  this.mostrarModalPerfil = true;
+}
 
   limpiarFiltros() {
     this.searchTerm = '';
@@ -187,25 +217,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     this.filtrarDeportistas();
     this.mostrarFiltros = false;
   }
-  abrirModal(deportista: DeportistaRendimiento) {
-    const token=localStorage.getItem("token")
-    if(!token) {
-      throw new Error("Not Token Found")
-    }
-    this.mostrarModal = true;
-    forkJoin({
-      rutinasJugador: this.rservice.list(deportista.deportista.id, token),
-    }).subscribe({
-      next: (data) => {
-        this.rutinasJugador = data.rutinasJugador;
-        this.rutinasFiltradas = this.borrarRepetidas(this.rutinasJugador, this.rutinas, deportista.deportista.posicion.nombre);
-      },
-      error: (err) => {
-        console.error("Error loading data", err);
-      }
-    });
-    this.jugadorSeleccionado = deportista
-  }
+  
     getTrend(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number {
      if (!metricas || metricas.length < 2) {
     return 0;
@@ -243,8 +255,6 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     this.chart.destroy();
   }
   console.log("hola")
-
-  // Obtener y filtrar los datos válidos
   this.datos = this.jugadorSeleccionado?.evolucionFisica;
   const datosFiltrados = this.datos?.filter(
     d => d.peso !== undefined && d.imc !== undefined && d.masaMuscular !== undefined
@@ -338,7 +348,44 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     }
   });
 }
+  renderizarGrafico2() {
+  if (!this.chartRef?.nativeElement) return;
 
+  if (this.chart2) {
+    this.chart2.destroy();
+  }
+
+  const ctx = this.chartRef.nativeElement.getContext('2d');
+  const data = {
+    completadas: this.datosC?.completadas || 0,
+    incompletas: this.datosC?.incompletas || 0,
+    porcentaje: this.datosC?.porcentajeCompletadas || 0
+  };
+
+  this.chart2 = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Completadas', 'Incompletas'],
+      datasets: [{
+        data: [data.completadas, data.incompletas],
+        backgroundColor: ['#4CAF50', '#F44336'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: {
+          display: true,
+          text: `Cumplimiento: ${data.porcentaje}%`,
+          font: { size: 16 }
+        }
+      },
+      cutout: '70%'
+    }
+  });
+}
 
   getUltimaMetrica(id:number|undefined, mid:number){
 
@@ -363,56 +410,112 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     this.cerrarModal();
   }
   async quitarRutina(rutinaJugador: RutinaJugador) {
-    const token=localStorage.getItem("token")
-    if(!token) {
-      throw new Error("Not Token Found")
-    }
-    this.rservice.delete(rutinaJugador.id,token).subscribe({
-      next:(data)=>{
-        if(data.success){
-          alert("eliminado")
-        }else{
-          alert("error")
+        const token = localStorage.getItem("token");
+        if (!token) {
+            this.showAuthError();
+            return;
         }
-      },
-      error:(err)=>{
-        console.error(err)
-      }
-    })
-  }
 
-  asignarRutina(deportista:DeportistaRendimiento| null ) {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar!'
+        });
+
+        if (result.isConfirmed) {
+            this.rservice.delete(rutinaJugador.id, token).subscribe({
+                next: (data) => {
+                    if (data.success) {
+                        Swal.fire('¡Eliminado!', 'La rutina fue desvinculada', 'success');
+                        this.abrirModalAsignar(this.jugadorSeleccionado);
+                    } else {
+                        Swal.fire('Error', 'No se pudo eliminar la rutina', 'error');
+                    }
+                },
+                error: (err) => {
+                    console.error(err);
+                    Swal.fire('Error', 'Ocurrió un error al procesar la solicitud', 'error');
+                }
+            });
+        }
+    }
+
+  asignarRutina(deportista: DeportistaRendimiento | null) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            this.showAuthError();
+            return;
+        }
+
+        if (!this.rutinaSeleccionada) {
+            Swal.fire('Advertencia', 'Debes seleccionar una rutina primero', 'warning');
+            return;
+        }
+
+        const nuevaVinculacion: RutinaJugadorDTO = {
+            idJugador: this.jugadorSeleccionado?.deportista?.id,
+            idRutina: this.rutinaSeleccionada
+        };
+
+        this.rservice.add(nuevaVinculacion, token).subscribe({
+            next: (data) => {
+                Swal.fire('¡Éxito!', 'Rutina vinculada correctamente', 'success');
+                this.abrirModalAsignar(this.jugadorSeleccionado);
+            },
+            error: (err) => {
+                console.error("Error al vincular rutina", err);
+                Swal.fire('Error', 'No se pudo vincular la rutina', 'error');
+            }
+        });
+    }
+    abrirModalAsignar(deportista: DeportistaRendimiento|null) {
     const token=localStorage.getItem("token")
     if(!token) {
+      this.showAuthError();
       throw new Error("Not Token Found")
     }
-    const nuevaVinculacion: RutinaJugadorDTO = {
-          idJugador: this.jugadorSeleccionado?.deportista?.id,
-          idRutina: this.rutinaSeleccionada
-        };
-    this.rservice.add(nuevaVinculacion, token).subscribe({
-          next:(data)=>{
-            alert("Rutina vinculada correctamente");
-          },
-          error:(err)=>{
-            console.error("Error al vincular rutina", err);
-          }
-        })
-  }
-    abrirModalAsignar(deportista: any) {
+    this.mostrarModal = true;
+    forkJoin({
+      rutinasJugador: this.rservice.list(deportista?.deportista?.id??0, token),
+    }).subscribe({
+      next: (data) => {
+        this.rutinasJugador = data.rutinasJugador;
+        this.rutinasF =this.borrarRepetidas(this.rutinasJugador, this.rutinas, deportista?.deportista?.posicion?.nombre??"");
+        this.rutinasFiltradas = this.borrarRepetidas(this.rutinasJugador, this.rutinas, deportista?.deportista?.posicion?.nombre??"");
+        if (this.rutinasFiltradas.length === 0) {
+                    Swal.fire('Info', 'No hay rutinas disponibles para asignar', 'info');
+                }
+      },
+      error: (err) => {
+        console.error("Error loading data", err);
+        Swal.fire('Error', 'No se pudieron cargar las rutinas', 'error');
+      }
+    });
     this.jugadorSeleccionado = deportista;
     this.mostrarModalAsignar = true;
     this.busquedaRutina = '';
     this.filtroTipoRutina = '';
     this.filtrarRutinas();
   }
+  private showAuthError() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de autenticación',
+            text: 'Tu sesión ha expirado o no estás autenticado',
+            confirmButtonText: 'Entendido',
+            allowOutsideClick: false
+        }).then(() => {
+        });
+    }
    filtrarRutinas() {
-    this.rutinasFiltradas = this.rutinas.filter(r => {
+    this.rutinasFiltradas = this.rutinasF.filter(r => {
       const matchesSearch = !this.busquedaRutina || 
         r.nombre.toLowerCase().includes(this.busquedaRutina.toLowerCase());
-      
       const matchesType = !this.filtroTipoRutina || r.objetivo === this.filtroTipoRutina;
-      
       return matchesSearch && matchesType;
     });
   }
@@ -420,8 +523,8 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     this.filtroTipoRutina = tipo;
     this.filtrarRutinas();
   }
-   seleccionarRutina(rutina: any) {
-    this.rutinaSeleccionada = rutina;
+   seleccionarRutina(rutina: Rutina) {
+    this.rutinaSeleccionada = rutina.id;
   }
     obtenerIconoRutina(objetivo: string): string {
     switch(objetivo) {
@@ -440,6 +543,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
     this.mostrarModalPerfil = false;
     this.mostrarModalRutinas = false;
     this.jugadorSeleccionado = null;
+    this.rutinaSeleccionada = 0
     
     if (this.evolucionChart) {
       this.evolucionChart.destroy();
