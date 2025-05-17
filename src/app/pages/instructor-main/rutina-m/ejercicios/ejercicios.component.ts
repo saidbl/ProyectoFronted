@@ -1,21 +1,4 @@
 import { Component, OnInit , inject} from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,14 +8,11 @@ import { RutinaService } from '../../../../services/rutina.service';
 import { forkJoin } from 'rxjs';
 import { EjercicioRutinaService } from '../../../../services/ejerciciorutina.service';
 import { EjercicioRutinaDTO } from '../../../../models/ejercicioRutinaDTO.model';
-
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-ejercicios',
     standalone:true,
-    imports: [MatButtonModule, MatToolbarModule, MatCardModule, MatIconModule, MatInputModule,
-        MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule,
-        MatSnackBarModule, MatSidenavModule, MatListModule, MatSelectModule, MatTabsModule,
-        MatDatepickerModule, MatNativeDateModule, FormsModule, CommonModule, RouterModule],
+    imports: [ FormsModule, CommonModule, RouterModule],
     templateUrl: './ejercicios.component.html',
     styleUrl: './ejercicios.component.css'
 }) 
@@ -40,6 +20,7 @@ export class EjerciciosComponent implements OnInit{
   private rservice = inject(RutinaService)
   private eservice = inject(EjercicioRutinaService)
   nombre : string = ''
+  id :number = 0
   descripcion : string = ''
   rutina : Rutina|null = null
   rutinas : Rutina []=[]
@@ -47,6 +28,7 @@ export class EjerciciosComponent implements OnInit{
   repeticiones:string = ''
   descanso : string = ''
   ejercicios : EjercicioRutina[] = []
+  modoEdicion:boolean = false
   orden :  number = 0
   ngOnInit(): void {
     try{
@@ -69,65 +51,117 @@ export class EjerciciosComponent implements OnInit{
                 console.log(this.ejercicios)
               },
               error: (err) => {
-                console.error("Error loading data", err);
+                Swal.fire('Error', 'No se pudieron cargar los ejercicios', 'error');
               }
             });
     }catch(error:any){
-      alert(error.message)
+      Swal.fire('Error', error.message, 'error');
     }
   }
+   limpiarFormulario(): void {
+    this.nombre = "";
+    this.descripcion= "",
+    this.series=0,
+    this.repeticiones='0',
+    this.descanso="",
+    this.orden = 0
+    this.rutina = null
+    this.modoEdicion = false;
+  }
 
-  agregarEjercicio(){
+  confirmarEliminarRutina(ejercicio: EjercicioRutina): void {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: `¿Deseas eliminar el ejercicio "${ejercicio.nombre}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.eliminarEjercicio(ejercicio);
+        }
+      });
+    }
+  async agregarEjercicio():Promise<void>{
     const token=localStorage.getItem("token")
             if(!token) {
-              throw new Error("Not Token Found")
+                 await Swal.fire('Error', 'Token no encontrado', 'error');
+                 return;
             }
+            if (!this.nombre || !this.descripcion || !this.series || !this.repeticiones || !this.descanso || !this.orden ||!this.rutina) {
+                await Swal.fire('Campos incompletos', 'Por favor, completa todos los campos requeridos.', 'warning');
+                return;
+              }
             const nuevaRutina: EjercicioRutinaDTO = {
               nombre: this.nombre,
-              idrutina: this.rutina?.id,
+              idrutina: this.rutina?.id?? 0,
               descripcion:this.descripcion,
               series: this.series,
               repeticiones: this.repeticiones,
               descanso : this.descanso,
               orden : this.orden,
             };
+            if (!this.modoEdicion) {
             this.eservice.add(nuevaRutina, token).subscribe({
-              next:(data)=>{
-                alert("Ejercicio agregado correctamente");
-              },
-              error:(err)=>{
-                console.error("Error al agregar equipo", err);
-              }
+              next: async (data) => {
+                      await Swal.fire('¡Éxito!', 'Ejercicio agregado correctamente', 'success');
+                      this.ngOnInit();
+                      this.limpiarFormulario();
+                    },
+                    error: async (err) => {
+                      console.error(err);
+                      await Swal.fire('Error', 'No se pudo agregar el Ejercicio', 'error');
+                    }
             })
+          }else{
+            this.eservice.edit(this.id, nuevaRutina, token).subscribe({
+                  next: async (data) => {
+                    await Swal.fire('¡Éxito!', 'Ejercicio actualizado correctamente', 'success');
+                    this.ngOnInit();
+                    this.limpiarFormulario();
+                  },
+                  error: async (err) => {
+                    console.error(err);
+                    await Swal.fire('Error', 'No se pudo actualizar el ejercicio', 'error');
+                  }
+                });
+          }
   }
 
   editarEjercicio(ejercicio : EjercicioRutina){
-
+    this.modoEdicion=true
+    this.nombre= ejercicio.nombre,
+    this.descripcion= ejercicio.descripcion,
+    this.series=ejercicio.series,
+    this.repeticiones=ejercicio.repeticiones,
+    this.descanso=ejercicio.descanso,
+    this.orden = ejercicio.orden
+    this.id = ejercicio.id
+    this.rutina = this.rutinas.find(rut => rut.id === ejercicio.rutina.id) ?? null;
   }
 
-  eliminarEjercicio(ejercicio : EjercicioRutina){
+   async  eliminarEjercicio(ejercicio : EjercicioRutina): Promise<void>{
     const token=localStorage.getItem("token")
     if(!token) {
-      throw new Error("Not Token Found")
+      await Swal.fire('Error', 'Token no encontrado', 'error');
+          return;
     }
-    if(confirm("Deseas Eliminar la ejercicio: "+ejercicio.id)){
       this.eservice.delete(ejercicio.id, token).subscribe({
-        next:(data)=>{
-          this.ejercicios = this.ejercicios.filter(e => e !== ejercicio);
-          if(data.success){
-            console.log("eliminado")
-          }else{
-            alert("No se pudo eliminar")
-          }
-        },
-        error:(err)=>{
-          if (err.status === 0) {
-            console.error('No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
-          } else {
-            console.error('Error al eliminar la persona', err);
-          }
-        }
+        next: async (data) => {
+              if (data.success) {
+                this.ejercicios = this.ejercicios.filter(r => r.id !== ejercicio.id);
+                await Swal.fire('Eliminado', 'El ejercicio fue eliminado correctamente', 'success');
+              } else {
+                await Swal.fire('Error', 'No se pudo eliminar el ejercicio', 'error');
+              }
+            },
+            error: async (err) => {
+              console.error(err);
+              await Swal.fire('Error', 'Error al eliminar el ejercicio', 'error');
+            }
       })
     }
   }
-}

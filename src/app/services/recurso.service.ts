@@ -2,6 +2,7 @@ import { Injectable,inject } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { RecursoRutina } from "../models/recursoRutina.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 @Injectable({
     providedIn:"root"
 })
@@ -33,6 +34,12 @@ export class RecursoService {
         'Authorization': `Bearer ${token}`
       });
       return this.http.get<RecursoRutina[]>(`${this.apiUrl}/ejercicio/videos/${instructorId}`, { headers });
+    }
+    eliminar(id :number, token : string ):Observable<ResponseAPI>{
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.delete<ResponseAPI>(`${this.apiUrl}/ejercicio/eliminar/${id}`, { headers });
     }
   }
   

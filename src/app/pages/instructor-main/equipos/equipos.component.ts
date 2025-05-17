@@ -12,10 +12,11 @@ import { JugadorEquipoDTO } from '../../../models/jugadorEquipoDTO.model';
 import { EquipoDTO } from '../../../models/equipoDTO.model';
 import { RouterModule } from '@angular/router'; 
 import Swal from 'sweetalert2';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
     selector: 'app-equipos',
     standalone:true,
-    imports: [FormsModule, CommonModule, RouterModule],
+    imports: [FormsModule, CommonModule, RouterModule,MatIconModule],
     templateUrl: './equipos.component.html',
     styleUrls: [ './equipos.component.css']
 })

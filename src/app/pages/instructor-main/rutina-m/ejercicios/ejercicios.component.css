@@ -1,24 +1,42 @@
-.nav-link {
-    position: relative;
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: #ccc;
-    transition: color 0.3s;
+  .nav-item {
+    @apply text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center;
   }
-  .nav-link:hover {
-    color: #60a5fa;
+
+  .form-group {
+    @apply space-y-2;
   }
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 50%;
-    background-color: #3b82f6;
-    transition: all 0.3s ease;
+
+  .form-label {
+    @apply text-sm font-medium text-gray-400;
   }
-  .nav-link:hover::after {
-    width: 100%;
-    left: 0;
+
+  .form-input {
+    @apply w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-gray-100 placeholder-gray-500 
+           focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
+  }
+
+  .form-select {
+    @apply form-input pr-8 bg-no-repeat bg-[length:24px_24px] bg-[center_right_0.5rem] cursor-pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239CA3AF'%3e%3cpath d='M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z'/%3e%3c/svg%3e");
+  }
+
+  .input-icon {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 text-gray-400;
+  }
+
+  .custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #3B82F6 #1F2937;
+  }
+
+  .custom-scroll::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    @apply bg-gray-800 rounded-full;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    @apply bg-blue-500 rounded-full hover:bg-blue-600;
   }

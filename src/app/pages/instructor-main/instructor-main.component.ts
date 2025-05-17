@@ -116,76 +116,12 @@ export class InstructorMainComponent implements OnInit {
     }
     
   }
-
-  cargarDeportistas() {
-  }
-
-  cargarEquipos() {
-  }
-
-  cargarEventos() {
-  }
-
-  cargarRutinas() {
-  }
-
-  cargarHistorialInscripciones() {
-  }
-
-  agregarRutina() {
-  }
-
-  asignarDeportista() {
-  }
-
-  inscribirEquipo() {
-  }
-
-  editarEquipo(id: number) {
-  }
-
-  eliminarEquipo(id: number) {
-  }
-
-  eliminarRutina(id: number) {
-  }
-
-  editarDeportista(id: number) {
-  }
-
-  eliminarDeportista(id: number) {
-  }
-
-  inscribirEquipoEvento(eventoId: number) {
-  }
-  cargarDatosInstructor(): void {
-  }
-
-  cargarEstadisticas(): void {
-
-  }
-
-  cargarDeportistasRecientes(): void {
-  }
-
-  cargarEquiposActivos(): void {
-
-  }
-
-  cargarRutinasPendientes(): void {
-
-  }
-
   toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
   }
 
   logout(): void {
   }
-
-  editarRutina(rutinaId: number): void {
-  }
-
   mostrarNotificacion(mensaje: string): void {
     this.notificationMessage = mensaje;
     this.showNotification = true;

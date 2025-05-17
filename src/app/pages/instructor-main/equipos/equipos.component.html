@@ -225,14 +225,17 @@
     <div *ngIf="mostrarModalAsociarJugador" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6">
-          <div class="flex justify-between items-center mb-4">
+          <button mat-icon-button
+              (click)="mostrarModalAsociarJugador = false"
+              class=" top-4 right-100 bg-red-700/80 hover:bg-red-800 rounded-full shadow-lg"
+              style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+              <mat-icon class="text-white">close</mat-icon>
+            </button>
+          <div class="flex justify-between items-center mb-4 ">
             <h2 class="text-xl font-bold text-white">
               <i class="fas fa-user-plus mr-2 text-green-400"></i>
-              Asociar Jugadores a {{equipoSeleccionado?.nombre}}
+              Asociar Jugadores a {{equipoSeleccionado?.nombre}} 
             </h2>
-            <button (click)="cerrarModalAsociar()" class="text-gray-400 hover:text-gray-300">
-              <i class="fas fa-times"></i>
-            </button>
           </div>
           
           <div class="mb-4">
@@ -259,12 +262,14 @@
               <button *ngIf="equipoSeleccionado"
               (click)="asociarJugador(jugador)" 
                       class="text-green-400 hover:text-green-300 text-sm p-1"
-                      [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores">
-                <i class="fas fa-plus">asociar</i>
+                      [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores"
+                      mat-icon-button
+                      aria-label="Asociar jugador">
+                 <mat-icon color="primary">person_add</mat-icon>
               </button>
             </div>
             
-            <div *ngIf="jugadoresFiltrados.length === 0" class="text-center py-4 text-gray-500">
+            <div *ngIf="jugadoresDisponibles.length === 0" class="text-center py-4 text-gray-500">
               No se encontraron jugadores disponibles
             </div>
           </div>
@@ -278,8 +283,11 @@
                   <img [src]="jugador.deportista || 'assets/default-avatar.png'" alt="Foto" class="w-8 h-8 rounded-full">
                   <span class="text-sm text-white">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
                 </div>
-                <button (click)="desasociarJugador(jugador.id)" class="text-red-400 hover:text-red-300 text-sm">
-                  <i class="fas fa-times">desasociar</i>
+                <button (click)="desasociarJugador(jugador.id)" 
+                    class="text-red-400 hover:text-red-300 text-sm p-1"
+                    mat-icon-button
+                    aria-label="Desasociar jugador">
+                   <mat-icon color="warn">person_remove</mat-icon>
                 </button>
               </div>
             </div>
@@ -334,9 +342,12 @@
                 class="h-24 w-24 rounded-full border-4 border-gray-700 object-cover shadow-md"></i>
             </div>
           </div>
-          <button (click)="mostrarDetallesEquipo = false" class="absolute top-4 right-4 bg-gray-900/50 hover:bg-gray-900/80 rounded-full p-2 text-white">
-            <i class="fas fa-times"></i>
-          </button>
+          <button mat-icon-button
+          (click)="mostrarDetallesEquipo = false"
+          class="absolute top-4 right-4 bg-red-700/80 hover:bg-red-800 rounded-full shadow-lg"
+          style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+          <mat-icon class="text-white">close</mat-icon>
+        </button>
         </div>
         
         <div class="p-6">
@@ -389,15 +400,6 @@
                     <p class="text-gray-300" *ngIf="equipoSeleccionado">{{equipoSeleccionado.instructor.nombre}} {{equipoSeleccionado.instructor.apellido}}</p>
                   </div>
                 </div>
-                
-                <div class="flex items-start">
-                  <div class="flex-shrink-0 pt-1">
-                    <i class="fas fa-calendar-alt text-gray-400 w-5"></i>
-                  </div>
-                  <div class="ml-3">
-                    <p class="text-sm text-gray-400">Eventos inscritos</p>
-                  </div>
-                </div>
               </div>
             </div>
             
@@ -422,9 +424,12 @@
                     <p class="text-sm font-medium text-white truncate">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</p>
                     <p class="text-xs text-gray-400">{{jugador.deportista.posicion.nombre}}</p>
                   </div>
-                  <button (click)="desasociarJugador(jugador.id)" class="text-red-400 hover:text-red-300 text-sm p-1">
-                    <i class="fas fa-times"></i>
-                  </button>
+                  <button (click)="desasociarJugador(jugador.id)" 
+                    class="text-red-400 hover:text-red-300 text-sm p-1"
+                    mat-icon-button
+                    aria-label="Desasociar jugador">
+                   <mat-icon color="warn">person_remove</mat-icon>
+                </button>
                 </div>
               </div>
               <ng-template #sinJugadores>
@@ -434,21 +439,6 @@
                 </div>
               </ng-template>
             </div>
-          </div>
-          
-          <div class="mt-8 pt-6 border-t border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-200 mb-4 flex items-center">
-              <i class="fas fa-calendar-check text-purple-400 mr-2"></i>
-              Eventos próximos
-            </h3>
-            
-            
-            <ng-template #sinEventos>
-              <div class="text-center py-4 bg-gray-700/30 rounded-lg">
-                <i class="fas fa-calendar-times text-2xl text-gray-500 mb-2"></i>
-                <p class="text-sm text-gray-400">No hay eventos próximos</p>
-              </div>
-            </ng-template>
           </div>
         </div>
       </div>

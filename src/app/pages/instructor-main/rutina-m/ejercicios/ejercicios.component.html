@@ -1,92 +1,153 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 py-12 px-6 font-sans text-white">
-    <!-- Encabezado principal -->
-    <div class="max-w-7xl mx-auto text-center mb-16">
-      <h1 class="text-5xl font-bold font-playfair text-blue-400 drop-shadow-xl">Gestión de Ejercicios</h1>
-      <p class="mt-4 text-xl text-gray-300">Optimiza tus entrenamientos con ejercicios personalizados.</p>
+<div class="min-h-screen bg-gray-950 font-sans text-gray-100">
+  <!-- Barra de navegación -->
+  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-center space-x-10">
+        <a routerLink="../.." class="nav-item">
+          <i class="fas fa-home mr-2"></i> Principal
+        </a>
+        <a routerLink=".." class="nav-item">
+          <i class="fas fa-dumbbell mr-2"></i> Rutinas
+        </a>
+        <a routerLink="../videos" class="nav-item">
+          <i class="fas fa-video mr-2"></i> Videos
+        </a>
+      </div>
     </div>
-  
-    <!-- Navegación superior -->
-    <nav class="max-w-7xl mx-auto flex justify-center space-x-8 mb-12 border-b border-gray-700 pb-4">
-      <a routerLink="../.." class="nav-link">Principal</a>
-      <a routerLink=".." class="nav-link">Rutinas</a>
-      <a routerLink="../videos" class="nav-link">Videos</a>
-    </nav>
-  
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
-  
-      <!-- Formulario -->
-      <div class="bg-gray-900 shadow-2xl rounded-2xl p-8">
-        <h2 class="text-3xl font-bold text-center text-blue-400 mb-6">Nuevo Ejercicio</h2>
-        <form #rutinaForm="ngForm" class="space-y-6">
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Nombre del ejercicio</mat-label>
-            <input matInput [(ngModel)]="nombre" name="nombre" required />
-            <mat-icon matSuffix>fitness_center</mat-icon>
-          </mat-form-field>
-  
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Descripción</mat-label>
-            <textarea matInput [(ngModel)]="descripcion" name="descripcion" required></textarea>
-            <mat-icon matSuffix>description</mat-icon>
-          </mat-form-field>
-  
-          <div class="grid grid-cols-2 gap-4">
-            <mat-form-field appearance="fill" class="w-full">
-              <mat-label>Rutina Asociada</mat-label>
-              <mat-select [(ngModel)]="rutina" name="rutina" required>
-                <mat-option *ngFor="let rutina of rutinas" [value]="rutina">{{ rutina.nombre }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            
-            <mat-form-field appearance="fill" class="w-full" >
-                <mat-label>Series:</mat-label>
-                <input matInput [(ngModel)]="series" type="number" name="series" required />
-            </mat-form-field>
-  
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Encabezado -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-playfair">
+        Gestión de Ejercicios
+      </h1>
+      <p class="mt-4 text-lg text-gray-400">Construye rutinas efectivas con ejercicios detallados</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Formulario Nuevo Ejercicio -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 hover:border-blue-500/30 transition-all duration-300">
+        <h2 class="text-2xl font-bold text-center mb-6 text-blue-400">
+          <i class="fas fa-plus-circle mr-2"></i>Nuevo Ejercicio
+        </h2>
+        
+        <form #ejercicioForm="ngForm" class="space-y-6">
+          <div class="form-group">
+            <label class="form-label">Nombre del Ejercicio</label>
+            <div class="input-group">
+              <input [(ngModel)]="nombre" name="nombre" required 
+                     class="form-input" placeholder="Ej: Press de banca">
+              <i class="fas fa-dumbbell input-icon"></i>
+            </div>
           </div>
-  
-  
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Repeticiones</mat-label>
-            <input matInput [(ngModel)]="repeticiones" name="repeticiones" required />
-          </mat-form-field>
 
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Descanso</mat-label>
-            <input matInput [(ngModel)]="descanso" name="descanso" required />
-          </mat-form-field>
+          <div class="form-group">
+            <label class="form-label">Descripción técnica</label>
+            <div class="input-group">
+              <textarea [(ngModel)]="descripcion" name="descripcion" required
+                        class="form-input h-32" placeholder="Detalla la ejecución correcta"></textarea>
+              <i class="fas fa-align-left input-icon"></i>
+            </div>
+          </div>
 
-          <mat-form-field appearance="fill" class="w-full" >
-            <mat-label>Orden:</mat-label>
-            <input matInput [(ngModel)]="orden" type="number" name="orden" required />
-        </mat-form-field>
-  
-          <button mat-raised-button color="primary" (click)="agregarEjercicio()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all">
-            Agregar Ejercicio
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">Rutina asociada</label>
+              <select [(ngModel)]="rutina" name="rutina" required class="form-select">
+                <option *ngFor="let rutina of rutinas" [ngValue]="rutina">{{ rutina.nombre }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Orden en la rutina</label>
+              <input type="number" [(ngModel)]="orden" name="orden" required 
+                     class="form-input" placeholder="Número de orden">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">Series</label>
+              <input type="number" [(ngModel)]="series" name="series" required 
+                     class="form-input" placeholder="Número de series">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Repeticiones</label>
+              <input type="number" [(ngModel)]="repeticiones" name="repeticiones" required 
+                     class="form-input" placeholder="Reps por serie">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descanso entre series</label>
+            <div class="input-group">
+              <input [(ngModel)]="descanso" name="descanso" required 
+                     class="form-input" placeholder="Ej: 90 segundos">
+              <i class="fas fa-clock input-icon"></i>
+            </div>
+          </div>
+
+          <button (click)="agregarEjercicio()" 
+                  class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl font-semibold shadow-lg transition-all duration-300">
+            <i class="fas fa-save mr-2"></i>Guardar Ejercicio
           </button>
         </form>
       </div>
-  
-      <!-- Lista de Rutinas -->
-      <div class="bg-gray-900 shadow-2xl rounded-2xl p-6">
-        <h2 class="text-3xl font-bold text-center text-blue-400 mb-6">Ejercicios Existentes</h2>
-        <div class="max-h-96 overflow-y-auto space-y-4">
-          <div *ngFor="let ejercicio of ejercicios" class="bg-gray-800 p-4 rounded-xl shadow hover:shadow-xl transition transform hover:-translate-y-1">
-            <h4 class="text-xl font-semibold text-center text-white">{{ ejercicio.nombre }}</h4>
-            <p class="text-sm text-gray-300 text-center">{{ ejercicio.descripcion }}</p>
-            <div class="grid grid-cols-2 gap-2 text-sm text-gray-400 mt-2">
-              <p>Descanso: <span class="text-blue-400 font-medium">{{ ejercicio.descanso}}</span></p>
-              <p>Orden: <span class="text-blue-400 font-medium">{{ ejercicio.orden }}</span></p>
-              <p>Repeticiones <span class="text-blue-400 font-medium">{{ ejercicio.repeticiones}}</span></p>
-              <p class="col-span-2">Series: <span class="text-blue-400 font-medium">{{ ejercicio.series }}</span></p>
+
+      <!-- Listado de Ejercicios -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-500/30 transition-all duration-300">
+        <h2 class="text-2xl font-bold text-center mb-6 text-purple-400">
+          <i class="fas fa-clipboard-list mr-2"></i>Ejercicios Registrados
+        </h2>
+        
+        <div class="max-h-[655px] overflow-y-auto custom-scroll pr-2">
+          <div *ngFor="let ejercicio of ejercicios" 
+               class="group bg-gray-800/50 p-5 rounded-xl mb-4 border border-gray-700 hover:border-blue-400 transition-all duration-300">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="text-xl font-semibold text-blue-400">{{ ejercicio.nombre }}</h4>
+                <p class="text-sm text-gray-400 mt-1">{{ ejercicio.descripcion }}</p>
+              </div>
+              <span class="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+                Orden: {{ ejercicio.orden }}
+              </span>
             </div>
-            <div class="flex justify-center mt-4 space-x-2">
-              <button (click)="editarEjercicio(ejercicio)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm">Editar</button>
-              <button (click)="eliminarEjercicio(ejercicio)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md text-sm">Eliminar</button>
+
+            <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+              <div class="flex items-center">
+                <i class="fas fa-redo-alt text-purple-400 mr-2"></i>
+                <span class="text-gray-300">{{ ejercicio.repeticiones }} repeticiones</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-layer-group text-blue-400 mr-2"></i>
+                <span class="text-gray-300">{{ ejercicio.series }} series</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-clock text-green-400 mr-2"></i>
+                <span class="text-gray-300">{{ ejercicio.descanso }} descanso</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-link text-yellow-400 mr-2"></i>
+                <span class="text-gray-300">{{ ejercicio.rutina.nombre }}</span>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button (click)="editarEjercicio(ejercicio)" 
+                      class="text-sm px-3 py-1 rounded-md bg-gray-700 hover:bg-blue-500/20 text-blue-400 border border-blue-400/30">
+                <i class="fas fa-edit mr-1"></i>Editar
+              </button>
+              <button (click)="eliminarEjercicio(ejercicio)" 
+                      class="text-sm px-3 py-1 rounded-md bg-gray-700 hover:bg-red-500/20 text-red-400 border border-red-400/30">
+                <i class="fas fa-trash-alt mr-1"></i>Eliminar
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+</div>

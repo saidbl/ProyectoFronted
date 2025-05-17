@@ -33,6 +33,12 @@ export class RutinaService{
         console.log(rutina.objetivo)
         return this.http.post<Rutina>(`${appSettings.apiAgregarRutinas}`,rutina,{ headers })
     }
+    edit(id:number,rutina:RutinaDTO, token: string):Observable<Rutina>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.put<Rutina>(`${appSettings.apiRutinas}/editar/${id}`,rutina,{ headers })
+    }
     getTotalRutinasByInstructorId(instructorId: number, token:string): Observable<number> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`

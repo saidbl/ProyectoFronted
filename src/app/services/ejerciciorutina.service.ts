@@ -18,6 +18,12 @@ export class EjercicioRutinaService {
       });
       return this.http.get<EjercicioRutina[]>(`${appSettings.apiEjercicios}?id=${idInstructor}`,{headers});
     }
+    edit (id : number,ejercicio:EjercicioRutinaDTO, token: string):Observable<EjercicioRutina>{
+                const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+                return this.http.put<EjercicioRutina>(`${appSettings.apiEjercicios}/editar/${id}`,ejercicio,{ headers })
+            }
 
     add(ejercicio:EjercicioRutinaDTO, token: string):Observable<EjercicioRutina>{
                 const headers = new HttpHeaders({

@@ -1,4 +1,4 @@
-import { RecursoRutina } from "./recursoRutina.model"
+
 
 export interface EjercicioRutinaDTO{
     idrutina? : number

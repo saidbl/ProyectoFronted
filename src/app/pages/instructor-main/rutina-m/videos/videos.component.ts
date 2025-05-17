@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EjercicioRutinaService } from '../../../../services/ejerciciorutina.service';
 import { EjercicioRutina } from '../../../../models/ejercicioRutina.model';
+import { MatIcon } from '@angular/material/icon';
 @Component({
     selector: 'app-videos',
     standalone:true,
-    imports: [FormsModule, CommonModule, RouterModule],
+    imports: [FormsModule, CommonModule, RouterModule,MatIcon],
     templateUrl: './videos.component.html',
     styleUrl: './videos.component.css'
 })
@@ -18,7 +19,7 @@ export class VideosComponent implements OnInit{
   private eService = inject(EjercicioRutinaService)
   videos: any[] = [];
     videoFile: File | null = null;
-    ejercicioId = 5;
+    ejercicioId = 0;
     recursos: RecursoRutina[] = [];
     archivo?: File;
     descripcion = '';
@@ -69,6 +70,24 @@ export class VideosComponent implements OnInit{
     }
   }
   eliminarRecurso(id: number) {
-    
+    const token=localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    this.recursoService.eliminar(id,token).subscribe({
+      next:(data)=>{
+        if(data.success){
+           alert("Eliminado")
+        }else{
+           alert("error.message")
+        }
+      },
+      error:(error)=>{
+         alert(error.message)
+      }
+    })
+  }
+  getEjercicioNombre(id:number){
+
   }
 }

@@ -387,25 +387,6 @@ contadorProgresos: number = 0;
   });
 }
 
-  getUltimaMetrica(id:number|undefined, mid:number){
-
-  }
-
-  calcularProgresoGeneral(deportista: any){
-
-  }
-  calcularProgresoMetrica(jugadorSeleccionado:number|undefined, metrica:number):number{
-    return 2;
-  }
-  getObjetivo(id:number|undefined, metrica:number){
-
-  }
-  marcarDestacado(){
-
-  }
-  generarReporte(){
-
-  }
     verDetalleRutina(rutina: any) {
     this.cerrarModal();
   }
@@ -536,8 +517,6 @@ contadorProgresos: number = 0;
       default: return 'fas fa-dumbbell text-gray-400';
     }
   }
-
-
   cerrarModal() {
     this.mostrarModalAsignar = false;
     this.mostrarModalPerfil = false;

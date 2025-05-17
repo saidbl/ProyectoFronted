@@ -264,9 +264,6 @@
                 <button [routerLink]="['/rutinas', rutina.id]" class="text-blue-400 hover:text-blue-300 mr-3">
                   <i class="fas fa-eye"></i>
                 </button>
-                <button (click)="editarRutina(rutina.id)" class="text-yellow-400 hover:text-yellow-300">
-                  <i class="fas fa-edit"></i>
-                </button>
               </td>
             </tr>
             <tr *ngIf="rutinas.length === 0">
