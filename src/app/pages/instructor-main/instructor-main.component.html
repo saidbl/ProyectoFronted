@@ -23,21 +23,21 @@
             <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
               <i class="fas fa-chart-bar mr-2"></i> Reportes
             </a>
+            <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-chart-bar mr-2"></i> Cerrar Sesion
+            </a>
           </div>
         </div>
         <div class="flex items-center">
           <div class="relative ml-3">
             <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
               <span class="text-gray-300 text-sm">{{nombre}} {{apellido}}</span>
-              <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
+              <a routerLink="perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
+              </a>
               <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
             </div>
             <!-- Dropdown menu -->
-            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <a routerLink="perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Mi Perfil</a>
-              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Configuración</a>
-              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
-            </div>
           </div>
         </div>
       </div>
@@ -49,14 +49,9 @@
     <!-- Encabezado personalizado -->
     <div class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Panel de Instructor
+        Bienvenido, {{nombre}}. 
       </h1>
-      <p class="mt-4 text-lg text-gray-400">Bienvenido, {{nombre}}. Tu centro de gestión deportiva</p>
-      <div class="mt-2 flex justify-center items-center space-x-2">
-        <span class="text-sm text-gray-400">Especialidad: {{especialidad}}</span>
-        <span class="text-gray-600">•</span>
-        <span class="text-sm text-gray-400">{{experiencia}} años de experiencia</span>
-      </div>
+      <p class="mt-4 text-lg text-gray-400">Tu centro de gestión deportiva</p>
     </div>
 
     <!-- Tarjetas resumen -->
@@ -143,7 +138,7 @@
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">{{deportista.nombre}} {{deportista.apellido}}</p>
-                <p class="text-sm text-gray-400">{{deportista.deporte}} • {{deportista.posicion}}</p>
+                <p class="text-sm text-gray-400">{{deportista.deporte.nombre}} • {{deportista.posicion.nombre}}</p>
                 <div class="mt-1 flex items-center space-x-2">
                   <span class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
                     Registrado: {{deportista.fechaRegistro | date:'shortDate'}}
@@ -234,10 +229,10 @@
                 Fecha Asignada
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Estado
+                Posicion
               </th>
-              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Acciones
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Duracion(minutos)
               </th>
             </tr>
           </thead>
@@ -261,9 +256,10 @@
                 <div class="text-sm text-white">{{rutina.dia}}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button [routerLink]="['/rutinas', rutina.id]" class="text-blue-400 hover:text-blue-300 mr-3">
-                  <i class="fas fa-eye"></i>
-                </button>
+                <div class="text-sm text-white">{{rutina.posicion.nombre}}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div class="text-sm text-white">{{rutina.duracion_esperada}}</div>
               </td>
             </tr>
             <tr *ngIf="rutinas.length === 0">

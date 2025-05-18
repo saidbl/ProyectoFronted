@@ -1,13 +1,13 @@
 import { Injectable,inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { appSettings } from "../settings/appSettings";
 import { Observable } from "rxjs";
 import { Instructor } from "../models/instructor.model";
+import { InstructorDTO } from "../models/instructorDTO.model";
 @Injectable({
     providedIn:"root"
 })
 export class InstructorService{
-    instructores: Instructor[]=[]
     private http=inject(HttpClient)
     private apiLog:string=appSettings.apiLoginInst
 
@@ -15,6 +15,18 @@ export class InstructorService{
             return this.http.post<any>(this.apiLog,{email,password})
     }
 
+    getInstructorById(id:number, token:string): Observable<Instructor>{
+      const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+          return this.http.get<Instructor>(`${appSettings.apiGeneral}/instructor/${id}`,{headers})
+    }
+     updateInstructor(id: number, token : string,formData: FormData): Observable<any> {
+      const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+    return this.http.put(`${appSettings.apiGeneral}/instructor/editar/${id}`, formData,{headers});
+  }
       logOut():void{
         if(typeof localStorage!=="undefined"){
             localStorage.removeItem("token")

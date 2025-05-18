@@ -1,14 +1,13 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DeportistaService } from '../../../services/deportista.service';
-import { Deportista } from '../../../models/deportista.model';
 import { CommonModule } from '@angular/common';
 import { RutinaJugadorService } from '../../../services/rutinajugador.service';
 import { RutinaJugador } from '../../../models/rutinajugador.model';
 import { RutinaService } from '../../../services/rutina.service';
 import { Rutina } from '../../../models/rutina.model';
 import { RutinaJugadorDTO } from '../../../models/rutinaJugadorDTO.model';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { RouterModule } from '@angular/router'; 
 import { Chart, registerables } from 'chart.js';
 import { PosicionService } from '../../../services/posicion.service';
@@ -18,6 +17,7 @@ import { EvolucionFisicaDTO } from '../../../models/evolucionFisicaDTO.model';
 import Swal from 'sweetalert2';
 Chart.register(...registerables);
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-rutina-deportista',
     imports: [FormsModule, CommonModule, RouterModule],
     standalone: true,
@@ -29,6 +29,8 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   private rservice = inject(RutinaJugadorService)
   private rtservice = inject(RutinaService)
   private pservice = inject(PosicionService)
+  private destroy$ = new Subject<void>();
+  private cdRef = inject(ChangeDetectorRef);
   @ViewChild('rutinasChart') private chartRef!: ElementRef;
   deportistas: DeportistaRendimiento[] = [];
   rutinasF : Rutina[]=[]
@@ -38,7 +40,6 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   rutinaSeleccionada!: number;
   mostrarModal = false;
   datos : EvolucionFisicaDTO[]|undefined = []
-  deportista : Deportista | null = null;
   rutinasFiltradas : Rutina[]=[]
   mostrarRutinas = false;
   mostrarPerfil = false;
@@ -93,13 +94,16 @@ contadorProgresos: number = 0;
         throw new Error("Not Token Found")
       }
       forkJoin({
-        deportistas: this.dservice.listCheckRenObj(id,token),
+        deportistas: this.dservice.listCheckRenObj(id,token).pipe(
+        takeUntil(this.destroy$)),
         rutinas: this.rtservice.list(id, token),
         posiciones: this.pservice.list(deporte,token)
+
         
       }).subscribe({
         next: (data) => {
-          this.deportistas = data.deportistas;
+          this.deportistas=data.deportistas
+          console.log(data.deportistas)
           this.rutinas = data.rutinas;
           this.totalJugadores = this.deportistas.length
           this.totalRutinasActivas = this.rutinas.length
@@ -108,6 +112,7 @@ contadorProgresos: number = 0;
           this.renderizarGrafico()
           this.renderizarGrafico2();
           console.log(this.deportistas)
+          this.cdRef.markForCheck();
           
         },
         error: (err) => {
@@ -121,6 +126,10 @@ contadorProgresos: number = 0;
       alert(error.message)
     }
   }
+  ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
 
   ngAfterViewInit() {
   this.renderizarGrafico();
@@ -151,31 +160,33 @@ contadorProgresos: number = 0;
   return edad;
 }
     calcularProgreso(objetivosTotales: ObjetivoRendimiento[], objetivosIncompletos: ObjetivoRendimiento[], totalRutinas: number, rutinasCompletadas: number): number {
-        if (totalRutinas === 0 && objetivosTotales.length === 0) {
-            Swal.fire('Advertencia', 'El jugador no tiene objetivos ni rutinas asignadas', 'warning');
-            return 0;
-        }
-
-        const objetivosCompletos = objetivosTotales.length - objetivosIncompletos.length;
-        const total = objetivosTotales.length + totalRutinas;
-        
-        if (total === 0) return 0;
-        
-        const porcentaje = (objetivosCompletos + rutinasCompletadas) / total * 100;
-        const porcentajeRedondeado = Math.round(porcentaje);
-        this.progresoPromedio += porcentajeRedondeado;
-        this.contadorProgresos++;
-
-        return porcentajeRedondeado;
+        const totalObjetivos = objetivosTotales.length ;
+  const objetivosCompletos = totalObjetivos - (objetivosIncompletos?.length || 0);
+  console.log(totalObjetivos)
+  console.log(objetivosCompletos)
+  const totalTareas = totalRutinas + totalObjetivos;
+  if (totalTareas === 0) {
+    return 0; 
+  }
+  return Math.round(((objetivosCompletos+rutinasCompletadas)/(totalRutinas+totalObjetivos))*100);
     }
     getProgresoPromedioFinal(): number {
-  if (this.contadorProgresos === 0) return 0;
-  return Math.round(this.progresoPromedio / this.contadorProgresos);
+       if (!this.deportistasFiltrados?.length) return 0;
+  
+        return this.deportistasFiltrados.reduce((acc, dep) => {
+          return acc + this.calcularProgreso(
+            dep.objetivosTotales,
+            dep.objetivosIncompletos,
+            dep.totalRutinas,
+            dep.rutinasCompletadas
+          );
+          }, 0) / this.deportistasFiltrados.length;
 }
    normalizarProgreso(progreso: number): number {
     return Math.min(Math.max(progreso || 0, 0), 100);
   }
-  async abrirModalRutinas(deportista: DeportistaRendimiento) {
+ abrirModalRutinas(deportista: DeportistaRendimiento) {
+  this.jugadorSeleccionado = deportista;
      const token=localStorage.getItem("token")
     if(!token) {
       throw new Error("Not Token Found")
@@ -185,13 +196,13 @@ contadorProgresos: number = 0;
     }).subscribe({
       next: (data) => {
         this.rutinasJugador = data.rutinasJugador;
+        this.mostrarModalRutinas = true; 
+        this.cdRef.markForCheck();
       },
       error: (err) => {
         console.error("Error loading data", err);
       }
     });
-    this.jugadorSeleccionado = deportista
-    this.mostrarModalRutinas=true
   }
   async exportarDatos() {
   }
@@ -217,11 +228,19 @@ contadorProgresos: number = 0;
     this.filtrarDeportistas();
     this.mostrarFiltros = false;
   }
+  trackByDeportista(index: number, dep: any): number {
+  return dep.deportista.id;
+}
+
+trackByRutina(index: number, rutina: any): number {
+  return rutina.id;
+}
   
     getTrend(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number {
      if (!metricas || metricas.length < 2) {
     return 0;
   }
+
 
   if (tipo === "peso") {
     const actual = metricas[metricas.length - 1].peso
@@ -467,6 +486,9 @@ contadorProgresos: number = 0;
         this.rutinasJugador = data.rutinasJugador;
         this.rutinasF =this.borrarRepetidas(this.rutinasJugador, this.rutinas, deportista?.deportista?.posicion?.nombre??"");
         this.rutinasFiltradas = this.borrarRepetidas(this.rutinasJugador, this.rutinas, deportista?.deportista?.posicion?.nombre??"");
+        this.mostrarModalAsignar = true;
+        this.filtrarRutinas();
+        this.cdRef.markForCheck();
         if (this.rutinasFiltradas.length === 0) {
                     Swal.fire('Info', 'No hay rutinas disponibles para asignar', 'info');
                 }
@@ -477,10 +499,8 @@ contadorProgresos: number = 0;
       }
     });
     this.jugadorSeleccionado = deportista;
-    this.mostrarModalAsignar = true;
     this.busquedaRutina = '';
     this.filtroTipoRutina = '';
-    this.filtrarRutinas();
   }
   private showAuthError() {
         Swal.fire({

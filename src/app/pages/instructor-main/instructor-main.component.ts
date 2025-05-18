@@ -44,7 +44,7 @@ export class InstructorMainComponent implements OnInit {
   rutinas : Rutina[] = []
   nombre: string = '';
   apellido: string = '';
-  fotoPerfil: string = 'assets/default-instructor.jpg';
+  fotoPerfil: string = "http://localhost:8080/";
   especialidad: string = '';
   experiencia: number = 0;
   totalDeportistas: number = 0;
@@ -61,6 +61,10 @@ export class InstructorMainComponent implements OnInit {
   showUserDropdown: boolean = false;
   ngOnInit(): void {
     try{
+      const fotoPerfil = localStorage.getItem("fotoPerfil")
+      const nom=localStorage.getItem("nombre")
+      const ap = localStorage.getItem("apellido")
+      console.log(fotoPerfil)
       const token=localStorage.getItem("token")
       const instructorId = Number(localStorage.getItem("id"))
       console.log(localStorage)
@@ -73,6 +77,10 @@ export class InstructorMainComponent implements OnInit {
           if(data>=0){
           console.log(data)
           this.totalRutinas=data
+          this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+          console.log(this.fotoPerfil)
+          this.nombre=nom ?? ''
+          this.apellido= ap ?? ''
           }
         },
         error:(err)=>{

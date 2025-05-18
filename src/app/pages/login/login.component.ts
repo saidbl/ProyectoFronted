@@ -98,7 +98,10 @@ export class LoginComponent {
             localStorage.setItem("rol", data.rol);
             localStorage.setItem("id",data.id);
             localStorage.setItem("idDeporte",data.idDeporte)
-            console.log(data.id);
+            localStorage.setItem("fotoPerfil",data.fotoPerfil)
+            localStorage.setItem("nombre",data.nombre)
+            localStorage.setItem("apellido",data.apellido)
+            console.log(localStorage);
             this.router.navigate(['/instructor']);
             console.log("Exito en conexion")
           } else {
