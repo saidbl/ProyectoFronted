@@ -472,6 +472,49 @@ trackByRutina(index: number, rutina: any): number {
             }
         });
     }
+    getMensajeRiesgo(): string | null {
+  const evolucion = this.jugadorSeleccionado?.evolucionFisica;
+  const sexo = this.jugadorSeleccionado?.deportista?.genero.toLowerCase();
+  if (!evolucion || evolucion.length === 0 || !sexo) return null;
+
+  const ultima = evolucion[evolucion.length - 1];
+  const { imc, peso, porcentajeGrasa } = ultima;
+
+  let mensaje = '';
+
+  // Clasificación IMC
+  if (imc < 18.5) {
+    mensaje += '⚠ Bajo peso (IMC < 18.5). Riesgo de fatiga, lesiones musculares o fracturas. ';
+  } else if (imc >= 18.5 && imc < 24.9) {
+    mensaje += '✅ IMC dentro del rango saludable. ';
+  } else if (imc >= 25 && imc < 29.9) {
+    mensaje += '⚠ Sobrepeso (IMC entre 25 y 29.9). Riesgo de menor rendimiento físico. ';
+  } else {
+    mensaje += '❗ Obesidad (IMC ≥ 30). Riesgo alto de lesión, fatiga y enfermedades crónicas. ';
+  }
+  if (sexo === 'masculino') {
+    if (porcentajeGrasa < 8) {
+      mensaje += '⚠ Grasa corporal muy baja. Posible pérdida de masa muscular. ';
+    } else if (porcentajeGrasa > 25) {
+      mensaje += '❗ Grasa corporal alta. Riesgo cardiovascular y menor agilidad. ';
+    }
+  } else if (sexo === 'femenino') {
+    if (porcentajeGrasa < 18) {
+      mensaje += '⚠ Grasa corporal muy baja. Riesgo hormonal y de fatiga. ';
+    } else if (porcentajeGrasa > 32) {
+      mensaje += '❗ Grasa corporal alta. Riesgo de lesiones y menor rendimiento. ';
+    }
+  }
+  if (peso < 50) {
+    mensaje += '⚠ Peso bajo. Revisar nutrición y masa muscular.';
+  } else if (peso > 100) {
+    mensaje += '⚠ Peso elevado. Posible sobrecarga articular. ';
+  }
+
+  return mensaje || '✅ Estado físico saludable.';
+}
+
+
     abrirModalAsignar(deportista: DeportistaRendimiento|null) {
     const token=localStorage.getItem("token")
     if(!token) {

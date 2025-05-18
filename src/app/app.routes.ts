@@ -21,6 +21,7 @@ import { EstadisticasOrgComponent } from './pages/organizacion-main/estadisticas
 import { ConfiguracionOrganizacionComponent } from './pages/organizacion-main/configuracion-organizacion/configuracion-organizacion.component';
 import { RendimientoComponent } from './pages/deportista-main/rendimiento/rendimiento.component';
 import { PerfilInstructorComponent } from './pages/instructor-main/perfil-instructor/perfil-instructor.component';
+import { InstructorEstadisticasComponent } from './pages/instructor-main/instructor-estadisticas/instructor-estadisticas.component';
 
 
 export const routes: Routes = [
@@ -36,6 +37,7 @@ export const routes: Routes = [
     { path: 'instructor/rutinas/videos', component: VideosComponent},
     { path: 'instructor/rutinas/ejercicios', component: EjerciciosComponent},
     { path: 'instructor/perfil',component:PerfilInstructorComponent},
+    { path: 'instructor/reportes',component:InstructorEstadisticasComponent},
     { path: 'deportista/rutinas', component: RutinasDepComponent},
     { path: 'deportista/check', component: CheckComponent},
     { path: 'deportista/check/completadas', component: CompletadasComponent},

@@ -507,6 +507,12 @@
                     </div>
                   </div>
                 </div>
+                <!-- Evaluación de Riesgo Física -->
+                <div *ngIf="getMensajeRiesgo()" class="mt-4 bg-yellow-800/40 p-4 rounded-lg">
+                  <p class="text-sm font-semibold text-yellow-300">Evaluación de Riesgo</p>
+                  <p class="text-white mt-1">{{ getMensajeRiesgo() }}</p>
+                </div>
+
               </div>
               
               <!-- Gráfico de evolución -->

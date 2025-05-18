@@ -1,0 +1,55 @@
+<div class="p-6 grid gap-6 md:grid-cols-2">
+  <!-- Gráfico principal -->
+  <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center">
+    <h3 class="text-xl font-semibold mb-4 text-gray-700">Cumplimiento General (Últimos 30 días)</h3>
+    <p-chart
+      type="doughnut"
+      [data]="chartDataGeneral"
+      [options]="optionsGeneral"
+      class="max-w-xs w-full"
+    ></p-chart>
+
+    <div class="mt-6 flex justify-around w-full max-w-xs text-center">
+      <div>
+        <div class="text-green-600 font-extrabold text-3xl">{{ data.porcentajeCompletadas }}%</div>
+        <div class="text-sm font-medium text-green-700">Completadas</div>
+      </div>
+      <div>
+        <div class="text-red-600 font-extrabold text-3xl">{{ data.porcentajeIncompletas }}%</div>
+        <div class="text-sm font-medium text-red-700">Incompletas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cumplimiento por día -->
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h3 class="text-xl font-semibold mb-4 text-gray-700">Rendimiento por Día de la Semana</h3>
+    <p-chart
+      type="bar"
+      [data]="chartDataDias"
+      [options]="optionsDias"
+      class="w-full h-72"
+    ></p-chart>
+  </div>
+
+  <!-- Top pendientes -->
+  <div class="bg-white rounded-lg shadow-lg p-6 md:col-span-2">
+    <h3 class="text-xl font-semibold mb-4 text-gray-700">Atletas con Más Rutinas Pendientes</h3>
+    <p-table [value]="data.topPendientes" [loading]="cargando" class="shadow rounded">
+      <ng-template pTemplate="header">
+        <tr class="bg-gray-100 text-gray-700 uppercase text-sm">
+          <th class="p-3">Posición</th>
+          <th class="p-3">Atleta</th>
+          <th class="p-3">Rutinas Pendientes</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-atleta let-rowIndex="rowIndex">
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 text-center font-semibold">{{ rowIndex + 1 }}</td>
+          <td class="p-3">{{ atleta.nombre }}</td>
+          <td class="p-3 text-center font-semibold text-red-600">{{ atleta.pendientes }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
