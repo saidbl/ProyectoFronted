@@ -18,7 +18,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import { RutinaService } from '../../services/rutina.service';
 import { Rutina } from '../../models/rutina.model';
 import { Equipo } from '../../models/equipo.model';
@@ -41,6 +41,15 @@ export class InstructorMainComponent implements OnInit {
   private eservice = inject(EquipoService)
   private dservice = inject(DeportistaService)
   totalRutinas:number = 0
+  navigation = [
+  { name: 'Eventos', route: 'equipoEvento', icon: 'event' },
+  { name: 'Deportistas', route: 'rutinaDeportista', icon: 'people' },
+  { name: 'Equipos', route: 'crearEquipos', icon: 'groups' },
+  { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
+  { name: 'Reportes', route: 'reportes', icon: 'analytics' }
+];
+
+constructor(public router: Router) {}
   rutinas : Rutina[] = []
   nombre: string = '';
   apellido: string = '';
@@ -124,12 +133,13 @@ export class InstructorMainComponent implements OnInit {
     }
     
   }
-  toggleUserDropdown(): void {
-    this.showUserDropdown = !this.showUserDropdown;
-  }
+  toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
 
-  logout(): void {
-  }
+cerrarSesion() {
+  console.log('Sesión cerrada');
+}
   mostrarNotificacion(mensaje: string): void {
     this.notificationMessage = mensaje;
     this.showNotification = true;
@@ -138,6 +148,7 @@ export class InstructorMainComponent implements OnInit {
       this.showNotification = false;
     }, 3000);
   }
+
   
 }
 

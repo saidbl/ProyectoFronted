@@ -1,55 +1,266 @@
-<div class="p-6 grid gap-6 md:grid-cols-2">
-  <!-- Gráfico principal -->
-  <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center">
-    <h3 class="text-xl font-semibold mb-4 text-gray-700">Cumplimiento General (Últimos 30 días)</h3>
-    <p-chart
-      type="doughnut"
-      [data]="chartDataGeneral"
-      [options]="optionsGeneral"
-      class="max-w-xs w-full"
-    ></p-chart>
-
-    <div class="mt-6 flex justify-around w-full max-w-xs text-center">
-      <div>
-        <div class="text-green-600 font-extrabold text-3xl">{{ data.porcentajeCompletadas }}%</div>
-        <div class="text-sm font-medium text-green-700">Completadas</div>
-      </div>
-      <div>
-        <div class="text-red-600 font-extrabold text-3xl">{{ data.porcentajeIncompletas }}%</div>
-        <div class="text-sm font-medium text-red-700">Incompletas</div>
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación -->
+  <nav class="bg-gray-900/90 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center">
+          <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            SportPerformance Pro
+          </span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-center space-x-8">
+            <a class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-chart-line mr-2"></i> Dashboard
+            </a>
+            <a class="text-gray-300 hover:text-purple-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users mr-2"></i> Atletas
+            </a>
+            <a class="text-gray-300 hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-dumbbell mr-2"></i> Rutinas
+            </a>
+            <a class="text-gray-300 hover:text-pink-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-file-alt mr-2"></i> Reportes
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="p-2 rounded-lg hover:bg-gray-800/50 transition-all">
+            <i class="fas fa-bell text-gray-400"></i>
+          </button>
+          <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500"></div>
+        </div>
       </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- Cumplimiento por día -->
-  <div class="bg-white rounded-lg shadow-lg p-6">
-    <h3 class="text-xl font-semibold mb-4 text-gray-700">Rendimiento por Día de la Semana</h3>
-    <p-chart
-      type="bar"
-      [data]="chartDataDias"
-      [options]="optionsDias"
-      class="w-full h-72"
-    ></p-chart>
-  </div>
+  <!-- Contenido principal -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Encabezado -->
+    <div class="mb-12">
+      <h1 class="text-4xl font-bold text-white mb-2">
+        <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          Panel de Rendimiento
+        </span>
+      </h1>
+      <p class="text-gray-400">Datos en tiempo real del rendimiento deportivo</p>
+    </div>
 
-  <!-- Top pendientes -->
-  <div class="bg-white rounded-lg shadow-lg p-6 md:col-span-2">
-    <h3 class="text-xl font-semibold mb-4 text-gray-700">Atletas con Más Rutinas Pendientes</h3>
-    <p-table [value]="data.topPendientes" [loading]="cargando" class="shadow rounded">
-      <ng-template pTemplate="header">
-        <tr class="bg-gray-100 text-gray-700 uppercase text-sm">
-          <th class="p-3">Posición</th>
-          <th class="p-3">Atleta</th>
-          <th class="p-3">Rutinas Pendientes</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-atleta let-rowIndex="rowIndex">
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 text-center font-semibold">{{ rowIndex + 1 }}</td>
-          <td class="p-3">{{ atleta.nombre }}</td>
-          <td class="p-3 text-center font-semibold text-red-600">{{ atleta.pendientes }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <!-- Sección de gráficos mejorada -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Tarjeta de cumplimiento con efecto neón -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-blue-400/20 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-20"></div>
+        <h3 class="text-lg font-semibold mb-4 text-blue-400">
+          <i class="fas fa-trophy mr-2"></i>
+          Progreso General
+        </h3>
+        <div class="relative h-64">
+          <p-chart
+            type="doughnut"
+            [data]="chartDataGeneral"
+            [options]="optionsGeneral"
+            class="w-full h-full"
+          ></p-chart>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-4xl font-bold text-green-400 animate-pulse">{{ data.porcentajeCompletadas }}%</span>
+            <span class="text-sm text-gray-400">Meta alcanzada</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de rendimiento 3D -->
+      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-400/20 transition-all duration-300">
+        <h3 class="text-lg font-semibold mb-4 text-purple-400">
+          <i class="fas fa-chart-bar mr-2"></i>
+          Rendimiento Diario
+        </h3>
+        <p-chart
+          type="bar"
+          [data]="chartDataDias"
+          [options]="optionsDias"
+          class="w-full h-64"
+        ></p-chart>
+      </div>
+    </div>
+
+    <!-- Tarjeta de estadísticas avanzadas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-400/20 rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2xl font-bold text-blue-400">{{ data2.totalMasculinos }}</div>
+            <div class="text-gray-400 text-sm">Atletas Activos</div>
+          </div>
+          <i class="fas fa-running text-blue-400/30 text-4xl"></i>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-400/20 rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2xl font-bold text-blue-400">{{ data2.totalFemeninos }}</div>
+            <div class="text-gray-400 text-sm">Atletas Activos</div>
+          </div>
+          <i class="fas fa-running text-blue-400/30 text-4xl"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-green-900/30 to-blue-900/30 border border-green-400/20 rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2xl font-bold text-green-400">{{ data.porcentajeCompletadas }}</div>
+            <div class="text-gray-400 text-sm">Rutinas Completadas</div>
+          </div>
+          <i class="fas fa-check-circle text-green-400/30 text-4xl"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-400/20 rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2xl font-bold text-purple-400">{{ data2.edadPromedioGeneral }}</div>
+            <div class="text-gray-400 text-sm">Edad Promedio</div>
+          </div>
+          <i class="fas fa-user-clock text-purple-400/30 text-4xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla premium -->
+    <div class="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden">
+      <div class="p-6 border-b border-gray-800">
+        <h3 class="text-lg font-semibold text-red-400">
+          <i class="fas fa-exclamation-triangle mr-2"></i>
+          Alertas de Rendimiento
+        </h3>
+      </div>
+      <p-table
+        [value]="data.topPendientes"
+        [loading]="cargando"
+        styleClass="p-datatable-striped p-datatable-gridlines"
+        [rows]="5"
+        [paginator]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr class="bg-gray-800">
+            <th class="p-4 text-left text-gray-300">Atleta</th>
+            <th class="p-4 text-center text-gray-300">Estado</th>
+            <th class="p-4 text-center text-gray-300">Progreso</th>
+            <th class="p-4 text-center text-gray-300">Última Medición</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-atleta>
+          <tr class="hover:bg-gray-800/20 border-t border-gray-800 transition-all">
+            <td class="p-4 flex items-center">
+              <div class="relative">
+                <img [src]="atleta.foto" class="h-10 w-10 rounded-full mr-3 shadow-lg" alt="Foto perfil">
+                <div class="absolute bottom-0 right-0 h-3 w-3 rounded-full"
+                     [ngClass]="{'bg-green-400': atleta.estado === 'activo', 'bg-red-400': atleta.estado !== 'activo'}"></div>
+              </div>
+              <div>
+                <div class="font-medium">{{ atleta.nombre }}</div>
+                <div class="text-sm text-gray-400">{{ atleta.deporte }}</div>
+              </div>
+            </td>
+            <td class="p-4 text-center">
+              <span class="px-3 py-1 rounded-full text-sm"
+                    [ngClass]="{'bg-green-900/50 text-green-400': atleta.estado === 'activo',
+                               'bg-red-900/50 text-red-400': atleta.estado !== 'activo'}">
+                {{ atleta.estado  }}
+              </span>
+            </td>
+            <td class="p-4">
+              <div class="flex items-center justify-center">
+                <div class="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full transition-all duration-500"
+                       [style.width]="atleta.progreso + '%'"></div>
+                </div>
+                <span class="ml-2 text-sm text-gray-400">{{ atleta.progreso }}%</span>
+              </div>
+            </td>
+            <td class="p-4 text-center text-gray-400 text-sm">
+              {{ atleta.ultimaActividad | date:'mediumDate' }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="mt-12 border-t border-gray-800 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+        <div class="mb-4 md:mb-0">
+          © 2024 SportPerformance Pro. Todos los derechos reservados.
+        </div>
+        <div class="flex space-x-6">
+          <a class="hover:text-blue-400 transition-colors">Políticas de Privacidad</a>
+          <a class="hover:text-purple-400 transition-colors">Términos de Servicio</a>
+          <a class="hover:text-green-400 transition-colors">Soporte</a>
+        </div>
+      </div>
+    </footer>
   </div>
 </div>
+
+<!-- Opciones de gráficos sugeridas -->
+<script>
+const doughnutOptions = {
+  cutout: '75%',
+  plugins: {
+    legend: { 
+      position: 'right',
+      labels: { color: '#D1D5DB', font: { size: 14 } }
+    },
+    tooltip: {
+      backgroundColor: '#1F2937',
+      titleColor: '#E5E7EB',
+      bodyColor: '#D1D5DB',
+      borderColor: '#374151',
+      borderWidth: 1
+    }
+  },
+  animation: { 
+    animateRotate: true,
+    animateScale: true
+  },
+  elements: {
+    arc: { 
+      borderWidth: 0,
+      hoverBorderWidth: 2
+    }
+  }
+};
+
+const barOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      grid: { color: '#374151', display: false },
+      ticks: { color: '#9CA3AF', font: { weight: 'bold' } }
+    },
+    y: {
+      grid: { color: '#374151' },
+      ticks: { color: '#9CA3AF', stepSize: 20 },
+      beginAtZero: true
+    }
+  },
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1F2937',
+      titleColor: '#E5E7EB',
+      bodyColor: '#D1D5DB',
+      borderColor: '#374151'
+    }
+  },
+  elements: {
+    bar: {
+      borderRadius: 8,
+      backgroundColor: 'rgba(99, 102, 241, 0.8)',
+      hoverBackgroundColor: 'rgba(79, 70, 229, 1)'
+    }
+  }
+};
+</script>

@@ -22,6 +22,8 @@ import { ConfiguracionOrganizacionComponent } from './pages/organizacion-main/co
 import { RendimientoComponent } from './pages/deportista-main/rendimiento/rendimiento.component';
 import { PerfilInstructorComponent } from './pages/instructor-main/perfil-instructor/perfil-instructor.component';
 import { InstructorEstadisticasComponent } from './pages/instructor-main/instructor-estadisticas/instructor-estadisticas.component';
+import { IncompletasComponent } from './pages/deportista-main/check/incompletas/incompletas.component';
+import { ChatComponent } from './pages/chat/chat.component';
 
 
 export const routes: Routes = [
@@ -37,10 +39,12 @@ export const routes: Routes = [
     { path: 'instructor/rutinas/videos', component: VideosComponent},
     { path: 'instructor/rutinas/ejercicios', component: EjerciciosComponent},
     { path: 'instructor/perfil',component:PerfilInstructorComponent},
+    { path: 'instructor/chat',component: ChatComponent},
     { path: 'instructor/reportes',component:InstructorEstadisticasComponent},
     { path: 'deportista/rutinas', component: RutinasDepComponent},
     { path: 'deportista/check', component: CheckComponent},
     { path: 'deportista/check/completadas', component: CompletadasComponent},
+    { path: 'deportista/check/incompletas', component: IncompletasComponent},
     { path: 'deportista/proximoseventos', component: EventosDeportistaComponent},
     { path: 'deportista/equipos', component: EquiposDeportistaComponent},
     { path: 'deportista/rendimiento', component: RendimientoComponent},

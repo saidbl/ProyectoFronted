@@ -25,6 +25,12 @@ export class CheckInRutinaService {
         });
         return this.http.get<CheckInRutina[]>(`${appSettings.apicompletadas}/${id}`,{ headers })
     }
+    listIncompletas(id :  number, token : string ):Observable<CheckInRutina[]>{
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get<CheckInRutina[]>(`${appSettings.apiincompletadas}/${id}`,{ headers })
+    }
 
     getCumplimientoRutinas(deportistaId: number, rango: string,token:string): Observable<any> {
         const headers = new HttpHeaders({

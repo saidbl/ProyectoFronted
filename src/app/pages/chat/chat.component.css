@@ -1,0 +1,24 @@
+/* chat.component.css */
+.message-container {
+  display: flex;
+  flex-direction: column-reverse; /* Para mensajes más nuevos abajo */
+  overflow-y: auto;
+  padding: 1rem;
+  height: calc(100vh - 150px);
+}
+
+.message {
+  transition: all 0.3s ease;
+  animation: messageAppear 0.3s ease-out;
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

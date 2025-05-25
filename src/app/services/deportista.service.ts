@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { Deportista } from "../models/deportista.model";
 import { Rutina } from "../models/rutina.model";
 import { DeportistaRendimiento } from "../models/deportistaRendimiento.model";
+import { ResumenAtletasDTO } from "../models/resumenAtletasDTO.model";
 @Injectable({
     providedIn:"root"
 })
@@ -29,6 +30,12 @@ export class DeportistaService{
             });
             return this.http.get<DeportistaRendimiento[]>(`${appSettings.apiDeportistas}/CheckRendObj?id=${id}`, { headers });
         }
+    getResumenAtletas(instructorId: number, token : string): Observable<ResumenAtletasDTO> {
+        const headers = new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            });
+      return this.http.get<ResumenAtletasDTO>(`${appSettings.apiDeportistas}/resumen/${instructorId}`,{headers});
+    }
 
       logOut():void{
         if(typeof localStorage!=="undefined"){

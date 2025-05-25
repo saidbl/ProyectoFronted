@@ -1,0 +1,5 @@
+export enum RemitenteTipo {
+  INSTRUCTOR = 'INSTRUCTOR',
+  DEPORTISTA = 'DEPORTISTA',
+  ORGANIZACION = 'ORGANIZACION'
+}

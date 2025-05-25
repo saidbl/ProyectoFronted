@@ -20,4 +20,5 @@ export interface Deportista{
     deporte:Deporte
     instructor:Instructor
     posicion:Posicion
+    fotoPerfil:string
 }

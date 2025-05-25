@@ -21,6 +21,12 @@ export class OrganizacionService{
       });
       return this.http.get<Organizacion>(`${appSettings.apiGeneral}/obtenerOrg/${id}`,{headers})
     }
+    getbyDeporte(id: number, token: string):Observable<Organizacion[]>{
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.get<Organizacion[]>(`${appSettings.apiGeneral}/listarOrganizacion/${id}`,{headers})
+    }
 
     update(idOrg: number, org: OrganizacionDTO,token:string): Observable<Organizacion> {
             const headers = new HttpHeaders({

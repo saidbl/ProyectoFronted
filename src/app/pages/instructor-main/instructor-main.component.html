@@ -1,286 +1,296 @@
 <div class="min-h-screen bg-gray-950 font-sans">
-  <!-- Barra de navegación superior -->
-  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+  <!-- Barra de navegación superior mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center">
-          <span class="text-xl font-bold text-blue-400">AllSports - Instructor</span>
+        <div class="flex items-center space-x-2">
+          <mat-icon class="text-blue-400">sports</mat-icon>
+          <span class="text-xl font-bold text-blue-400 tracking-tighter">ALLSPORTS</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Instructor</span>
         </div>
+        
+        <!-- Menú central mejorado -->
         <div class="hidden md:block">
-          <div class="ml-10 flex items-center space-x-8">
-            <a routerLink="equipoEvento" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Eventos
-            </a>
-            <a routerLink="rutinaDeportista" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users mr-2"></i> Deportistas
-            </a>
-            <a routerLink="crearEquipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users-cog mr-2"></i> Equipos
-            </a>
-            <a routerLink="rutinas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-dumbbell mr-2"></i> Rutinas
-            </a>
-            <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-bar mr-2"></i> Reportes
-            </a>
-            <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-bar mr-2"></i> Cerrar Sesion
+          <div class="ml-4 flex items-center space-x-6">
+            <a *ngFor="let nav of navigation" 
+               [routerLink]="nav.route"
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive(nav.route, false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive(nav.route, false)}">
+              <mat-icon class="mr-2 text-lg">{{nav.icon}}</mat-icon>
+              <span class="text-sm font-medium">{{nav.name}}</span>
             </a>
           </div>
         </div>
-        <div class="flex items-center">
-          <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
-              <span class="text-gray-300 text-sm">{{nombre}} {{apellido}}</span>
-              <a routerLink="perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
-                <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
+
+        <!-- Perfil con efecto neumórfico -->
+        <div class="flex items-center space-x-4">
+          <button mat-icon-button class="text-gray-400 hover:text-blue-400">
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-9 w-9 rounded-full border-2 border-blue-400/30 shadow-lg 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100">{{nombre}} {{apellido}}</p>
+                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" class="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+              <a routerLink="/perfil"
+                class="block px-5 py-3 text-gray-200 hover:bg-blue-600 hover:text-white transition-all duration-200 flex items-center space-x-3">
+                <mat-icon class="text-blue-400">person</mat-icon>
+                <span class="font-medium">Ver perfil</span>
               </a>
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+              <button (click)="cerrarSesion()"
+                      class="w-full text-left px-5 py-3 text-gray-200 hover:bg-red-600 hover:text-white transition-all duration-200 flex items-center space-x-3">
+                <mat-icon class="text-red-400">logout</mat-icon>
+                <span class="font-medium">Cerrar sesión</span>
+              </button>
             </div>
-            <!-- Dropdown menu -->
           </div>
+          
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Contenido principal -->
+  <!-- Contenido principal mejorado -->
   <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <!-- Encabezado personalizado -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Bienvenido, {{nombre}}. 
+    <!-- Encabezado con efecto gradiente animado -->
+    <div class="text-center mb-16 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                  bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 
+                  animate-gradient-x tracking-tight">
+        Bienvenido, {{nombre}}
       </h1>
-      <p class="mt-4 text-lg text-gray-400">Tu centro de gestión deportiva</p>
+      <p class="mt-4 text-lg text-gray-400 font-light max-w-2xl mx-auto">
+        Gestión integral de deportistas, equipos y rutinas deportivas
+      </p>
     </div>
 
-    <!-- Tarjetas resumen -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-      <!-- Tarjeta Deportistas Activos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-blue-500/30 transition-all duration-300 group">
-        <div class="flex justify-between items-start">
+    <!-- Tarjetas métricas mejoradas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      <!-- Tarjeta Deportistas -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-blue-400/30">
+        <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Deportistas Activos</p>
-            <h3 class="mt-1 text-3xl font-bold text-white">{{deportistas.length}}</h3>
+            <mat-icon class="text-blue-400 mb-2">group</mat-icon>
+            <h3 class="text-2xl font-bold text-white mb-1">{{deportistas.length}}</h3>
+            <p class="text-sm text-gray-400">Deportistas Activos</p>
           </div>
-          <div class="p-3 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300">
-            <i class="fas fa-users text-blue-400 text-xl"></i>
-          </div>
-        </div>
-        <div class="mt-4">
-          <div class="flex items-center text-sm text-gray-400">
-            <span class="text-green-400 mr-1">{{deportistasRecientes.length}} nuevos este mes</span>
+          <div class="text-right">
+            <span class="text-xs px-2 py-1 rounded-full bg-blue-900/30 text-blue-400">
+              +{{deportistasRecientes.length}} nuevos
+            </span>
           </div>
         </div>
       </div>
 
-      <!-- Tarjeta Equipos Activos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-green-500/30 transition-all duration-300 group">
-        <div class="flex justify-between items-start">
+      <!-- Tarjeta Equipos -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-green-400/30">
+        <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Equipos Activos</p>
-            <h3 class="mt-1 text-3xl font-bold text-white">{{equiposActivos.length}}</h3>
-          </div>
-          <div class="p-3 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-all duration-300">
-            <i class="fas fa-users-cog text-green-400 text-xl"></i>
+            <mat-icon class="text-green-400 mb-2">sports_soccer</mat-icon>
+            <h3 class="text-2xl font-bold text-white mb-1">{{equiposActivos.length}}</h3>
+            <p class="text-sm text-gray-400">Equipos Activos</p>
           </div>
         </div>
       </div>
 
-      <!-- Tarjeta Rutinas Asignadas -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300 group">
-        <div class="flex justify-between items-start">
+      <!-- Tarjeta Rutinas -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-purple-400/30">
+        <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Rutinas Activas</p>
-            <h3 class="mt-1 text-3xl font-bold text-white">{{totalRutinas}}</h3>
+            <mat-icon class="text-purple-400 mb-2">fitness_center</mat-icon>
+            <h3 class="text-2xl font-bold text-white mb-1">{{totalRutinas}}</h3>
+            <p class="text-sm text-gray-400">Rutinas Activas</p>
           </div>
-          <div class="p-3 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-all duration-300">
-            <i class="fas fa-dumbbell text-purple-400 text-xl"></i>
-          </div>
-        </div>
-        <div class="mt-4">
-          <div class="flex items-center text-sm text-gray-400">
-            <span class="text-yellow-400">{{rutinasPendientes}} pendientes de revisión</span>
+          <div class="text-right">
+            <span class="text-xs px-2 py-1 rounded-full bg-purple-900/30 text-purple-400">
+              {{rutinasPendientes}} pendientes
+            </span>
           </div>
         </div>
       </div>
 
-      <!-- Tarjeta Acción Rápida -->
-      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/20 rounded-xl p-6 transition-all duration-300 group hover:border-blue-400/50">
-        <div class="flex flex-col h-full justify-between">
+      <!-- Tarjeta Acción rápida mejorada -->
+      <div class="bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-2xl p-5 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-blue-400/20 hover:border-blue-400/40">
+        <div class="h-full flex flex-col justify-between">
           <div>
-            <p class="text-sm font-medium text-blue-300">Acción rápida</p>
-            <h3 class="mt-1 text-xl font-bold text-white">Crear nueva rutina</h3>
+            <mat-icon class="text-white mb-2">add_circle</mat-icon>
+            <h3 class="text-xl font-semibold text-white mb-2">Nueva Rutina</h3>
+            <p class="text-sm text-gray-300">Crea y personaliza rutinas para tus deportistas</p>
           </div>
-          <button routerLink="rutinas/nueva" class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg border border-white/10 transition-all duration-300">
-            <i class="fas fa-plus"></i>
-            <span>Crear ahora</span>
+          <button routerLink="rutinas/nueva" 
+                  class="mt-4 w-full flex items-center justify-center space-x-2 
+                         bg-white/5 hover:bg-white/10 text-white py-2.5 px-4 
+                         rounded-xl border border-white/10 transition-all duration-300">
+            <mat-icon class="text-lg">add</mat-icon>
+            <span class="text-sm">Crear ahora</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Secciones principales -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-      <!-- Deportistas recientes -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
-        <div class="p-6 border-b border-gray-800">
-          <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-            <i class="fas fa-user-plus text-blue-400 mr-2"></i>
+    <!-- Secciones principales mejoradas -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Deportistas recientes con tarjetas modernas -->
+      <div class="bg-gray-900 rounded-2xl p-6 shadow-xl border border-gray-700">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-white flex items-center">
+            <mat-icon class="mr-2 text-blue-400">person_add</mat-icon>
             Deportistas Recientes
           </h3>
+          <a routerLink="deportistas" class="text-xs text-blue-400 hover:text-blue-300 
+                                            flex items-center">
+            Ver todos <mat-icon class="ml-1 text-sm">chevron_right</mat-icon>
+          </a>
         </div>
-        <div class="divide-y divide-gray-800">
-          <div *ngFor="let deportista of deportistasRecientes.slice(0,3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200">
-            <div class="flex items-start space-x-4">
-              <div class="flex-shrink-0">
-                <img class="h-10 w-10 rounded-full" [src]="deportista.genero" alt="Foto perfil">
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-white truncate">{{deportista.nombre}} {{deportista.apellido}}</p>
-                <p class="text-sm text-gray-400">{{deportista.deporte.nombre}} • {{deportista.posicion.nombre}}</p>
-                <div class="mt-1 flex items-center space-x-2">
-                  <span class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
-                    Registrado: {{deportista.fechaRegistro | date:'shortDate'}}
-                  </span>
+        <div class="space-y-4">
+          <div *ngFor="let deportista of deportistasRecientes.slice(0,3)" 
+               class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-4 transition-all 
+                      duration-300 border border-gray-700 hover:border-blue-400/30">
+            <div class="flex items-center space-x-4">
+              <img class="h-12 w-12 rounded-full object-cover border-2 border-blue-400/20" 
+                   [src]="deportista.genero" alt="Foto perfil">
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-white">{{deportista.nombre}} {{deportista.apellido}}</h4>
+                <div class="flex items-center space-x-2 mt-1">
+                  <span class="text-xs text-gray-400">{{deportista.deporte.nombre}}</span>
+                  <span class="text-xs text-gray-400">•</span>
+                  <span class="text-xs text-gray-400">{{deportista.posicion.nombre}}</span>
                 </div>
               </div>
-              <div>
-                <button [routerLink]="['/deportistas', deportista.id]" class="text-blue-400 hover:text-blue-300">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </div>
+              <button [routerLink]="['/deportistas', deportista.id]" 
+                      class="text-blue-400 hover:text-blue-300">
+                <mat-icon>visibility</mat-icon>
+              </button>
             </div>
           </div>
-        </div>
-        <div class="p-4 border-t border-gray-800 text-center">
-          <a routerLink="deportistas" class="text-sm text-blue-400 hover:text-blue-300">Ver todos mis deportistas</a>
         </div>
       </div>
 
-      <!-- Equipos bajo supervisión -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
-        <div class="p-6 border-b border-gray-800">
-          <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-            <i class="fas fa-users text-green-400 mr-2"></i>
+      <!-- Equipos con diseño moderno -->
+      <div class="bg-gray-900 rounded-2xl p-6 shadow-xl border border-gray-700">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-white flex items-center">
+            <mat-icon class="mr-2 text-green-400">groups</mat-icon>
             Mis Equipos
           </h3>
+          <a routerLink="equipos" class="text-xs text-green-400 hover:text-green-300 
+                                        flex items-center">
+            Gestionar <mat-icon class="ml-1 text-sm">chevron_right</mat-icon>
+          </a>
         </div>
-        <div class="divide-y divide-gray-800">
-          <div *ngFor="let equipo of equiposActivos.slice(0, 3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/equipos', equipo.id]">
+        <div class="space-y-4">
+          <div *ngFor="let equipo of equiposActivos.slice(0, 3)" 
+               class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-4 transition-all 
+                      duration-300 border border-gray-700 hover:border-green-400/30">
             <div class="flex items-center space-x-4">
-              <div class="flex-shrink-0">
-                <div class="h-14 w-14 rounded-full bg-green-500/10 flex items-center justify-center border border-gray-700 overflow-hidden">
-                  <img 
-                    [src]="'http://localhost:8080/' + equipo.img"
-                    alt="Logo del equipo"
-                    class="h-full w-full object-cover rounded-full">
+              <div class="relative">
+                <img class="h-12 w-12 rounded-full object-cover border-2 border-green-400/20" 
+                     [src]="'http://localhost:8080/' + equipo.img" alt="Logo equipo">
+                <div class="absolute -right-1 -bottom-1 w-3 h-3 rounded-full 
+                            border-2 border-gray-800" 
+                     [ngClass]="{'bg-green-400': equipo.estado === 'activo', 
+                                 'bg-yellow-400': equipo.estado === 'inactivo'}"></div>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-white">{{equipo.nombre}}</h4>
+                <div class="flex items-center space-x-2 mt-1">
+                  <span class="text-xs text-gray-400">{{equipo.deporte.nombre}}</span>
+                  <span class="text-xs text-gray-400">•</span>
+                  <span class="text-xs text-gray-400">{{equipo.jugadoresAsociados}} miembros</span>
                 </div>
               </div>
-              
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-white truncate">{{equipo.nombre}}</p>
-                <p class="text-sm text-gray-400">{{equipo.deporte.nombre}} • {{equipo.categoria}}</p>
-                <div class="mt-1 flex items-center space-x-2">
-                  <span class="text-xs text-gray-400">
-                    {{equipo.jugadoresAsociados}} jugadores
-                  </span>
-                  <span class="text-xs px-2 py-0.5 rounded-full" [ngClass]="{
-                    'bg-green-900/50 text-green-400': equipo.estado === 'activo',
-                    'bg-yellow-900/50 text-yellow-400': equipo.estado === 'inactivo'
-                  }">
-                    {{equipo.estado | lowercase}}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <i class="fas fa-chevron-right text-gray-500"></i>
-              </div>
+              <mat-icon class="text-gray-500">chevron_right</mat-icon>
             </div>
           </div>
-        </div>
-        <div class="p-4 border-t border-gray-800 text-center">
-          <a routerLink="equipos" class="text-sm text-green-400 hover:text-green-300">Gestionar todos mis equipos</a>
         </div>
       </div>
     </div>
 
-    <!-- Rutinas pendientes de revisión -->
-    <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden mb-12">
-      <div class="p-6 border-b border-gray-800 flex justify-between items-center">
-        <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-          <i class="fas fa-clipboard-check text-purple-400 mr-2"></i>
-          Rutinas Mas Famosas
-        </h3>
-        <div class="flex space-x-2">
+    <!-- Tabla de rutinas mejorada -->
+    <div class="bg-gray-900 rounded-2xl shadow-xl border border-gray-700">
+      <div class="px-6 py-5 border-b border-gray-700">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-white flex items-center">
+            <mat-icon class="mr-2 text-purple-400">assignment</mat-icon>
+            Rutinas Destacadas
+          </h3>
+          <a routerLink="rutinas" class="text-xs text-purple-400 hover:text-purple-300 
+                                       flex items-center">
+            Ver todas <mat-icon class="ml-1 text-sm">chevron_right</mat-icon>
+          </a>
         </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-800">
+      <div class="overflow-x-auto rounded-lg">
+        <table class="w-full">
           <thead class="bg-gray-800">
             <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Rutina
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Deportista
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Fecha Asignada
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Posicion
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Duracion(minutos)
-              </th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 
+                         uppercase tracking-wider">Rutina</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 
+                         uppercase tracking-wider">Dificultad</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 
+                         uppercase tracking-wider">Día</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 
+                         uppercase tracking-wider">Posición</th>
+              <th class="px-6 py-4 text-right text-xs font-medium text-gray-400 
+                         uppercase tracking-wider">Duración</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800">
-            <tr *ngFor="let rutina of rutinas" class="hover:bg-gray-800/50 transition-all duration-150">
-              <td class="px-6 py-4 whitespace-nowrap">
+          <tbody class="divide-y divide-gray-700">
+            <tr *ngFor="let rutina of rutinas" 
+                class="hover:bg-gray-800/50 transition-all duration-150">
+              <td class="px-6 py-4">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <i class="fas fa-dumbbell text-purple-400"></i>
+                  <div class="flex-shrink-0">
+                    <mat-icon class="text-purple-400">directions_run</mat-icon>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-white">{{rutina.nombre}}</div>
-                    <div class="text-sm text-gray-400">{{rutina.objetivo}} • {{rutina.descripcion}} min</div>
+                    <div class="text-sm text-gray-400">{{rutina.objetivo}}</div>
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-white">{{rutina.nivel_dificultad}}</div>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-green-900/30 text-green-400': rutina.nivel_dificultad === 'Principiante',
+                        'bg-yellow-900/30 text-yellow-400': rutina.nivel_dificultad === 'Intermedio',
+                        'bg-red-900/30 text-red-400': rutina.nivel_dificultad === 'Avanzado'
+                      }">
+                  {{rutina.nivel_dificultad}}
+                </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-white">{{rutina.dia}}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div class="text-sm text-white">{{rutina.posicion.nombre}}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div class="text-sm text-white">{{rutina.duracion_esperada}}</div>
-              </td>
-            </tr>
-            <tr *ngIf="rutinas.length === 0">
-              <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
-                No hay rutinas pendientes de revisión
+              <td class="px-6 py-4 text-sm text-gray-300">{{rutina.dia}}</td>
+              <td class="px-6 py-4 text-sm text-gray-300">{{rutina.posicion.nombre}}</td>
+              <td class="px-6 py-4 text-right text-sm text-gray-300">
+                {{rutina.duracion_esperada}} min
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="p-4 border-t border-gray-800 text-center">
-        <a routerLink="rutinas" class="text-sm text-purple-400 hover:text-purple-300">Gestionar todas las rutinas</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Notificaciones flotantes -->
-  <div *ngIf="showNotification" class="fixed bottom-4 right-4 z-50">
-    <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
-      <i class="fas fa-check-circle mr-2"></i>
-      <span>{{notificationMessage}}</span>
     </div>
   </div>
 </div>

@@ -1,15 +1,15 @@
-import { Component, OnInit, inject} from '@angular/core';
+import { Component,inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CheckInRutinaService } from '../../../../services/checkinrutina.service';
 import { CheckInRutina } from '../../../../models/checkinRutina.model';
+
 @Component({
-    selector: 'app-completadas',
-    imports: [CommonModule],
-    standalone : true,
-    templateUrl: './completadas.component.html',
-    styleUrl: './completadas.component.css'
+  selector: 'app-incompletas',
+  imports: [CommonModule],
+  templateUrl: './incompletas.component.html',
+  styleUrl: './incompletas.component.css'
 })
-export class CompletadasComponent implements OnInit{
+export class IncompletasComponent implements OnInit{
   private chservice = inject(CheckInRutinaService)
   checkins: CheckInRutina[] = [];
   idJugador: number = 0;
@@ -25,7 +25,7 @@ export class CompletadasComponent implements OnInit{
     if(!token){
       throw new Error("Not Token Found")
     }
-    this.chservice.list(id,token).subscribe({
+    this.chservice.listIncompletas(id,token).subscribe({
       next: (data)=>{
         this.checkins = data
         console.log(data)

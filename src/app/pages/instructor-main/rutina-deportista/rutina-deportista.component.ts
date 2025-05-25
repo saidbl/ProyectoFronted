@@ -8,18 +8,19 @@ import { RutinaService } from '../../../services/rutina.service';
 import { Rutina } from '../../../models/rutina.model';
 import { RutinaJugadorDTO } from '../../../models/rutinaJugadorDTO.model';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
-import { RouterModule } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import { Chart, registerables } from 'chart.js';
 import { PosicionService } from '../../../services/posicion.service';
 import { DeportistaRendimiento } from '../../../models/deportistaRendimiento.model';
 import { ObjetivoRendimiento } from '../../../models/objetivoRendimiento.model';
 import { EvolucionFisicaDTO } from '../../../models/evolucionFisicaDTO.model';
+import { MatIcon } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 Chart.register(...registerables);
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-rutina-deportista',
-    imports: [FormsModule, CommonModule, RouterModule],
+    imports: [FormsModule, CommonModule, RouterModule,MatIcon],
     standalone: true,
     templateUrl: './rutina-deportista.component.html',
     styleUrl: './rutina-deportista.component.css'
@@ -47,6 +48,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   porcentajeCompletadas: 0, 
   completadas: 0, 
   incompletas: 0 
+  
 };
 contadorProgresos: number = 0;
   searchTerm = '';
@@ -71,21 +73,36 @@ contadorProgresos: number = 0;
     {value: 'TECNICA', nombre: 'Técnica', icono: 'fas fa-football-ball'}
   ];
   checkinsJugador: any[] = [];
+  constructor(public router: Router) {}
+  nombre: string = '';
+  apellido: string = '';
   metricasRendimiento: any[] = [];
   objetivosJugador: any[] = [];
   evolucionChart: any;
   medicionesJugador: any[] = [];
   totalJugadores: number = 0;
   totalRutinasActivas: number = 0;
+   showUserDropdown: boolean = false;
+   fotoPerfil: string = "http://localhost:8080/";
   progresoPromedio: number = 0;
   jugadoresDestacados: number = 0;
   private chart: Chart | undefined = undefined;
-
+  navigation = [
+  { name: 'Eventos', route: 'equipoEvento', icon: 'event' },
+  { name: 'Deportistas', route: 'rutinaDeportista', icon: 'people' },
+  { name: 'Equipos', route: 'crearEquipos', icon: 'groups' },
+  { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
+  { name: 'Reportes', route: 'reportes', icon: 'analytics' }
+];
+userAvatar:string= ""
 
 
 
   ngOnInit() {
     try{
+      const fotoPerfil = localStorage.getItem("fotoPerfil")
+      const nom=localStorage.getItem("nombre")
+      const ap = localStorage.getItem("apellido")
       const token=localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
       const deporte = Number(localStorage.getItem("idDeporte"))
@@ -113,6 +130,10 @@ contadorProgresos: number = 0;
           this.renderizarGrafico2();
           console.log(this.deportistas)
           this.cdRef.markForCheck();
+          this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+          console.log(this.fotoPerfil)
+          this.nombre=nom ?? ''
+          this.apellido= ap ?? ''
           
         },
         error: (err) => {
@@ -134,6 +155,9 @@ contadorProgresos: number = 0;
   ngAfterViewInit() {
   this.renderizarGrafico();
   this.renderizarGrafico2();
+}
+cerrarSesion(){
+  
 }
   filtrarDeportistas() {
     this.deportistasFiltrados = this.deportistas.filter(d => {
@@ -159,6 +183,9 @@ contadorProgresos: number = 0;
   }
   return edad;
 }
+toggleUserDropdown() {
+    this.showUserDropdown =  !this.showUserDropdown;
+  }
     calcularProgreso(objetivosTotales: ObjetivoRendimiento[], objetivosIncompletos: ObjetivoRendimiento[], totalRutinas: number, rutinasCompletadas: number): number {
         const totalObjetivos = objetivosTotales.length ;
   const objetivosCompletos = totalObjetivos - (objetivosIncompletos?.length || 0);
@@ -235,8 +262,33 @@ contadorProgresos: number = 0;
 trackByRutina(index: number, rutina: any): number {
   return rutina.id;
 }
+getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
+  console.log(metricas)
+     if (!metricas || metricas.length < 2) {
+    return 0;
+  }
+
+
+  if (tipo === "peso") {
+    const actual = metricas[metricas.length - 1].peso
+
+    return actual;
+  }else if(tipo === "imc"){
+    const actual = metricas[metricas.length - 1].imc
+
+
+    return actual;
+
+  }else if(tipo === "porcentaje_grasa"){
+    const actual = metricas[metricas.length - 1].porcentajeGrasa
+
+    return actual;
+  }
+  return 0
+}
   
     getTrend(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number {
+      console.log(metricas)
      if (!metricas || metricas.length < 2) {
     return 0;
   }

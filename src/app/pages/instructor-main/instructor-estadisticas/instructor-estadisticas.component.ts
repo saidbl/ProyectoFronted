@@ -3,17 +3,22 @@ import { ResumenCumplimientoDTO } from '../../../models/resumenCumplimientoDTO.m
 import { CheckInRutinaService } from '../../../services/checkinrutina.service';
 import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
-
+import { ResumenAtletasDTO } from '../../../models/resumenAtletasDTO.model';
+import { DeportistaService } from '../../../services/deportista.service';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-instructor-estadisticas',
-  imports: [ChartModule, TableModule],
+  imports: [ChartModule, TableModule,ProgressBarModule,CommonModule ],
   templateUrl: './instructor-estadisticas.component.html',
   styleUrls: ['./instructor-estadisticas.component.css']
 })
 export class InstructorEstadisticasComponent implements OnInit {
   data!: ResumenCumplimientoDTO;
+  data2!: ResumenAtletasDTO;
   cargando = true;
   private crservice = inject(CheckInRutinaService);
+  private dservice = inject(DeportistaService)
 
   optionsDias = {
     indexAxis: 'y',
@@ -21,14 +26,14 @@ export class InstructorEstadisticasComponent implements OnInit {
       x: {
         max: 100,
         ticks: {
-          color: '#4A5568', // Tailwind gray-700
+          color: '#4A5568', 
           font: {
             size: 14,
             weight: 'bold'
           }
         },
         grid: {
-          color: '#E2E8F0' // Tailwind gray-300
+          color: '#E2E8F0' 
         }
       },
       y: {
@@ -80,6 +85,11 @@ export class InstructorEstadisticasComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false
   };
+   optionsDistribucion = {
+    plugins: {
+      legend: { position: 'bottom' }
+    }
+  };
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
@@ -90,6 +100,12 @@ export class InstructorEstadisticasComponent implements OnInit {
     this.crservice.getCumplimientoRutinasStats(token, id).subscribe({
       next: (res) => {
         this.data = res;
+        this.cargando = false;
+      }
+    });
+    this.dservice.getResumenAtletas(id,token).subscribe( {
+      next: (res) => {
+        this.data2 = res;
         this.cargando = false;
       }
     });
@@ -120,4 +136,22 @@ export class InstructorEstadisticasComponent implements OnInit {
       }]
     };
   }
+  get chartDataDistribucion() {
+    return {
+      labels: this.data2?.distribucionPosicionGenero.map(d => d.posicion),
+      datasets: [
+        {
+          label: 'Hombres',
+          data: this.data2?.distribucionPosicionGenero.map(d => d.hombres),
+          backgroundColor: '#42A5F5'
+        },
+        {
+          label: 'Mujeres',
+          data: this.data2?.distribucionPosicionGenero.map(d => d.mujeres),
+          backgroundColor: '#FFA726'
+        }
+      ]
+    };
+  }
+
 }

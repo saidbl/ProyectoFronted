@@ -49,8 +49,9 @@ export class LoginComponent {
               localStorage.setItem("id",data.id);
               localStorage.setItem("idDeporte",data.idDeporte)
               localStorage.setItem("posicion",data.posicion)
+              localStorage.setItem("fotoPerfil",data.fotoPerfil)
               localStorage.setItem("nombre",data.nombre)
-              localStorage.setItem("apellido", data.apellido)
+              localStorage.setItem("apellido",data.apellido)
               console.log(data)
               console.log(data.idDeporte)
               this.router.navigate(['/deportista']);

@@ -22,11 +22,11 @@ export class DeportistaMainComponent implements OnInit{
   private rservice = inject(RutinaService)
   private eservice = inject(EventoService)
   private eqservice = inject(EquipoService)
-  nombre: string = '';
-  apellido: string = '';
+  nombre: string | null = '';
+  apellido: string | null = '';
   deporte: string = '';
-  posicion: string = '';
-  fotoPerfil: string = '';
+  posicion: string | null = ''
+  fotoPerfil: string = "http://localhost:8080/";
   rutinasCompletadasArray: CheckInRutina[]= [];
   rutinasCompletadas :number = 0
   rutinasPendientesArray: RutinaDTOR[]= []
@@ -61,10 +61,15 @@ export class DeportistaMainComponent implements OnInit{
   }
 
   cargarDatosDeportista(): void {
+    const fotoPerfil = localStorage.getItem("fotoPerfil")
     this.cargarRutinasCompletadas ()
     this.cargarRutinasPendientes()
     this.cargarProximosEventos();
     this.cargarMisEquipos()
+    this.nombre=localStorage.getItem("nombre") 
+    this.apellido = localStorage.getItem("apellido")
+    this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+    this.posicion = localStorage.getItem("posicion")   
   }
 
   cargarRutinasCompletadas(){

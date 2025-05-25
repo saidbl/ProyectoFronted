@@ -49,9 +49,9 @@
     <!-- Encabezado personalizado -->
     <div class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Panel de Deportista
+        Bienvenido, {{nombre}}. 
       </h1>
-      <p class="mt-4 text-lg text-gray-400">Bienvenido, {{nombre}}. Tu progreso y actividades</p>
+      <p class="mt-4 text-lg text-gray-400">Tu progreso y actividades</p>
       <div class="mt-2 flex justify-center items-center space-x-2">
         <span class="text-sm text-gray-400">{{deporte}}</span>
         <span class="text-gray-600">•</span>
@@ -176,7 +176,14 @@
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
                 <div class="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <i class="fas fa-users text-green-400"></i>
+                  <div class="flex-shrink-0">
+                <div class="h-14 w-14 rounded-full bg-green-500/10 flex items-center justify-center border border-gray-700 overflow-hidden">
+                  <img 
+                    [src]="'http://localhost:8080/' + equipo.img"
+                    alt="Logo del equipo"
+                    class="h-full w-full object-cover rounded-full">
+                </div>
+              </div>
                 </div>
               </div>
               <div class="flex-1 min-w-0">
