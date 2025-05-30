@@ -1,5 +1,5 @@
 import { Component, OnInit , inject} from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Rutina } from '../../../../models/rutina.model';
@@ -9,17 +9,26 @@ import { forkJoin } from 'rxjs';
 import { EjercicioRutinaService } from '../../../../services/ejerciciorutina.service';
 import { EjercicioRutinaDTO } from '../../../../models/ejercicioRutinaDTO.model';
 import Swal from 'sweetalert2';
+import { MatIcon } from '@angular/material/icon';
+import { InstructorService } from '../../../../services/instructor.service';
 @Component({
     selector: 'app-ejercicios',
     standalone:true,
-    imports: [ FormsModule, CommonModule, RouterModule],
+    imports: [ FormsModule, CommonModule, RouterModule,MatIcon ],
     templateUrl: './ejercicios.component.html',
     styleUrl: './ejercicios.component.css'
 }) 
 export class EjerciciosComponent implements OnInit{
   private rservice = inject(RutinaService)
   private eservice = inject(EjercicioRutinaService)
+  private iservice = inject(InstructorService)
   nombre : string = ''
+  nombreInst: string = '';
+  apellido: string = '';
+  fotoPerfil: string = "http://localhost:8080/";
+  showNotification: boolean = false;
+  notificationMessage: string = '';
+  showUserDropdown: boolean = false;
   id :number = 0
   descripcion : string = ''
   rutina : Rutina|null = null
@@ -30,8 +39,12 @@ export class EjerciciosComponent implements OnInit{
   ejercicios : EjercicioRutina[] = []
   modoEdicion:boolean = false
   orden :  number = 0
+  constructor(public router:Router){}
   ngOnInit(): void {
     try{
+      const fotoPerfil = localStorage.getItem("fotoPerfil")
+      const nom=localStorage.getItem("nombre")
+      const ap = localStorage.getItem("apellido")
       const token=localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
       const idDeporte = Number(localStorage.getItem("idDeporte"))
@@ -47,8 +60,9 @@ export class EjerciciosComponent implements OnInit{
               next: (data) => {
                 this.rutinas = data.rutinas;
                 this.ejercicios = data.ejercicios
-                console.log(this.rutinas)
-                console.log(this.ejercicios)
+                this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+                this.nombreInst=nom ?? ''
+                this.apellido= ap ?? ''
               },
               error: (err) => {
                 Swal.fire('Error', 'No se pudieron cargar los ejercicios', 'error');
@@ -164,4 +178,23 @@ export class EjerciciosComponent implements OnInit{
             }
       })
     }
+    toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
+cerrarSesion() {
+ Swal.fire({
+  title: '¿Estás seguro?',
+  text: '¿Quieres cerrar sesión?',
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonText: 'Sí, cerrar sesión',
+  cancelButtonText: 'Cancelar'
+}).then((result) => {
+  if (result.isConfirmed) {
+    this.iservice.logOut();
+    this.router.navigate(['/login']);
+    Swal.fire('Sesión cerrada', '', 'success');
+  }
+});
+}
   }

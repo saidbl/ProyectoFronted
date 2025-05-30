@@ -5,19 +5,22 @@ import { RutinaService } from '../../../services/rutina.service';
 import { CommonModule } from '@angular/common';
 import { Posicion } from '../../../models/posicion.model';
 import { PosicionService } from '../../../services/posicion.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RutinaDTO } from '../../../models/rutinaDTO.model';
+import { MatIcon } from '@angular/material/icon';
 import Swal from 'sweetalert2';
+import { InstructorService } from '../../../services/instructor.service';
 @Component({
     selector: 'app-rutina-m',
     standalone:true,
-    imports: [FormsModule, CommonModule, RouterModule],
+    imports: [FormsModule, CommonModule, RouterModule, MatIcon],
     templateUrl: './rutina-m.component.html',
     styleUrl: './rutina-m.component.css'
 })
 export class RutinaMComponent implements OnInit{
   private rservice= inject(RutinaService)
   private pservice= inject(PosicionService)
+  private iservice = inject(InstructorService)
   public rutinas:Rutina []= []
   public descripcion:string = ""
   public posiciones:Posicion[]=[]
@@ -29,6 +32,8 @@ export class RutinaMComponent implements OnInit{
   public objetivo : string = ""
   public duracion : number = 0
   public id : number = 0
+  apellido: string|null = '';
+  nombreInst : string|null = ""
   public modoEdicion: boolean = false;
   public dias:string[]=["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
   public dificultades:string[]=["Básico","Intermedio","Avanzado"]
@@ -37,10 +42,14 @@ export class RutinaMComponent implements OnInit{
   rutinaAEliminar: Rutina | null = null;
   showUserDropdown: boolean = false;
   nombreInstructor: string = 'Nombre Instructor';
-  fotoPerfil: string = 'https://randomuser.me/api/portraits/men/32.jpg';
+  fotoPerfil: string = "http://localhost:8080/";
+  constructor(public router: Router) {}
   ngOnInit(): void {
     try{
+      const nom=localStorage.getItem("nombre")
+      const ap = localStorage.getItem("apellido")
       const token=localStorage.getItem("token")
+      const fotoPerfil = localStorage.getItem("fotoPerfil")
       const id = Number(localStorage.getItem("id"))
       const idDeporte = Number(localStorage.getItem("idDeporte"))
       console.log(localStorage)
@@ -55,6 +64,9 @@ export class RutinaMComponent implements OnInit{
           if(data.length>=0){
             console.log(data)
           this.rutinas=data
+          this.nombreInst = nom
+          this.apellido = ap
+           this.fotoPerfil = this.fotoPerfil+ fotoPerfil
           }
         },
         error:(err)=>{
@@ -87,7 +99,21 @@ export class RutinaMComponent implements OnInit{
     this.posicion = null;
     this.modoEdicion = false;
   }
-  logout(): void {
+  cerrarSesion() {
+   Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Quieres cerrar sesión?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.iservice.logOut();
+      this.router.navigate(['/login']);
+      Swal.fire('Sesión cerrada', '', 'success');
+    }
+  });
   }
   confirmarEliminarRutina(rutina: Rutina): void {
     Swal.fire({

@@ -12,6 +12,7 @@ import { WsService } from '../../services/websocket.service';
 import { RemitenteTipo } from '../../models/remitentetipo.model';
 import { MensajeService } from '../../services/mensaje.service';
 import { OrganizacionService } from '../../services/organizacion.service';
+import { Mensaje } from '../../models/mensaje.model';
 @Component({
   selector: 'app-chat',
   imports: [FormsModule,CommonModule],
@@ -171,6 +172,7 @@ export class ChatComponent {
       this.messages = reset ? nuevosMensajes : [...nuevosMensajes, ...this.messages];
         this.totalMessages = pagina.totalElements;
         this.currentPage++;
+        this.messages.reverse()
         this.scrollToBottom();
       },
       error: (err) => console.error('Error loading messages:', err)
@@ -285,9 +287,9 @@ export class ChatComponent {
     }
   }
 
-isCurrentUser(senderId: number): boolean {
+isCurrentUser(mensaje: Mensaje): boolean {
   const currentUserId = Number(localStorage.getItem("id"));
-  return senderId === currentUserId;
+  return mensaje.remitenteId === currentUserId && mensaje.remitenteTipo=="INSTRUCTOR";
 }
 
   formatDate(dateString: string | Date | undefined | null): string {

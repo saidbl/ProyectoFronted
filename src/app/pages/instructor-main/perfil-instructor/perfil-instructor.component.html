@@ -1,143 +1,167 @@
 <!-- perfil.component.html -->
-<div class="min-h-screen bg-gray-950 font-sans ">
-    <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-50 shadow-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center">
-          <span class="text-xl font-bold text-blue-400">AllSports - Instructor</span>
+          <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
+            AllSports - Instructor
+          </span>
         </div>
         <div class="hidden md:block">
-          <div class="ml-10 flex items-center space-x-8">
-            <a routerLink="equipoEvento" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Eventos
+          <div class="ml-10 flex items-center space-x-4">
+            <a routerLink="equipoEvento" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-calendar-alt mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Eventos</span>
             </a>
-            <a routerLink="rutinaDeportista" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users mr-2"></i> Deportistas
+            <a routerLink="rutinaDeportista" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-users mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Deportistas</span>
             </a>
-            <a routerLink="crearEquipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users-cog mr-2"></i> Equipos
+            <a routerLink="crearEquipos" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-users-cog mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Equipos</span>
             </a>
-            <a routerLink="rutinas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-dumbbell mr-2"></i> Rutinas
+            <a routerLink="rutinas" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-dumbbell mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Rutinas</span>
             </a>
-            <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-bar mr-2"></i> Reportes
-            </a>
-            <a routerLink="reportes" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-bar mr-2"></i> Cerrar Sesion
+            <a routerLink="reportes" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-chart-bar mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Reportes</span>
             </a>
           </div>
         </div>
         <div class="flex items-center">
           <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer" >
-              <span class="text-gray-300 text-sm"></span>
-              <a routerLink="perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
-                <img class="h-8 w-8 rounded-full"  alt="Foto perfil">
+            <div class="flex items-center space-x-2 cursor-pointer group" >
+              <a routerLink="perfil" class="block px-4 py-2 text-sm">
+                <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500"></div>
               </a>
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+              <i class="fas fa-chevron-down text-gray-400 text-xs group-hover:text-blue-400 transition-colors"></i>
             </div>
-            <!-- Dropdown menu -->
           </div>
         </div>
       </div>
     </div>
   </nav>
-  <div class="max-w-3xl mx-auto">
-    <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-8">
-      <h2 class="text-3xl font-bold text-blue-400 mb-8 text-center">Actualizar Perfil</h2>
+  
+  <!-- Contenido principal con animación -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto animate-fade-in">
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-gray-700 shadow-xl p-8">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 mb-2">
+          Actualizar Perfil
+        </h2>
+        <p class="text-gray-400">Completa tu información personal para mejorar la experiencia</p>
+      </div>
       
-      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-8">
         <!-- Sección de imagen de perfil -->
-        <div class="flex flex-col items-center space-y-4">
-            <div class="relative group w-32 h-32">
-            <img   
-                [src]="'http://localhost:8080/' + previewImage"
-                class="w-full h-full rounded-full border-4 border-blue-400/30 object-cover hover:border-blue-400 transition-all duration-300"
-            />
-
-            <label
-                class="absolute bottom-0 right-0 bg-blue-500/80 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-all"
-            >
-                <input
-                type="file"
-                accept="image/*"
-                (change)="onFileSelected($event)"
-                class="hidden"
-                />
-                <mat-icon class="!text-white !text-xl leading-none">photo_camera</mat-icon>
+        <div class="flex flex-col items-center">
+          <div class="relative group w-40 h-40">
+            <img [src]="previewImage" 
+                 class="w-full h-full rounded-full border-4 border-blue-400/30 object-cover hover:border-blue-400 transition-all duration-300 shadow-lg"/>
+            
+            <label class="absolute bottom-2 right-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:opacity-90 transition-all shadow-md">
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden"/>
+              <mat-icon class="!text-white !text-xl leading-none">photo_camera</mat-icon>
             </label>
-            </div>
+          </div>
         </div>
 
         <!-- Campos del formulario -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Nombre</label>
+          <!-- Nombre -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-user mr-2 text-blue-400"></i> Nombre
+            </label>
             <input type="text" formControlName="nombre"
-                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('nombre')?.invalid && (profileForm.get('nombre')?.dirty || profileForm.get('nombre')?.touched)"
-                 class="text-red-400 text-sm mt-1">
-              Nombre requerido (max 50 caracteres)
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Nombre requerido (max 50 caracteres)
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Apellido</label>
+          <!-- Apellido -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-user-tag mr-2 text-purple-400"></i> Apellido
+            </label>
             <input type="text" formControlName="apellido"
-                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('apellido')?.invalid && (profileForm.get('apellido')?.dirty || profileForm.get('apellido')?.touched)"
-                 class="text-red-400 text-sm mt-1">
-              Apellido requerido (max 50 caracteres)
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Apellido requerido (max 50 caracteres)
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+          <!-- Email -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-envelope mr-2 text-blue-400"></i> Email
+            </label>
             <input type="email" formControlName="email"
-                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('email')?.invalid && (profileForm.get('email')?.dirty || profileForm.get('email')?.touched)"
-                 class="text-red-400 text-sm mt-1">
-              Email inválido
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Email inválido
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Teléfono</label>
+          <!-- Teléfono -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-phone mr-2 text-purple-400"></i> Teléfono
+            </label>
             <input type="tel" formControlName="telefono"
-                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('telefono')?.invalid && (profileForm.get('telefono')?.dirty || profileForm.get('telefono')?.touched)"
-                 class="text-red-400 text-sm mt-1">
-              Formato inválido (9-12 dígitos)
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Formato inválido (9-12 dígitos)
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Especialidad</label>
+          <!-- Especialidad -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-graduation-cap mr-2 text-blue-400"></i> Especialidad
+            </label>
             <input type="text" formControlName="especialidad"
-                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('especialidad')?.invalid && (profileForm.get('especialidad')?.dirty || profileForm.get('especialidad')?.touched)"
-                 class="text-red-400 text-sm mt-1">
-              Especialidad requerida
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Especialidad requerida
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Experiencia (años)</label>
+          <!-- Experiencia -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-medal mr-2 text-purple-400"></i> Experiencia (años)
+            </label>
             <input type="number" formControlName="experiencia"
-                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50">
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('experiencia')?.invalid && (profileForm.get('experiencia')?.dirty || profileForm.get('experiencia')?.touched)"
-                 class="text-red-400 text-sm mt-1">
-              Experiencia requerida (0-50 años)
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Experiencia requerida (0-50 años)
             </div>
           </div>
         </div>
 
-        <button type="submit" [disabled]="profileForm.invalid || loading"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-          <i class="fas fa-save mr-2"></i>
-          {{ loading ? 'Actualizando...' : 'Guardar Cambios' }}
-        </button>
+        <!-- Botón de guardar -->
+        <div class="pt-4">
+          <button type="submit" [disabled]="profileForm.invalid || loading"
+                  class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3.5 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="flex items-center justify-center">
+              <i class="fas fa-save mr-3"></i>
+              {{ loading ? 'Actualizando...' : 'Guardar Cambios' }}
+            </div>
+          </button>
+        </div>
       </form>
     </div>
   </div>

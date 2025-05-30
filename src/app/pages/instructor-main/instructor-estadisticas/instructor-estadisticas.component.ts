@@ -7,19 +7,30 @@ import { ResumenAtletasDTO } from '../../../models/resumenAtletasDTO.model';
 import { DeportistaService } from '../../../services/deportista.service';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router'; 
+import { MatIconModule } from '@angular/material/icon';
+import Swal from 'sweetalert2';
+import { InstructorService } from '../../../services/instructor.service';
 @Component({
   selector: 'app-instructor-estadisticas',
-  imports: [ChartModule, TableModule,ProgressBarModule,CommonModule ],
+  imports: [ChartModule, TableModule,ProgressBarModule,CommonModule,RouterModule,MatIconModule],
   templateUrl: './instructor-estadisticas.component.html',
   styleUrls: ['./instructor-estadisticas.component.css']
 })
 export class InstructorEstadisticasComponent implements OnInit {
+  nombre: string = '';
+  apellido: string = '';
+  fotoPerfil: string = "http://localhost:8080/";
   data!: ResumenCumplimientoDTO;
   data2!: ResumenAtletasDTO;
   cargando = true;
   private crservice = inject(CheckInRutinaService);
   private dservice = inject(DeportistaService)
-
+  private iservice = inject (InstructorService)
+    showNotification: boolean = false;
+  notificationMessage: string = '';
+  showUserDropdown: boolean = false;
+ constructor (public router : Router){}
   optionsDias = {
     indexAxis: 'y',
     scales: {
@@ -92,6 +103,9 @@ export class InstructorEstadisticasComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    const fotoPerfil = localStorage.getItem("fotoPerfil")
+      const nom=localStorage.getItem("nombre")
+      const ap = localStorage.getItem("apellido")
     const token = localStorage.getItem('token');
     const id = Number(localStorage.getItem('id'));
     if (!token) {
@@ -106,10 +120,17 @@ export class InstructorEstadisticasComponent implements OnInit {
     this.dservice.getResumenAtletas(id,token).subscribe( {
       next: (res) => {
         this.data2 = res;
+        console.log(this.data2)
         this.cargando = false;
+        this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+          this.nombre=nom ?? ''
+          this.apellido= ap ?? ''
       }
     });
   }
+  toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
 
   get chartDataDias() {
     return {
@@ -154,4 +175,20 @@ export class InstructorEstadisticasComponent implements OnInit {
     };
   }
 
+  cerrarSesion() {
+   Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Quieres cerrar sesión?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.iservice.logOut();
+      this.router.navigate(['/login']);
+      Swal.fire('Sesión cerrada', '', 'success');
+    }
+  });
+  }
 }

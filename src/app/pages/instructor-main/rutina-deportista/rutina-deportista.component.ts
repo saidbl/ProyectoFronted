@@ -16,6 +16,7 @@ import { ObjetivoRendimiento } from '../../../models/objetivoRendimiento.model';
 import { EvolucionFisicaDTO } from '../../../models/evolucionFisicaDTO.model';
 import { MatIcon } from '@angular/material/icon';
 import Swal from 'sweetalert2';
+import { InstructorService } from '../../../services/instructor.service';
 Chart.register(...registerables);
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +33,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   private pservice = inject(PosicionService)
   private destroy$ = new Subject<void>();
   private cdRef = inject(ChangeDetectorRef);
+  private iservice = inject(InstructorService)
   @ViewChild('rutinasChart') private chartRef!: ElementRef;
   deportistas: DeportistaRendimiento[] = [];
   rutinasF : Rutina[]=[]
@@ -73,7 +75,7 @@ contadorProgresos: number = 0;
     {value: 'TECNICA', nombre: 'Técnica', icono: 'fas fa-football-ball'}
   ];
   checkinsJugador: any[] = [];
-  constructor(public router: Router) {}
+  
   nombre: string = '';
   apellido: string = '';
   metricasRendimiento: any[] = [];
@@ -88,17 +90,20 @@ contadorProgresos: number = 0;
   jugadoresDestacados: number = 0;
   private chart: Chart | undefined = undefined;
   navigation = [
-  { name: 'Eventos', route: 'equipoEvento', icon: 'event' },
-  { name: 'Deportistas', route: 'rutinaDeportista', icon: 'people' },
-  { name: 'Equipos', route: 'crearEquipos', icon: 'groups' },
-  { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
-  { name: 'Reportes', route: 'reportes', icon: 'analytics' }
+  { name: 'Eventos', route: '../equipoEvento', icon: 'event' },
+  { name: 'Deportistas', route: '../rutinaDeportista', icon: 'people' },
+  { name: 'Equipos', route: '../crearEquipos', icon: 'groups' },
+  { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
+  { name: 'Reportes', route: '../reportes', icon: 'analytics' }
 ];
 userAvatar:string= ""
-
+constructor(public router: Router) {}
 
 
   ngOnInit() {
+    this.cargarDatosIniciales()
+  }
+  private cargarDatosIniciales(){
     try{
       const fotoPerfil = localStorage.getItem("fotoPerfil")
       const nom=localStorage.getItem("nombre")
@@ -107,20 +112,19 @@ userAvatar:string= ""
       const id = Number(localStorage.getItem("id"))
       const deporte = Number(localStorage.getItem("idDeporte"))
       if(!token) {
-        this.showAuthError();
-        throw new Error("Not Token Found")
+        this.mostrarErrorAutenticacion();
+        return;
       }
+       this.cargando = true;
+            this.cdRef.markForCheck();
       forkJoin({
         deportistas: this.dservice.listCheckRenObj(id,token).pipe(
         takeUntil(this.destroy$)),
         rutinas: this.rtservice.list(id, token),
         posiciones: this.pservice.list(deporte,token)
-
-        
       }).subscribe({
         next: (data) => {
           this.deportistas=data.deportistas
-          console.log(data.deportistas)
           this.rutinas = data.rutinas;
           this.totalJugadores = this.deportistas.length
           this.totalRutinasActivas = this.rutinas.length
@@ -128,36 +132,64 @@ userAvatar:string= ""
           this.deportistasFiltrados = this.deportistas
           this.renderizarGrafico()
           this.renderizarGrafico2();
-          console.log(this.deportistas)
-          this.cdRef.markForCheck();
           this.fotoPerfil = this.fotoPerfil+ fotoPerfil
-          console.log(this.fotoPerfil)
           this.nombre=nom ?? ''
           this.apellido= ap ?? ''
+          this.progresoPromedio= this.getProgresoPromedioFinal()
+          this.cdRef.markForCheck();
           
         },
         error: (err) => {
           console.error("Error loading data", err);
-          Swal.fire('Error', err.message, 'error');
-
+                    Swal.fire('Error', 'Error al cargar los datos: ' + err.message, 'error');
+                    this.cargando = false;
+                    this.cdRef.markForCheck();
         }
       });
       
     }catch(error:any){
-      alert(error.message)
+      console.error("Initialization error", error);
+            Swal.fire('Error', error.message, 'error');
+            this.cargando = false;
+            this.cdRef.markForCheck();
     }
   }
   ngOnDestroy() {
   this.destroy$.next();
   this.destroy$.complete();
+  this.destruirGraficos();
 }
+private mostrarErrorAutenticacion(): void {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de autenticación',
+            text: 'Tu sesión ha expirado o no estás autenticado',
+            confirmButtonText: 'Entendido',
+            allowOutsideClick: false
+        }).then(() => {
+            this.router.navigate(['/login']);
+        });
+    }
 
   ngAfterViewInit() {
   this.renderizarGrafico();
   this.renderizarGrafico2();
 }
-cerrarSesion(){
-  
+cerrarSesion() {
+ Swal.fire({
+  title: '¿Estás seguro?',
+  text: '¿Quieres cerrar sesión?',
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonText: 'Sí, cerrar sesión',
+  cancelButtonText: 'Cancelar'
+}).then((result) => {
+  if (result.isConfirmed) {
+    this.iservice.logOut();
+    this.router.navigate(['/login']);
+    Swal.fire('Sesión cerrada', '', 'success');
+  }
+});
 }
   filtrarDeportistas() {
     this.deportistasFiltrados = this.deportistas.filter(d => {
@@ -264,13 +296,14 @@ trackByRutina(index: number, rutina: any): number {
 }
 getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
   console.log(metricas)
-     if (!metricas || metricas.length < 2) {
+     if (!metricas || metricas.length < 1) {
     return 0;
   }
 
 
   if (tipo === "peso") {
     const actual = metricas[metricas.length - 1].peso
+    console.log(metricas[metricas.length - 1].peso)
 
     return actual;
   }else if(tipo === "imc"){
@@ -287,38 +320,42 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
   return 0
 }
   
-    getTrend(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number {
-      console.log(metricas)
-     if (!metricas || metricas.length < 2) {
+    
+    getTrend(metricas: EvolucionFisicaDTO[] | undefined, tipo: string): number {
+  console.log(metricas);
+  if (!metricas || metricas.length < 2) {
     return 0;
   }
 
+  const ultima = metricas[metricas.length - 1];
+  const anterior = metricas[metricas.length - 2];
 
-  if (tipo === "peso") {
-    const actual = metricas[metricas.length - 1].peso
-    const anterior = metricas[metricas.length - 2].peso;
+  let actualValor: number = 0;
+  let anteriorValor: number = 0;
 
-    if (anterior === 0) return 0; 
-
-    return Math.round(actual / anterior);
-  }else if(tipo === "imc"){
-    const actual = metricas[metricas.length - 1].imc
-    const anterior = metricas[metricas.length - 2].imc;
-
-    if (anterior === 0) return 0; 
-
-    return Math.round(actual / anterior);
-
-  }else if(tipo === "porcentaje_grasa"){
-    const actual = metricas[metricas.length - 1].porcentajeGrasa
-    const anterior = metricas[metricas.length - 2].porcentajeGrasa;
-
-    if (anterior === 0) return 0; 
-
-    return Math.round(actual / anterior);
+  switch (tipo) {
+    case "peso":
+      actualValor = ultima.peso;
+      anteriorValor = anterior.peso;
+      break;
+    case "imc":
+      actualValor = ultima.imc;
+      anteriorValor = anterior.imc;
+      break;
+    case "porcentaje_grasa":
+      actualValor = ultima.porcentajeGrasa;
+      anteriorValor = anterior.porcentajeGrasa;
+      break;
+    default:
+      return 0;
   }
-  return 0
-  }
+
+  if (anteriorValor === 0) return 0;
+
+  const cambioPorcentual = ((actualValor - anteriorValor) / anteriorValor) * 100;
+  return Math.round(cambioPorcentual);
+}
+
   renderizarGrafico() {
   const ctx = document.getElementById('evolucionChart') as HTMLCanvasElement;
 
@@ -464,7 +501,7 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
   async quitarRutina(rutinaJugador: RutinaJugador) {
         const token = localStorage.getItem("token");
         if (!token) {
-            this.showAuthError();
+            this.mostrarErrorAutenticacion();
             return;
         }
 
@@ -496,10 +533,10 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
         }
     }
 
-  asignarRutina(deportista: DeportistaRendimiento | null) {
+  asignarRutina() {
         const token = localStorage.getItem("token");
         if (!token) {
-            this.showAuthError();
+            this.mostrarErrorAutenticacion();
             return;
         }
 
@@ -516,7 +553,7 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
         this.rservice.add(nuevaVinculacion, token).subscribe({
             next: (data) => {
                 Swal.fire('¡Éxito!', 'Rutina vinculada correctamente', 'success');
-                this.abrirModalAsignar(this.jugadorSeleccionado);
+                this.abrirModalAsignar(this.jugadorSeleccionado!);
             },
             error: (err) => {
                 console.error("Error al vincular rutina", err);
@@ -533,8 +570,6 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
   const { imc, peso, porcentajeGrasa } = ultima;
 
   let mensaje = '';
-
-  // Clasificación IMC
   if (imc < 18.5) {
     mensaje += '⚠ Bajo peso (IMC < 18.5). Riesgo de fatiga, lesiones musculares o fracturas. ';
   } else if (imc >= 18.5 && imc < 24.9) {
@@ -570,9 +605,12 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
     abrirModalAsignar(deportista: DeportistaRendimiento|null) {
     const token=localStorage.getItem("token")
     if(!token) {
-      this.showAuthError();
-      throw new Error("Not Token Found")
+      this.mostrarErrorAutenticacion();
+            return;
     }
+    this.jugadorSeleccionado = deportista;
+        this.cargando = true;
+        this.cdRef.markForCheck();
     this.mostrarModal = true;
     forkJoin({
       rutinasJugador: this.rservice.list(deportista?.deportista?.id??0, token),
@@ -583,20 +621,29 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
         this.rutinasFiltradas = this.borrarRepetidas(this.rutinasJugador, this.rutinas, deportista?.deportista?.posicion?.nombre??"");
         this.mostrarModalAsignar = true;
         this.filtrarRutinas();
-        this.cdRef.markForCheck();
-        if (this.rutinasFiltradas.length === 0) {
-                    Swal.fire('Info', 'No hay rutinas disponibles para asignar', 'info');
-                }
+        this.mostrarModalAsignar = true;
+                this.cargando = false;
+                this.cdRef.markForCheck();
       },
       error: (err) => {
         console.error("Error loading data", err);
-        Swal.fire('Error', 'No se pudieron cargar las rutinas', 'error');
+                Swal.fire('Error', 'No se pudieron cargar las rutinas: ' + err.message, 'error');
+                this.cargando = false;
+                this.cdRef.markForCheck();
       }
     });
-    this.jugadorSeleccionado = deportista;
     this.busquedaRutina = '';
     this.filtroTipoRutina = '';
   }
+   private destruirGraficos(): void {
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = undefined;
+        }
+        if (this.chart2) {
+            this.chart2.destroy();
+        }
+    }
   private showAuthError() {
         Swal.fire({
             icon: 'error',
@@ -638,11 +685,7 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
     this.mostrarModalRutinas = false;
     this.jugadorSeleccionado = null;
     this.rutinaSeleccionada = 0
-    
-    if (this.evolucionChart) {
-      this.evolucionChart.destroy();
-      this.evolucionChart = null;
-    }
+    this.destruirGraficos();
   }
   borrarRepetidas(rutinasJugador: RutinaJugador[], rutinas: Rutina[], posicion:String): Rutina[] {
     if (!rutinasJugador.length || !rutinas.length) return rutinas.filter(r=> r.posicion.nombre == posicion);

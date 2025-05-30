@@ -1,115 +1,181 @@
-<div class="min-h-screen bg-gray-950 font-sans text-gray-100">
-  <!-- Barra de navegación -->
-  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex items-center justify-center space-x-10">
-        <a routerLink="../.." class="nav-item">
-          <i class="fas fa-home mr-2"></i> Principal
-        </a>
-        <a routerLink=".." class="nav-item">
-          <i class="fas fa-dumbbell mr-2"></i> Rutinas
-        </a>
-        <a routerLink="../ejercicios" class="nav-item">
-          <i class="fas fa-running mr-2"></i> Ejercicios
-        </a>
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <mat-icon class="text-blue-400">sports</mat-icon>
+          <span class="text-xl font-bold text-blue-400 tracking-tighter">TRAINPRO</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Recursos</span>
+        </div>
+        
+        <!-- Menú central -->
+        <div class="hidden md:block">
+          <div class="ml-4 flex items-center space-x-6">
+            <a routerLink="../.." 
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive('/principal', false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive('/principal', false)}">
+              <mat-icon class="mr-2">home</mat-icon>
+              <span class="text-sm font-medium">Principal</span>
+            </a>
+            <a routerLink=".." 
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive('/rutinas', false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive('/rutinas', false)}">
+              <mat-icon class="mr-2">list_alt</mat-icon>
+              <span class="text-sm font-medium">Rutinas</span>
+            </a>
+            <a routerLink="../ejercicios" 
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive('/ejercicios', false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive('/ejercicios', false)}">
+              <mat-icon class="mr-2">fitness_center</mat-icon>
+              <span class="text-sm font-medium">Ejercicios</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Perfil -->
+        <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-9 w-9 rounded-full border-2 border-blue-400/30 shadow-lg 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100">{{nombreInst}} {{apellido}}</p>
+                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-2 bg-gray-800 border border-gray-700 z-20">
+              <a routerLink="../../perfil" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                <mat-icon class="mr-2">person</mat-icon> Perfil
+              </a>
+              <a (click)="cerrarSesion()" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 cursor-pointer">
+                <mat-icon class="mr-2">logout</mat-icon> Cerrar sesión
+              </a>
+            </div>
+          </div>
       </div>
     </div>
   </nav>
 
-  <!-- Contenido principal -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Encabezado -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-playfair">
+  <!-- Contenido principal mejorado -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Encabezado con gradiente -->
+    <div class="text-center mb-16 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 animate-gradient-x tracking-tight">
         Gestión de Videos
       </h1>
-      <p class="mt-4 text-lg text-gray-400">Recursos visuales para optimizar entrenamientos</p>
+      <p class="mt-4 text-lg text-gray-400 font-light max-w-2xl mx-auto">Recursos visuales para optimización técnica</p>
     </div>
 
-    <!-- Sección de subida -->
-    <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 mb-12 hover:border-blue-500/30 transition-all duration-300">
-      <h2 class="text-2xl font-bold text-center mb-6 text-blue-400">
-        <i class="fas fa-cloud-upload-alt mr-2"></i>Subir Nuevo Video
-      </h2>
+    <!-- Sección de subida mejorada -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 mb-12 shadow-xl border border-gray-700 hover:border-blue-400/30 transition-all duration-300">
+      <div class="flex items-center mb-6">
+        <div class="bg-blue-900/20 p-3 rounded-xl mr-4">
+          <mat-icon class="text-blue-400 text-3xl">cloud_upload</mat-icon>
+        </div>
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Subir Nuevo Recurso</h2>
+      </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="form-group">
-          <label class="form-label">Seleccionar video</label>
-          <div class="input-group">
+          <div class="relative">
             <input type="file" (change)="seleccionarArchivo($event)"
-                   class="form-input file:bg-blue-600 file:text-white file:border-0">
-            <i class="fas fa-video input-icon"></i>
+                   class="w-full px-4 py-2.5 bg-gray-800 border-2 border-gray-700 rounded-xl
+                         text-gray-100 file:bg-blue-600 file:text-white file:border-0 file:px-4 file:py-2
+                         file:rounded-lg file:mr-4 cursor-pointer">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Descripción</label>
-          <div class="input-group">
+          <div class="relative">
             <input type="text" [(ngModel)]="descripcion" 
-                   class="form-input" placeholder="Ej: Técnica correcta">
-            <i class="fas fa-comment-dots input-icon"></i>
+                   class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                         text-gray-100 placeholder-transparent focus:border-blue-500 peer"
+                   placeholder="Descripción">
+            <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                        transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                        peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+              <mat-icon class="align-middle mr-1 text-base">description</mat-icon>
+              Descripción
+            </label>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Ejercicio asociado</label>
-          <select [(ngModel)]="ejercicioId" class="form-select">
-            <option *ngFor="let ejercicio of ejercicios" [value]="ejercicio.id">{{ ejercicio.nombre }}</option>
-          </select>
+          <div class="relative">
+            <select [(ngModel)]="ejercicioId" 
+                    class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                          text-gray-100 appearance-none pr-10">
+              <option *ngFor="let ejercicio of ejercicios" [value]="ejercicio.id">{{ ejercicio.nombre }}</option>
+            </select>
+            <mat-icon class="absolute right-4 top-4 text-gray-500">unfold_more</mat-icon>
+            <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400">
+              <mat-icon class="align-middle mr-1 text-base">link</mat-icon>
+              Ejercicio asociado
+            </label>
+          </div>
         </div>
 
         <button (click)="subirRecurso()" 
-                class="self-end bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl font-semibold shadow-lg transition-all duration-300">
-          <i class="fas fa-upload mr-2"></i>Subir
+                class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 
+                      text-white py-3.5 rounded-xl font-semibold shadow-lg transition-all duration-300 
+                      flex items-center justify-center gap-2">
+          <mat-icon>upload</mat-icon>
+          Subir Recurso
         </button>
       </div>
     </div>
 
-    <!-- Grid de videos -->
+    <!-- Grid de videos mejorado -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <div *ngFor="let recurso of recursos" 
-           class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-blue-400 transition-all duration-300">
-        <div class="relative overflow-hidden rounded-lg">
-          <div class=" inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10"></div>
-          
-          <div class="flex justify-center items-center w-full">
-            <video 
-                [src]="'http://localhost:8080/' + recurso.url"
-                class="rounded-lg transform group-hover:scale-105 transition-transform duration-300"
-                controls
-                muted>
-            </video>
-            </div>
+  <div *ngFor="let recurso of recursos" 
+       class="group bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-4 border border-gray-700 hover:border-blue-400/50 transition-all duration-300">
 
-          <div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button mat-icon-button
+    <div class="relative overflow-hidden rounded-xl">
+      <video [src]="'http://localhost:8080/' + recurso.url"
+             class="w-full h-auto max-h-[400px] object-contain rounded-xl transform group-hover:scale-[1.02] transition-transform duration-300"
+             controls
+             muted>
+      </video>
+
+      <button mat-icon-button
               (click)="eliminarRecurso(recurso.id)"
-              class="absolute top-3 right-3 bg-red-700/80 hover:bg-red-800 rounded-full shadow-lg"
-              style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-              <mat-icon class="text-white">close</mat-icon>
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-4">
-          <div class="flex justify-between items-start">
-            <h5 class="text-lg font-semibold text-blue-400 truncate">{{ recurso.tipo }}</h5>
-            <span class="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
-              {{recurso.ejercicioRutina.nombre }}
-            </span>
-          </div>
-          <p class="text-sm text-gray-400 mt-2 line-clamp-2">{{ recurso.descripcion || 'Sin descripción' }}</p>
-        </div>
-      </div>
+              class="absolute top-3 right-3 bg-gray-800/80 hover:bg-red-600/90 backdrop-blur-sm
+                     rounded-full p-2 transition-all duration-300 shadow-lg">
+        <mat-icon class="text-gray-300 hover:text-white">delete</mat-icon>
+      </button>
     </div>
 
-    <!-- Esqueleto de carga -->
+    <div class="mt-4">
+      <div class="flex justify-between items-start mb-2">
+        <h5 class="text-lg font-semibold text-blue-400 truncate">{{ recurso.tipo }}</h5>
+        <span class="text-xs px-3 py-1 rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
+          {{ recurso.ejercicioRutina.nombre }}
+        </span>
+      </div>
+      <p class="text-sm text-gray-400 line-clamp-2 leading-relaxed">
+        {{ recurso.descripcion || 'Sin descripción proporcionada' }}
+      </p>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Esqueleto de carga mejorado -->
     <div *ngIf="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <div *ngFor="let _ of [].constructor(4)" 
-           class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 animate-pulse">
-        <div class="h-48 bg-gray-800 rounded-lg mb-4"></div>
-        <div class="h-4 bg-gray-800 rounded w-3/4 mb-2"></div>
-        <div class="h-3 bg-gray-800 rounded w-1/2"></div>
+           class="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+        <div class="aspect-video bg-gray-800/50 rounded-xl mb-4 animate-pulse"></div>
+        <div class="h-5 bg-gray-800/50 rounded w-3/4 mb-3"></div>
+        <div class="h-3 bg-gray-800/50 rounded w-1/2"></div>
       </div>
     </div>
   </div>

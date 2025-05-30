@@ -1,148 +1,262 @@
-<div class="min-h-screen bg-gray-950 font-sans text-gray-100">
-  <!-- Barra de navegación -->
-  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex items-center justify-center space-x-10">
-        <a routerLink="../.." class="nav-item">
-          <i class="fas fa-home mr-2"></i> Principal
-        </a>
-        <a routerLink=".." class="nav-item">
-          <i class="fas fa-dumbbell mr-2"></i> Rutinas
-        </a>
-        <a routerLink="../videos" class="nav-item">
-          <i class="fas fa-video mr-2"></i> Videos
-        </a>
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <mat-icon class="text-blue-400">fitness_center</mat-icon>
+          <span class="text-xl font-bold text-blue-400 tracking-tighter">TRAINPRO</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Entrenador</span>
+        </div>
+        
+        <!-- Menú central -->
+        <div class="hidden md:block">
+          <div class="ml-4 flex items-center space-x-6">
+            <a routerLink="../.." 
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive('/principal', false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive('/principal', false)}">
+              <mat-icon class="mr-2">home</mat-icon>
+              <span class="text-sm font-medium">Principal</span>
+            </a>
+            <a routerLink=".." 
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive('/rutinas', false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive('/rutinas', false)}">
+              <mat-icon class="mr-2">list_alt</mat-icon>
+              <span class="text-sm font-medium">Rutinas</span>
+            </a>
+            <a routerLink="../videos" 
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive('/videos', false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive('/videos', false)}">
+              <mat-icon class="mr-2">ondemand_video</mat-icon>
+              <span class="text-sm font-medium">Videos</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Perfil -->
+        <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-9 w-9 rounded-full border-2 border-blue-400/30 shadow-lg 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100">{{nombreInst}} {{apellido}}</p>
+                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-2 bg-gray-800 border border-gray-700 z-20">
+              <a routerLink="../../perfil" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                <mat-icon class="mr-2">person</mat-icon> Perfil
+              </a>
+              <a (click)="cerrarSesion()" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 cursor-pointer">
+                <mat-icon class="mr-2">logout</mat-icon> Cerrar sesión
+              </a>
+            </div>
+          </div>
       </div>
     </div>
   </nav>
 
-  <!-- Contenido principal -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Encabezado -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-playfair">
+  <!-- Contenido principal mejorado -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Encabezado con gradiente -->
+    <div class="text-center mb-16 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 animate-gradient-x tracking-tight">
         Gestión de Ejercicios
       </h1>
-      <p class="mt-4 text-lg text-gray-400">Construye rutinas efectivas con ejercicios detallados</p>
+      <p class="mt-4 text-lg text-gray-400 font-light max-w-2xl mx-auto">Construye rutinas precisas con ejercicios técnicos</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Formulario Nuevo Ejercicio -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 hover:border-blue-500/30 transition-all duration-300">
-        <h2 class="text-2xl font-bold text-center mb-6 text-blue-400">
-          <i class="fas fa-plus-circle mr-2"></i>Nuevo Ejercicio
-        </h2>
+      <!-- Formulario Nuevo Ejercicio mejorado -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700 hover:border-blue-400/30 transition-all duration-300">
+        <div class="flex items-center mb-8">
+          <div class="bg-blue-900/20 p-3 rounded-xl mr-4">
+            <mat-icon class="text-blue-400 text-3xl">add_circle</mat-icon>
+          </div>
+          <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Nuevo Ejercicio</h2>
+        </div>
         
         <form #ejercicioForm="ngForm" class="space-y-6">
           <div class="form-group">
-            <label class="form-label">Nombre del Ejercicio</label>
-            <div class="input-group">
+            <div class="relative">
               <input [(ngModel)]="nombre" name="nombre" required 
-                     class="form-input" placeholder="Ej: Press de banca">
-              <i class="fas fa-dumbbell input-icon"></i>
+                    class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                          text-gray-100 placeholder-transparent focus:border-blue-500 peer"
+                    placeholder="Nombre del Ejercicio">
+              <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                          transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                          peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+                <mat-icon class="align-middle mr-1 text-base">fitness_center</mat-icon>
+                Nombre del Ejercicio
+              </label>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Descripción técnica</label>
-            <div class="input-group">
+            <div class="relative">
               <textarea [(ngModel)]="descripcion" name="descripcion" required
-                        class="form-input h-32" placeholder="Detalla la ejecución correcta"></textarea>
-              <i class="fas fa-align-left input-icon"></i>
+                       class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                             text-gray-100 placeholder-transparent focus:border-blue-500 peer h-32"
+                       placeholder="Descripción técnica"></textarea>
+              <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                          transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                          peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+                <mat-icon class="align-middle mr-1 text-base">description</mat-icon>
+                Descripción técnica
+              </label>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-group">
-              <label class="form-label">Rutina asociada</label>
-              <select [(ngModel)]="rutina" name="rutina" required class="form-select">
-                <option *ngFor="let rutina of rutinas" [ngValue]="rutina">{{ rutina.nombre }}</option>
-              </select>
+              <div class="relative">
+                <select [(ngModel)]="rutina" name="rutina" required 
+                        class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                              text-gray-100 appearance-none pr-10">
+                  <option *ngFor="let rutina of rutinas" [ngValue]="rutina">{{ rutina.nombre }}</option>
+                </select>
+                <mat-icon class="absolute right-4 top-4 text-gray-500">unfold_more</mat-icon>
+                <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400">
+                  <mat-icon class="align-middle mr-1 text-base">link</mat-icon>
+                  Rutina asociada
+                </label>
+              </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Orden en la rutina</label>
-              <input type="number" [(ngModel)]="orden" name="orden" required 
-                     class="form-input" placeholder="Número de orden">
+              <div class="relative">
+                <input type="number" [(ngModel)]="orden" name="orden" required 
+                      class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                            text-gray-100 placeholder-transparent focus:border-blue-500 peer"
+                      placeholder="Orden">
+                <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                            transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                            peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+                  <mat-icon class="align-middle mr-1 text-base">sort</mat-icon>
+                  Orden en rutina
+                </label>
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-group">
-              <label class="form-label">Series</label>
-              <input type="number" [(ngModel)]="series" name="series" required 
-                     class="form-input" placeholder="Número de series">
+              <div class="relative">
+                <input type="number" [(ngModel)]="series" name="series" required 
+                      class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                            text-gray-100 placeholder-transparent focus:border-blue-500 peer"
+                      placeholder="Series">
+                <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                            transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                            peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+                  <mat-icon class="align-middle mr-1 text-base">repeat</mat-icon>
+                  Número de series
+                </label>
+              </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Repeticiones</label>
-              <input type="number" [(ngModel)]="repeticiones" name="repeticiones" required 
-                     class="form-input" placeholder="Reps por serie">
+              <div class="relative">
+                <input type="number" [(ngModel)]="repeticiones" name="repeticiones" required 
+                      class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                            text-gray-100 placeholder-transparent focus:border-blue-500 peer"
+                      placeholder="Repeticiones">
+                <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                            transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                            peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+                  <mat-icon class="align-middle mr-1 text-base">replay</mat-icon>
+                  Reps por serie
+                </label>
+              </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Descanso entre series</label>
-            <div class="input-group">
+            <div class="relative">
               <input [(ngModel)]="descanso" name="descanso" required 
-                     class="form-input" placeholder="Ej: 90 segundos">
-              <i class="fas fa-clock input-icon"></i>
+                    class="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                          text-gray-100 placeholder-transparent focus:border-blue-500 peer"
+                    placeholder="Descanso">
+              <label class="absolute left-4 -top-3 px-1 bg-gray-800 text-sm text-gray-400 
+                          transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                          peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm">
+                <mat-icon class="align-middle mr-1 text-base">timer</mat-icon>
+                Descanso entre series
+              </label>
             </div>
           </div>
 
           <button (click)="agregarEjercicio()" 
-                  class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl font-semibold shadow-lg transition-all duration-300">
-            <i class="fas fa-save mr-2"></i>Guardar Ejercicio
+                 class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 
+                       text-white py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 
+                       hover:shadow-blue-500/20 flex items-center justify-center gap-2">
+            <mat-icon>save</mat-icon>
+            Guardar Ejercicio
           </button>
         </form>
       </div>
 
-      <!-- Listado de Ejercicios -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-500/30 transition-all duration-300">
-        <h2 class="text-2xl font-bold text-center mb-6 text-purple-400">
-          <i class="fas fa-clipboard-list mr-2"></i>Ejercicios Registrados
-        </h2>
+      <!-- Listado de Ejercicios mejorado -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-xl border border-gray-700 hover:border-purple-400/30 transition-all duration-300">
+        <div class="flex items-center mb-8">
+          <div class="bg-purple-900/20 p-3 rounded-xl mr-4">
+            <mat-icon class="text-purple-400 text-3xl">format_list_bulleted</mat-icon>
+          </div>
+          <h2 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Ejercicios Registrados</h2>
+        </div>
         
-        <div class="max-h-[655px] overflow-y-auto custom-scroll pr-2">
+        <div class="max-h-[700px] overflow-y-auto custom-scroll pr-2">
           <div *ngFor="let ejercicio of ejercicios" 
-               class="group bg-gray-800/50 p-5 rounded-xl mb-4 border border-gray-700 hover:border-blue-400 transition-all duration-300">
-            <div class="flex justify-between items-start">
-              <div>
-                <h4 class="text-xl font-semibold text-blue-400">{{ ejercicio.nombre }}</h4>
-                <p class="text-sm text-gray-400 mt-1">{{ ejercicio.descripcion }}</p>
-              </div>
-              <span class="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+              class="group bg-gray-800/20 p-5 rounded-xl mb-4 border border-gray-700 hover:border-blue-400/50 transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+              <h4 class="text-xl font-semibold text-blue-400">{{ ejercicio.nombre }}</h4>
+              <span class="text-xs px-3 py-1 rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
                 Orden: {{ ejercicio.orden }}
               </span>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
-              <div class="flex items-center">
-                <i class="fas fa-redo-alt text-purple-400 mr-2"></i>
-                <span class="text-gray-300">{{ ejercicio.repeticiones }} repeticiones</span>
+            <p class="text-sm text-gray-400 mb-4">{{ ejercicio.descripcion }}</p>
+
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div class="flex items-center text-gray-300">
+                <mat-icon class="text-purple-400 mr-2 scale-75">repeat</mat-icon>
+                {{ ejercicio.series }} series
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-layer-group text-blue-400 mr-2"></i>
-                <span class="text-gray-300">{{ ejercicio.series }} series</span>
+              <div class="flex items-center text-gray-300">
+                <mat-icon class="text-blue-400 mr-2 scale-75">replay</mat-icon>
+                {{ ejercicio.repeticiones }} reps
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-clock text-green-400 mr-2"></i>
-                <span class="text-gray-300">{{ ejercicio.descanso }} descanso</span>
+              <div class="flex items-center text-gray-300">
+                <mat-icon class="text-green-400 mr-2 scale-75">timer</mat-icon>
+                {{ ejercicio.descanso }}
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-link text-yellow-400 mr-2"></i>
-                <span class="text-gray-300">{{ ejercicio.rutina.nombre }}</span>
+              <div class="flex items-center text-gray-300">
+                <mat-icon class="text-yellow-400 mr-2 scale-75">link</mat-icon>
+                {{ ejercicio.rutina.nombre }}
               </div>
             </div>
 
-            <div class="flex justify-end space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="flex justify-end gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <button (click)="editarEjercicio(ejercicio)" 
-                      class="text-sm px-3 py-1 rounded-md bg-gray-700 hover:bg-blue-500/20 text-blue-400 border border-blue-400/30">
-                <i class="fas fa-edit mr-1"></i>Editar
+                     class="px-3 py-1.5 bg-gray-700/50 hover:bg-blue-500/20 text-blue-400 rounded-lg 
+                           border border-blue-400/30 transition-all duration-200 flex items-center gap-1">
+                <mat-icon class="scale-75">edit</mat-icon>
+                Editar
               </button>
               <button (click)="eliminarEjercicio(ejercicio)" 
-                      class="text-sm px-3 py-1 rounded-md bg-gray-700 hover:bg-red-500/20 text-red-400 border border-red-400/30">
-                <i class="fas fa-trash-alt mr-1"></i>Eliminar
+                     class="px-3 py-1.5 bg-gray-700/50 hover:bg-red-500/20 text-red-400 rounded-lg 
+                           border border-red-400/30 transition-all duration-200 flex items-center gap-1">
+                <mat-icon class="scale-75">delete</mat-icon>
+                Eliminar
               </button>
             </div>
           </div>

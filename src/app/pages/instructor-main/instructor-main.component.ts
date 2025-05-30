@@ -25,6 +25,8 @@ import { Equipo } from '../../models/equipo.model';
 import { EquipoService } from '../../services/equipo.service';
 import { DeportistaService } from '../../services/deportista.service';
 import { Deportista } from '../../models/deportista.model';
+import Swal from 'sweetalert2';
+import { InstructorService } from '../../services/instructor.service';
 
 @Component({
     selector: 'app-instructor-main',
@@ -40,6 +42,7 @@ export class InstructorMainComponent implements OnInit {
   private rservice= inject(RutinaService)
   private eservice = inject(EquipoService)
   private dservice = inject(DeportistaService)
+  private iservice = inject(InstructorService)
   totalRutinas:number = 0
   navigation = [
   { name: 'Eventos', route: 'equipoEvento', icon: 'event' },
@@ -138,7 +141,20 @@ constructor(public router: Router) {}
 }
 
 cerrarSesion() {
-  console.log('Sesión cerrada');
+ Swal.fire({
+  title: '¿Estás seguro?',
+  text: '¿Quieres cerrar sesión?',
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonText: 'Sí, cerrar sesión',
+  cancelButtonText: 'Cancelar'
+}).then((result) => {
+  if (result.isConfirmed) {
+    this.iservice.logOut();
+    this.router.navigate(['/login']);
+    Swal.fire('Sesión cerrada', '', 'success');
+  }
+});
 }
   mostrarNotificacion(mensaje: string): void {
     this.notificationMessage = mensaje;

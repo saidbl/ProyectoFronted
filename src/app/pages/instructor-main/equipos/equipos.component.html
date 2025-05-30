@@ -1,37 +1,63 @@
 <div class="min-h-screen bg-gray-950 font-sans">
-  <!-- Barra de navegación -->
-  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+  <!-- Barra de navegación mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center">
-          <span class="text-xl font-bold text-blue-400">AllSports</span>
+        <div class="flex items-center space-x-2">
+          <mat-icon class="text-blue-400 transform transition hover:rotate-12">sports</mat-icon>
+          <span class="text-xl font-bold text-blue-400 tracking-tighter bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            ALLSPORTS
+          </span>
         </div>
+
+        <!-- Menú central mejorado -->
         <div class="hidden md:block">
-          <div class="ml-10 flex items-center space-x-8">
-            <a routerLink="/instructor" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-home mr-2"></i> Inicio
-            </a>
-            <a routerLink="/instructor/deportistas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users mr-2"></i> Deportistas
-            </a>
-            <a routerLink="/instructor/equipos" class="text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users-cog mr-2"></i> Equipos
-            </a>
-            <a routerLink="/instructor/eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Eventos
+          <div class="ml-4 flex items-center space-x-6">
+            <a *ngFor="let nav of navigation" 
+               [routerLink]="nav.route"
+               class="group flex items-center px-4 py-2 rounded-xl transition-all duration-300"
+               [ngClass]="{
+                 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 text-blue-400 shadow-inner': router.isActive(nav.route, false),
+                 'text-gray-400 hover:bg-gray-800/20 hover:text-blue-300': !router.isActive(nav.route, false)
+               }">
+              <mat-icon class="mr-2 transform transition group-hover:scale-110">{{nav.icon}}</mat-icon>
+              <span class="text-sm font-medium tracking-tight">{{nav.name}}</span>
             </a>
           </div>
         </div>
-        <div class="flex items-center">
-          <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
-              <span class="text-gray-300 text-sm">{{nombreInstructor}}</span>
-              <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-            </div>
-            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <a routerLink="/instructor/perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Mi Perfil</a>
-              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+
+        <!-- Perfil con diseño premium -->
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-10 w-10 rounded-full border-2 border-blue-400/20 shadow-xl 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900 shadow-sm"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100 tracking-tight">{{nombre}} {{apellido}}</p>
+                <p class="text-xs text-gray-400 font-light">Instructor certificado</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" 
+                 class="absolute right-0 mt-2 w-56 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+              <a routerLink="/perfil"
+                 class="block px-5 py-3 text-gray-200 hover:bg-gray-800/50 transition-all duration-200 flex items-center space-x-3 border-b border-gray-800">
+                <mat-icon class="text-blue-400">account_circle</mat-icon>
+                <span class="font-medium">Mi Perfil</span>
+              </a>
+              <button (click)="cerrarSesion()"
+                      class="w-full text-left px-5 py-3 text-gray-200 hover:bg-red-900/30 transition-all duration-200 flex items-center space-x-3">
+                <mat-icon class="text-red-400">exit_to_app</mat-icon>
+                <span class="font-medium">Cerrar sesión</span>
+              </button>
             </div>
           </div>
         </div>
@@ -39,112 +65,129 @@
     </div>
   </nav>
 
-  <!-- Contenido principal -->
+  <!-- Contenido principal mejorado -->
   <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <!-- Encabezado -->
-    <div class="text-center mb-8">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+    <!-- Encabezado con efecto neumórfico -->
+    <div class="text-center mb-16 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                  bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 
+                  animate-gradient-x tracking-tighter">
         Gestión de Equipos
       </h1>
-      <p class="mt-3 text-lg text-gray-400">Administra tus equipos deportivos</p>
+      <p class="mt-4 text-lg text-gray-400 font-light max-w-2xl mx-auto">
+        Administra y optimiza el rendimiento de tus equipos
+      </p>
     </div>
 
-    <!-- Filtros y acciones -->
-    <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <i class="fas fa-search text-gray-500"></i>
-        </div>
-        <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarEquipos()" 
-               class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-               placeholder="Buscar equipos...">
-      </div>
-      
-      <div>
-        <button (click)="abrirModalCrearEquipo()" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center">
-          <i class="fas fa-plus mr-2"></i> Nuevo Equipo
-        </button>
-      </div>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-4 hover:border-blue-500/30 transition-all duration-300">
-        <div class="flex justify-between items-center">
+    <!-- Sección de métricas mejorada -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-green-500/30 transition-all">
+        <div class="flex items-center">
+          <div class="p-3 bg-green-500/10 rounded-lg mr-4">
+            <mat-icon class="text-green-400">assignment</mat-icon>
+          </div>
           <div>
-            <p class="text-sm text-gray-400">Total de equipos</p>
-            <h3 class="text-2xl font-bold text-white">{{equipos.length}}</h3>
+            <p class="text-sm text-gray-400">Equipos</p>
+            <p class="text-2xl font-bold text-white">{{totalEquipos}}</p>
           </div>
-          <div class="p-2 rounded-lg bg-blue-500/10">
-            <i class="fas fa-users text-blue-400"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-2xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition-all">
+        <div class="flex flex-col h-full justify-between">
+          <div>
+            <mat-icon class="text-white mb-2">add_circle</mat-icon>
+            <h3 class="text-lg font-semibold text-white">Nuevo Equipo</h3>
           </div>
+          <button (click)="abrirModalCrearEquipo()" class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/5 hover:bg-white/10 text-white py-2.5 px-4 rounded-xl border border-white/10 transition-all">
+            <mat-icon>person_add</mat-icon>
+            <span class="text-sm">Agregar nuevo</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Listado de equipos -->
+    <!-- Listado de equipos premium -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div *ngFor="let equipo of equiposFiltrados"
-           class="bg-gray-900/60 border border-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-blue-500/20 transition-all duration-300 group">
+           class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-blue-400/30 group">
         
-        <div class="p-6">
-          
-          <!-- Logo del equipo -->
-          <div class="flex justify-center mb-4">
-            <img 
-              [src]="'http://localhost:8080/' + equipo.img"
-              alt="Logo del equipo"
-              class="h-24 w-24 rounded-full border-4 border-gray-700 object-cover shadow-md">
+        <!-- Encabezado del equipo -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <img [src]="'http://localhost:8080/' + equipo.img" 
+                 class="h-12 w-12 rounded-full border-2 border-gray-600 object-cover 
+                        transform transition group-hover:rotate-12">
+            <div>
+              <h3 class="text-xl font-semibold text-white tracking-tight">{{equipo.nombre}}</h3>
+              <p class="text-sm text-gray-400">{{equipo.deporte.nombre}} • {{equipo.categoria}}</p>
+            </div>
           </div>
-    
-          <!-- Info principal -->
-          <div class="text-center">
-            <h3 class="text-2xl font-semibold text-white">{{equipo.nombre}}</h3>
-            <p class="text-sm text-gray-400 mt-1">
-              {{equipo.deporte.nombre}} • {{equipo.categoria}}
-            </p>
+          <span class="text-xs px-3 py-1 rounded-full border 
+                      transition-all duration-300"
+                [ngClass]="{
+                  'border-green-900/30 text-green-400 bg-green-900/10': equipo.estado === 'Activo',
+                  'border-yellow-900/30 text-yellow-400 bg-yellow-900/10': equipo.estado === 'Inactivo'
+                }">
+            {{equipo.estado}}
+          </span>
+        </div>
+
+        <!-- Detalles del equipo -->
+        <div class="space-y-4">
+          <div class="flex justify-between items-center text-sm text-gray-400">
+            <div class="flex items-center space-x-2">
+              <mat-icon class="text-blue-400 text-base">people</mat-icon>
+              <span>{{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <mat-icon class="text-purple-400 text-base">calendar_today</mat-icon>
+              <span>{{equipo.fechaCreacion | date:'shortDate'}}</span>
+            </div>
           </div>
-    
-          <!-- Estado y jugadores -->
-          <div class="mt-4 flex justify-center gap-2 flex-wrap">
-            <span class="text-xs px-3 py-1 rounded-full bg-gray-700 text-gray-300 flex items-center gap-1">
-              <i class="fas fa-users"></i> {{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}} jugadores
-            </span>
-            <span class="text-xs px-3 py-1 rounded-full flex items-center gap-1"
-                  [ngClass]="{
-                    'bg-green-900/60 text-green-400': equipo.estado === 'Activo',
-                    'bg-yellow-900/60 text-yellow-400': equipo.estado === 'Inactivo'
-                  }">
-              <i class="fas fa-circle"></i> {{equipo.estado | lowercase | titlecase}}
-            </span>
+
+          <!-- Barra de progreso mejorada -->
+          <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 
+                        transition-all duration-500 ease-out" 
+                 [style.width]="(equipo.jugadoresAsociados / equipo.maxJugadores * 100) + '%'"></div>
           </div>
-    
-          <!-- Fecha de creación -->
-          <p class="text-xs text-gray-500 mt-4 text-center">
-            <i class="fas fa-calendar-alt mr-1"></i> Creado: {{equipo.fechaCreacion | date:'mediumDate'}}
-          </p>
-    
-          <!-- Acciones -->
-          <div  class="mt-4 flex justify-center space-x-4">
-            <button (click)="verDetallesEquipo(equipo)" class="text-blue-400 hover:text-blue-300 text-sm" title="Ver">
-              <span class="material-icons">visibility</span>
+
+          <!-- Acciones flotantes -->
+          <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+            <button (click)="verDetallesEquipo(equipo)" 
+                    class="text-gray-400 hover:text-blue-400 transition-all duration-200"
+                    matTooltip="Ver detalles"
+                    matTooltipPosition="above">
+              <mat-icon>visibility</mat-icon>
             </button>
-            <button (click)="abrirModalEditarEquipo(equipo)" class="text-yellow-400 hover:text-yellow-300 text-sm" title="Editar">
-              <span class="material-icons">edit</span>
+            <button (click)="abrirModalEditarEquipo(equipo)" 
+                    class="text-gray-400 hover:text-yellow-400 transition-all duration-200"
+                    matTooltip="Editar equipo"
+                    matTooltipPosition="above">
+              <mat-icon>edit</mat-icon>
             </button>
-            <button *ngIf="equipo.estado==='Activo'" (click)="abrirModalAsociarJugador(equipo)" class="text-green-400 hover:text-green-300 text-sm" title="Asociar Jugador">
-              <span class="material-icons">person_add</span>
+            <button *ngIf="equipo.estado==='Activo'" 
+                    (click)="abrirModalAsociarJugador(equipo)" 
+                    class="text-gray-400 hover:text-green-400 transition-all duration-200"
+                    matTooltip="Agregar jugador"
+                    matTooltipPosition="above">
+              <mat-icon>person_add</mat-icon>
             </button>
-            <button *ngIf="equipo.estado==='Activo'" (click)="confirmarEliminarEquipo(equipo)" class="text-red-400 hover:text-red-300 text-sm" title="Eliminar">
-              <span class="material-icons">delete</span>
+            <button (click)="confirmarEliminarEquipo(equipo)" 
+                    class="text-gray-400 hover:text-red-400 transition-all duration-200"
+                    matTooltip="Eliminar equipo"
+                    matTooltipPosition="above">
+              <mat-icon>delete</mat-icon>
             </button>
           </div>
-    
         </div>
       </div>
     </div>
-    
-    
-
-    <!-- Mensaje cuando no hay equipos -->
+     <!-- Mensaje cuando no hay equipos -->
     <div *ngIf="equiposFiltrados.length === 0" class="text-center py-12">
       <i class="fas fa-users-slash text-4xl text-gray-600 mb-4"></i>
       <h3 class="text-xl font-medium text-gray-300">No se encontraron equipos</h3>
@@ -154,294 +197,365 @@
       </button>
     </div>
 
-    <!-- Modal para crear/editar equipo -->
     <div *ngIf="mostrarModalEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-white">
-              <i class="fas fa-users-cog mr-2 text-blue-400"></i>
-              {{equipoEditando ? 'Editar Equipo' : 'Nuevo Equipo'}}
-            </h2>
-            <button (click)="cerrarModalEquipo()" class="text-gray-400 hover:text-gray-300">
-              <i class="fas fa-times"></i>
+  <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl max-w-sm w-full border border-gray-700 transform transition-all duration-300 max-h-[90vh] overflow-y-auto">
+    <div class="p-5">
+      <!-- Encabezado compacto -->
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
+        <h2 class="text-lg font-semibold text-gray-100">
+          <mat-icon class="align-middle mr-2 text-blue-400 scale-90">groups</mat-icon>
+          {{equipoEditando ? 'Editar Equipo' : 'Nuevo Equipo'}}
+        </h2>
+        <button (click)="cerrarModalEquipo()" 
+                class="p-1.5 hover:bg-gray-700 rounded-lg transition-colors duration-200">
+          <mat-icon class="text-gray-300 text-lg">close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Formulario compacto -->
+      <form (ngSubmit)="guardarEquipo()" class="space-y-4">
+        <!-- Campo Nombre -->
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Nombre del equipo</label>
+          <input [(ngModel)]="formEquipo.nombre" name="nombre" 
+                class="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg
+                      text-gray-100 focus:ring-1 focus:ring-blue-500 focus:border-transparent">
+        </div>
+
+        <!-- Campos en fila -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Categoría</label>
+            <select [(ngModel)]="formEquipo.categoria" name="categoria" 
+                   class="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg
+                         text-gray-100 focus:ring-1 focus:ring-blue-500 appearance-none">
+              <option value="" disabled selected class="text-gray-500">Seleccionar</option>
+              <option *ngFor="let categoria of categorias" [value]="categoria">{{categoria}}</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Máx. jugadores</label>
+            <input [(ngModel)]="formEquipo.max_jugadores" name="max_jugadores" type="number" min="1"
+                  class="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg
+                        text-gray-100 focus:ring-1 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <!-- Upload de imagen compacto -->
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Logo (opcional)</label>
+          <div class="relative border border-dashed border-gray-700 rounded-lg p-2 text-center
+                    hover:border-blue-500 transition-colors duration-200 cursor-pointer">
+            <input type="file" 
+                  (change)="onImageSelected($event)"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  accept="image/*">
+            <div class="space-y-1">
+              <mat-icon class="text-gray-500 text-xl">cloud_upload</mat-icon>
+              <p class="text-xs text-gray-400">Haz clic para subir</p>
+            </div>
+          </div>
+          <div *ngIf="imagenPreview" class="mt-2 flex justify-center">
+            <img [src]="imagenPreview" alt="Vista previa" 
+                class="h-16 w-16 rounded-full border-2 border-gray-800 object-cover">
+          </div>
+        </div>
+
+        <!-- Botones apilados en móvil -->
+        <div class="flex flex-col sm:flex-row gap-2 pt-4">
+          <button type="submit" 
+                 class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg
+                       transition-colors duration-200 flex items-center justify-center gap-1">
+            <mat-icon class="scale-90">{{equipoEditando ? 'save' : 'add'}}</mat-icon>
+            {{equipoEditando ? 'Guardar' : 'Crear'}}
+          </button>
+          <button type="button" (click)="cerrarModalEquipo()" 
+                 class="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg
+                       transition-colors duration-200 flex items-center justify-center gap-1">
+            <mat-icon class="scale-90">close</mat-icon>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="mostrarModalAsociarJugador" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-lg">
+  <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-700 max-h-[90vh] overflow-y-auto">
+    <div class="p-6">
+      <!-- Encabezado mejorado -->
+      <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+        <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+          <mat-icon class="align-middle mr-2">group_add</mat-icon>
+          Asociar Jugadores a {{equipoSeleccionado?.nombre}}
+        </h2>
+        <button mat-icon-button 
+                (click)="mostrarModalAsociarJugador = false"
+                class="hover:bg-gray-700/50 rounded-full transition-colors duration-200">
+          <mat-icon class="text-gray-300">close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Búsqueda mejorada -->
+      <div class="mb-6">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+            <mat-icon>search</mat-icon>
+          </div>
+          <input type="text" [(ngModel)]="busquedaJugador" (input)="filtrarJugadoresDisponibles()" 
+                class="w-full pl-12 pr-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl
+                      text-gray-100 placeholder-gray-500 focus:outline-none focus:border-green-500
+                      transition-all duration-300 text-sm">
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <span class="text-xs text-gray-500">{{jugadoresDisponibles.length}} resultados</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de jugadores mejorada -->
+      <div class="space-y-2 mb-6 max-h-96 overflow-y-auto">
+        <div *ngFor="let jugador of jugadoresFiltrados" 
+            class="flex items-center justify-between p-3 bg-gray-800 hover:bg-gray-700/50 rounded-lg
+                  transition-all duration-300 cursor-pointer border border-transparent hover:border-gray-600">
+          <div class="flex items-center space-x-3">
+            <img [src]="jugador || 'assets/default-avatar.png'" 
+                class="w-12 h-12 rounded-full border-2 border-gray-600 object-cover">
+            <div>
+              <p class="text-sm font-medium text-gray-100">{{jugador.nombre}} {{jugador.apellido}}</p>
+              <p class="text-xs text-gray-400">{{jugador.posicion.nombre}}</p>
+            </div>
+          </div>
+          <button (click)="asociarJugador(jugador)" 
+                 class="text-green-400 hover:text-green-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                 mat-icon-button>
+            <mat-icon>person_add</mat-icon>
+          </button>
+        </div>
+        
+        <div *ngIf="jugadoresDisponibles.length === 0" class="text-center py-4">
+          <mat-icon class="text-gray-600 mb-2">search_off</mat-icon>
+          <p class="text-sm text-gray-400">No se encontraron jugadores</p>
+        </div>
+      </div>
+
+      <!-- Jugadores asociados mejorados -->
+      <div class="pt-6 border-t border-gray-700">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-semibold text-gray-300">
+            <mat-icon class="align-middle mr-2">groups</mat-icon>
+            Jugadores Asociados ({{jugadoresAsociados.length}})
+          </h3>
+        </div>
+        
+        <div class="space-y-2">
+          <div *ngFor="let jugador of jugadoresAsociados" 
+              class="flex items-center justify-between p-3 bg-gray-800/50 hover:bg-gray-700/30 rounded-lg
+                    transition-all duration-300">
+            <div class="flex items-center space-x-3">
+              <img [src]="jugador.deportista || 'assets/default-avatar.png'" 
+                  class="w-10 h-10 rounded-full border-2 border-gray-600 object-cover">
+              <span class="text-sm text-gray-100">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
+            </div>
+            <button (click)="desasociarJugador(jugador.id)" 
+                   class="text-red-400 hover:text-red-300"
+                   mat-icon-button>
+              <mat-icon>person_remove</mat-icon>
             </button>
           </div>
           
-          <form (ngSubmit)="guardarEquipo()" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-300 mb-1">Nombre del equipo</label>
-              <input [(ngModel)]="formEquipo.nombre" name="nombre" 
-                     class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+          <ng-template #sinJugadores>
+            <div class="text-center py-3">
+              <p class="text-sm text-gray-500">No hay jugadores asociados</p>
             </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Categoría</label>
-                <select [(ngModel)]="formEquipo.categoria" name="categoria" 
-                        class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                  <option value="" disabled selected>Seleccionar categoría</option>
-                  <option *ngFor="let categoria of categorias" [value]="categoria">{{categoria}}</option>
-                </select>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Máx. jugadores</label>
-                <input [(ngModel)]="formEquipo.max_jugadores" name="max_jugadores" type="number" min="1"
-                       class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-              </div>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-300 mb-1">Logo</label>
-              <input type="file"
-                     accept="image/*"
-                     (change)="onImageSelected($event)"
-                     class="w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <div *ngIf="imagenPreview" class="mt-2">
-                <img [src]="imagenPreview" alt="Vista previa del logo" class="h-24 object-contain border rounded-lg" />
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 pt-4">
-              <button type="button" (click)="cerrarModalEquipo()" 
-                      class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
-                Cancelar
-              </button>
-              <button type="submit" 
-                      class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center">
-                <i class="fas fa-save mr-2"></i>
-                {{equipoEditando ? 'Actualizar' : 'Crear'}}
-              </button>
-            </div>
-          </form>
+          </ng-template>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Modal para asociar jugadores -->
-    <div *ngIf="mostrarModalAsociarJugador" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-          <button mat-icon-button
-              (click)="mostrarModalAsociarJugador = false"
-              class=" top-4 right-100 bg-red-700/80 hover:bg-red-800 rounded-full shadow-lg"
-              style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-              <mat-icon class="text-white">close</mat-icon>
+<div *ngIf="mostrarConfirmacionEliminar" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-lg">
+  <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl max-w-xs w-full border border-gray-700">
+    <div class="p-6">
+      <!-- Encabezado mejorado -->
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-700">
+        <div class="flex items-center">
+          <mat-icon class="text-yellow-400 mr-2 scale-125">warning</mat-icon>
+          <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-400">
+            Confirmar Eliminación
+          </h2>
+        </div>
+        <button (click)="mostrarConfirmacionEliminar = false" 
+                class="p-1.5 hover:bg-gray-700 rounded-lg transition-all duration-300">
+          <mat-icon class="text-gray-300">close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Contenido -->
+      <div class="mb-6">
+        <p class="text-gray-300 leading-relaxed">
+          ¿Eliminar permanentemente 
+          <span class="font-semibold text-red-300">"{{equipoAEliminar?.nombre}}"</span>?
+          <span class="block mt-2 text-sm text-yellow-400/80">Esta acción no se puede deshacer.</span>
+        </p>
+      </div>
+
+      <!-- Botones mejorados -->
+      <div class="grid grid-cols-2 gap-3">
+        <button (click)="mostrarConfirmacionEliminar = false" 
+                class="px-4 py-2.5 bg-gradient-to-br from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 
+                       text-gray-300 rounded-lg transition-all duration-300 shadow-md hover:shadow-gray-700/20
+                       flex items-center justify-center space-x-2">
+          <mat-icon class="scale-90">arrow_back</mat-icon>
+          <span>Cancelar</span>
+        </button>
+        
+        <button (click)="eliminarEquipo(equipoAEliminar)" 
+                class="px-4 py-2.5 bg-gradient-to-br from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 
+                       text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-red-500/20
+                       flex items-center justify-center space-x-2">
+          <mat-icon class="scale-90">delete_forever</mat-icon>
+          <span>Eliminar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="mostrarDetallesEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-lg">
+  <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+    <!-- Encabezado mejorado -->
+    <div class="relative bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+      <div class="h-48 flex items-center justify-center p-8">
+        <div class="relative group">
+          <img [src]="'http://localhost:8080/' + equipoSeleccionado?.img"
+              class="h-32 w-32 rounded-full border-4 border-gray-800 object-cover shadow-xl
+                    transition-transform duration-300 hover:scale-105">
+          <div class="absolute inset-0 rounded-full border-2 border-white/10 shadow-inner"></div>
+        </div>
+      </div>
+      <button mat-icon-button
+          (click)="mostrarDetallesEquipo = false"
+          class="absolute top-4 right-4 bg-gray-800/80 hover:bg-gray-700/90 backdrop-blur-sm
+                rounded-full p-2 transition-all duration-300 shadow-lg">
+          <mat-icon class="text-gray-300 hover:text-white">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="p-6">
+      <div class="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+        <div>
+          <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+            {{equipoSeleccionado?.nombre}}
+          </h2>
+          <div class="flex flex-wrap gap-2 mt-3">
+            <span class="px-3 py-1 rounded-full bg-gray-700/50 text-gray-300 text-sm border border-gray-600">
+              {{equipoSeleccionado?.deporte?.nombre}}
+            </span>
+            <span class="px-3 py-1 rounded-full text-sm border 
+                      transition-all duration-300"
+                  [ngClass]="{
+                    'border-green-500/30 text-green-400 bg-green-900/10': equipoSeleccionado?.estado === 'ACTIVO',
+                    'border-yellow-500/30 text-yellow-400 bg-yellow-900/10': equipoSeleccionado?.estado === 'INACTIVO'
+                  }">
+              {{equipoSeleccionado?.estado | lowercase | titlecase}}
+            </span>
+          </div>
+        </div>
+        <div class="text-right space-y-1">
+          <p class="text-sm text-gray-400">Creado el {{equipoSeleccionado?.fechaCreacion| date:'mediumDate'}}</p>
+          <div class="text-lg font-semibold text-gray-300">
+            <span class="text-blue-400">{{equipoSeleccionado?.jugadoresAsociados}}</span>
+            <span class="text-gray-500">/</span>
+            <span class="text-purple-400">{{equipoSeleccionado?.maxJugadores}}</span>
+            <span class="text-sm text-gray-400">jugadores</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secciones de información -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Información del equipo -->
+        <div class="bg-gray-800/30 rounded-xl p-5 border border-gray-700">
+          <div class="flex items-center mb-4 pb-3 border-b border-gray-700">
+            <mat-icon class="text-blue-400 mr-2">info</mat-icon>
+            <h3 class="text-lg font-semibold text-gray-200">Detalles del Equipo</h3>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <mat-icon class="text-gray-400 mt-1">category</mat-icon>
+              <div>
+                <p class="text-sm text-gray-400 mb-1">Categoría</p>
+                <p class="text-gray-300">{{equipoSeleccionado?.categoria || 'Sin categoría'}}</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <mat-icon class="text-gray-400 mt-1">badge</mat-icon>
+              <div>
+                <p class="text-sm text-gray-400 mb-1">Instructor</p>
+                <p class="text-gray-300">
+                  {{equipoSeleccionado?.instructor?.nombre}} {{equipoSeleccionado?.instructor?.apellido}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jugadores -->
+        <div class="bg-gray-800/30 rounded-xl p-5 border border-gray-700">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
+            <div class="flex items-center">
+              <mat-icon class="text-green-400 mr-2">groups</mat-icon>
+              <h3 class="text-lg font-semibold text-gray-200">Plantilla</h3>
+            </div>
+            <button *ngIf="equipoSeleccionado" 
+                    (click)="abrirModalAsociarJugador(equipoSeleccionado)" 
+                    class="px-3 py-1.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800
+                          text-white rounded-lg text-sm transition-all duration-300 shadow-sm
+                          flex items-center gap-1"
+                    [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores">
+              <mat-icon class="scale-75">add</mat-icon>
+              Agregar
             </button>
-          <div class="flex justify-between items-center mb-4 ">
-            <h2 class="text-xl font-bold text-white">
-              <i class="fas fa-user-plus mr-2 text-green-400"></i>
-              Asociar Jugadores a {{equipoSeleccionado?.nombre}} 
-            </h2>
           </div>
           
-          <div class="mb-4">
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-500"></i>
-              </div>
-              <input type="text" [(ngModel)]="busquedaJugador" (input)="filtrarJugadoresDisponibles()" 
-                     class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                     placeholder="Buscar jugadores...">
-            </div>
-          </div>
-          
-          <div class="space-y-3 max-h-96 overflow-y-auto">
-            <div *ngFor="let jugador of jugadoresDisponibles" 
-                 class="flex items-center justify-between p-3 border border-gray-700 rounded-lg hover:bg-gray-700/50">
-              <div class="flex items-center space-x-3">
-                <img [src]="jugador || 'assets/default-avatar.png'" alt="Foto" class="w-10 h-10 rounded-full">
-                <div>
-                  <p class="text-sm font-medium text-white">{{jugador.nombre}} {{jugador.apellido}}</p>
-                  <p class="text-xs text-gray-400">{{jugador.posicion.nombre}}</p>
-                </div>
-              </div>
-              <button *ngIf="equipoSeleccionado"
-              (click)="asociarJugador(jugador)" 
-                      class="text-green-400 hover:text-green-300 text-sm p-1"
-                      [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores"
-                      mat-icon-button
-                      aria-label="Asociar jugador">
-                 <mat-icon color="primary">person_add</mat-icon>
-              </button>
-            </div>
-            
-            <div *ngIf="jugadoresDisponibles.length === 0" class="text-center py-4 text-gray-500">
-              No se encontraron jugadores disponibles
-            </div>
-          </div>
-          
-          <div class="mt-6 pt-4 border-t border-gray-700">
-            <h3 class="text-sm font-medium text-gray-300 mb-2">Jugadores asociados</h3>
-            <div *ngIf="jugadoresAsociados.length > 0; else sinJugadores" class="space-y-2">
+          <!-- Lista de jugadores -->
+          <div class="space-y-2">
+            <div *ngIf="jugadoresAsociados.length > 0; else sinJugadores">
               <div *ngFor="let jugador of jugadoresAsociados" 
-                   class="flex items-center justify-between p-2 bg-gray-700/50 rounded-lg">
-                <div class="flex items-center space-x-2">
-                  <img [src]="jugador.deportista || 'assets/default-avatar.png'" alt="Foto" class="w-8 h-8 rounded-full">
-                  <span class="text-sm text-white">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
+                  class="group flex items-center justify-between p-3 hover:bg-gray-700/20 rounded-lg transition-all duration-300">
+                <div class="flex items-center gap-3">
+                  <img [src]="jugador.deportista || 'assets/default-avatar.png'" 
+                      class="w-10 h-10 rounded-full border-2 border-gray-600 object-cover">
+                  <div>
+                    <p class="text-sm font-medium text-gray-100">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</p>
+                    <p class="text-xs text-gray-400">{{jugador.deportista.posicion.nombre}}</p>
+                  </div>
                 </div>
                 <button (click)="desasociarJugador(jugador.id)" 
-                    class="text-red-400 hover:text-red-300 text-sm p-1"
-                    mat-icon-button
-                    aria-label="Desasociar jugador">
-                   <mat-icon color="warn">person_remove</mat-icon>
+                       class="text-red-400/80 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                       mat-icon-button>
+                  <mat-icon>person_remove</mat-icon>
                 </button>
               </div>
             </div>
             <ng-template #sinJugadores>
-              <p class="text-sm text-gray-500">No hay jugadores asociados aún</p>
+              <div class="text-center py-4">
+                <mat-icon class="text-gray-600 text-4xl mb-2">people_outline</mat-icon>
+                <p class="text-sm text-gray-400">No hay jugadores registrados</p>
+              </div>
             </ng-template>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Modal de confirmación para eliminar -->
-    <div *ngIf="mostrarConfirmacionEliminar" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full">
-        <div class="p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-white">
-              <i class="fas fa-exclamation-triangle mr-2 text-yellow-400"></i>
-              Confirmar eliminación
-            </h2>
-            <button (click)="mostrarConfirmacionEliminar = false" class="text-gray-400 hover:text-gray-300">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          
-          <p class="text-gray-300 mb-6">¿Estás seguro que deseas eliminar el equipo <strong>{{equipoAEliminar?.nombre}}</strong>? Esta acción no se puede deshacer.</p>
-          
-          <div class="grid grid-cols-2 gap-4">
-            <button (click)="mostrarConfirmacionEliminar = false" 
-                    class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
-              Cancelar
-            </button>
-            <button (click)="eliminarEquipo(equipoAEliminar)" 
-                    class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center">
-              <i class="fas fa-trash-alt mr-2"></i>
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de detalles del equipo -->
-    <div *ngIf="mostrarDetallesEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="relative">
-          <div class="h-48 bg-gradient-to-r from-blue-900/30 to-purple-900/30 flex items-center justify-center">
-            <div class="h-24 w-24 rounded-full bg-gray-700/80 flex items-center justify-center shadow-lg">
-              <i class="fas fa-users text-3xl text-white"><img 
-                [src]="'http://localhost:8080/' + equipoSeleccionado?.img"
-                alt="Logo del equipo"
-                class="h-24 w-24 rounded-full border-4 border-gray-700 object-cover shadow-md"></i>
-            </div>
-          </div>
-          <button mat-icon-button
-          (click)="mostrarDetallesEquipo = false"
-          class="absolute top-4 right-4 bg-red-700/80 hover:bg-red-800 rounded-full shadow-lg"
-          style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-          <mat-icon class="text-white">close</mat-icon>
-        </button>
-        </div>
-        
-        <div class="p-6">
-          <div class="flex justify-between items-start">
-            <div>
-              <h2 class="text-2xl font-bold text-white">{{equipoSeleccionado?.nombre}}</h2>
-              <div class="flex items-center mt-2 space-x-2">
-                <span class="text-sm px-2 py-1 rounded-full bg-gray-700 text-gray-300">
-                  {{equipoSeleccionado?.deporte?.nombre}}
-                </span>
-                <span class="text-sm px-2 py-1 rounded-full" 
-                      [ngClass]="{
-                        'bg-green-900/50 text-green-400': equipoSeleccionado?.estado === 'ACTIVO',
-                        'bg-yellow-900/50 text-yellow-400': equipoSeleccionado?.estado === 'INACTIVO'
-                      }">
-                  {{equipoSeleccionado?.estado | lowercase | titlecase}}
-                </span>
-              </div>
-            </div>
-            <div class="text-right">
-              <p class="text-gray-400">Creado: {{equipoSeleccionado?.fechaCreacion| date:'mediumDate'}}</p>
-              <p class="text-gray-300">{{equipoSeleccionado?.jugadoresAsociados}}/{{equipoSeleccionado?.maxJugadores}} jugadores</p>
-            </div>
-          </div>
-          
-          <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 class="text-lg font-semibold text-gray-200 mb-4 flex items-center">
-                <i class="fas fa-info-circle text-blue-400 mr-2"></i>
-                Información del equipo
-              </h3>
-              
-              <div class="space-y-3">
-                <div class="flex items-start">
-                  <div class="flex-shrink-0 pt-1">
-                    <i class="fas fa-tag text-gray-400 w-5"></i>
-                  </div>
-                  <div class="ml-3">
-                    <p class="text-sm text-gray-400">Categoría</p>
-                    <p class="text-gray-300">{{equipoSeleccionado?.categoria || 'No especificada'}}</p>
-                  </div>
-                </div>
-                
-                <div class="flex items-start">
-                  <div class="flex-shrink-0 pt-1">
-                    <i class="fas fa-user-tie text-gray-400 w-5"></i>
-                  </div>
-                  <div class="ml-3">
-                    <p class="text-sm text-gray-400">Instructor</p>
-                    <p class="text-gray-300" *ngIf="equipoSeleccionado">{{equipoSeleccionado.instructor.nombre}} {{equipoSeleccionado.instructor.apellido}}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-                  <i class="fas fa-users text-green-400 mr-2"></i>
-                  Jugadores ({{equipoSeleccionado?.jugadoresAsociados}})
-                </h3>
-                <button *ngIf="equipoSeleccionado" (click)="abrirModalAsociarJugador(equipoSeleccionado)" 
-                        class="text-xs bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded flex items-center"
-                        [disabled]="equipoSeleccionado.jugadoresAsociados >= equipoSeleccionado.maxJugadores">
-                  <i class="fas fa-plus mr-1"></i> Agregar
-                </button>
-              </div>
-              
-              <div *ngIf="jugadoresAsociados.length > 0; else sinJugadores" class="space-y-2">
-                <div *ngFor="let jugador of jugadoresAsociados" 
-                     class="flex items-center p-3 border border-gray-700 rounded-lg hover:bg-gray-700/50">
-                  <img [src]="jugador.deportista|| 'assets/default-avatar.png'" alt="Foto" class="w-10 h-10 rounded-full">
-                  <div class="ml-3 flex-1 min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</p>
-                    <p class="text-xs text-gray-400">{{jugador.deportista.posicion.nombre}}</p>
-                  </div>
-                  <button (click)="desasociarJugador(jugador.id)" 
-                    class="text-red-400 hover:text-red-300 text-sm p-1"
-                    mat-icon-button
-                    aria-label="Desasociar jugador">
-                   <mat-icon color="warn">person_remove</mat-icon>
-                </button>
-                </div>
-              </div>
-              <ng-template #sinJugadores>
-                <div class="text-center py-4 bg-gray-700/30 rounded-lg">
-                  <i class="fas fa-users-slash text-2xl text-gray-500 mb-2"></i>
-                  <p class="text-sm text-gray-400">No hay jugadores asociados</p>
-                </div>
-              </ng-template>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
+</div>
+
+
+
 </div>
