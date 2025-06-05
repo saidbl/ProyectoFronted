@@ -19,41 +19,53 @@ import { EvolucionFisicaDTO } from '../../../models/evolucionFisicaDTO.model';
 import { Chart, registerables } from 'chart.js';
 import { CheckInRutinaService } from '../../../services/checkinrutina.service';
 import { ProgresoObjetivoDTO } from '../../../models/progresoObjetivoDTO.model';
+import { MatIcon } from '@angular/material/icon';
+import { MedicionFisica } from '../../../models/medicionFisica.model';
+import { MatIconModule } from '@angular/material/icon';
+import { MedicionFisicaDTO } from '../../../models/medicionFisicaDTO.model';
 Chart.register(...registerables);
 @Component({
   selector: 'app-rendimiento',
-  imports: [FormsModule,CommonModule,ReactiveFormsModule,MatTooltipModule],
+  imports: [FormsModule,CommonModule,ReactiveFormsModule,MatTooltipModule,MatIcon,MatIconModule ],
   templateUrl: './rendimiento.component.html',
   styleUrl: './rendimiento.component.css'
 })
 export class RendimientoComponent implements OnInit,AfterViewInit{
+  nombre: string | null = '';
+  apellido: string | null = '';
+  deporte: string = '';
   private mfservice = inject(MedicionFisicaService)
   private tmservice = inject(TipoMetricaService)
   private rrservice = inject(RegistroRendimientoService)
   private orservice= inject (ObjetivoRendimientoService)
   private crservice= inject(CheckInRutinaService)
   private oservice = inject(ObjetivoRendimientoService)
-  currentView: 'metrics' | 'records' | 'goals' = 'metrics';
+  posicion: string | null = ''
+  currentView : 'metrics' | 'records' | 'goals' | 'stats' | 'medicion' = 'metrics';
   showrendimientoForm= false
   showgoalsForm= false
   loading = true;
   metricForm: FormGroup ;
   recordForm: FormGroup;
   goalForm: FormGroup;
+  medicionForm:FormGroup
   sports: any[] = [];
   metrics: TipoMetrica[] = [];
   athleteMetrics: any[] = [];
   records: RegistroRendimiento[] = [];
   goals: ObjetivoRendimiento[] = [];
-  filteredRecords: any[] = [];
+  filteredRecords: RegistroRendimiento[] = [];
+  mediciones : MedicionFisica[] = []
   athleteProfile: any;
-  selectedMetric: any = null;
-  dateRange = { start: "12/11/2025", end: "24/01/2026" };
+  selectedMetric: string = "";
+  dateRange = { start: new Date(), end: new Date() };
+  showmedicionForm: boolean = false
   performanceChart: any;
   showmetricaForm: boolean =false
-
+  @ViewChild('evolucionChart') evolucionChart!: ElementRef;
   @ViewChild('rutinasChart') private chartRef!: ElementRef;
   objetivos: ProgresoObjetivoDTO[] = [];
+  ultimaMedicion: MedicionFisica|null = null
   chart2!: Chart;
   datosC: any;
   datos: EvolucionFisicaDTO[] = [];
@@ -61,6 +73,7 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   errorMessage: string | null = null;
   private chart: Chart | null = null;
   private subs: Subscription[] = [];
+  graficoRenderizado:boolean = false
   rangos = [
     { value: '1m', label: 'Último mes' },
     { value: '3m', label: 'Últimos 3 meses' },
@@ -72,6 +85,8 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   constructor(
     private fb: FormBuilder,
   ) {
+    const nextWeek = new Date();
+nextWeek.setDate(nextWeek.getDate() + 7);
     this.metricForm = this.fb.group({
       nombre: ['', Validators.required],
       unidad: ['', Validators.required],
@@ -86,63 +101,83 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
     this.goalForm = this.fb.group({
       idmetrica: ['', Validators.required],
       valorObjetivo: ['', [Validators.required, Validators.min(0)]],
-      fechaObjetivo: ['', Validators.required],
+      fechaObjetivo: [nextWeek, Validators.required],
       prioridad: [1, [Validators.min(1), Validators.max(5)]],
     });
+    this.medicionForm = this.fb.group({
+      fecha:[new Date(), Validators.required],
+      peso:[0, [Validators.required,Validators.min(10), Validators.max(200)]],
+      estatura:[0, [Validators.required,Validators.min(100), Validators.max(250)]],
+      porcentajeGrasa:[0, [Validators.required,Validators.min(0), Validators.max(100)]],
+      masaMuscular:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
+      circunferenciaBrazo:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
+      circunferenciaCintura:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
+      circunferenciaCadera:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
+      presionArterial:['', [Validators.required]],
+      frecuenciaCardiacaReposo:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
+      notas:['', [Validators.required]],
+    })
   }
 
   ngOnInit(): void {
     this.loadInitialData();
     this.cargarDatos();
+    const today = new Date();
+  const pastDate = new Date();
+  pastDate.setDate(today.getDate() - 28);
+
+  this.dateRange = {
+    start: pastDate,
+    end: today
+  };
+
+  this.filterRecords();
   }
-  cargarDatos() {
-    const token =localStorage.getItem("token")
-    const id = localStorage.getItem("id")
-    if(!token) {
-      throw new Error("Not Token Found")
+  ngAfterViewChecked() {
+  if (this.currentView === 'stats' && !this.graficoRenderizado && this.evolucionChart) {
+    this.graficoRenderizado = true;
+    this.renderizarGrafico();
+    this.renderizarGrafico2()
+  }
+}
+   cargarDatos(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const token = localStorage.getItem("token");
+    const id = localStorage.getItem("id");
+
+    if (!token) {
+      reject(new Error("No token found"));
+      return;
     }
     this.isLoading = true;
     this.errorMessage = null;
-    const sub = this.mfservice.getEvolucionFisica(Number(id), this.rangoSeleccionado,token)
+    const sub1 = this.mfservice.getEvolucionFisica(Number(id), this.rangoSeleccionado, token)
       .subscribe({
         next: (data) => {
           this.datos = data;
-          console.log(data)
-          this.renderizarGrafico();
           this.isLoading = false;
+          resolve(); 
         },
         error: (err) => {
           this.errorMessage = err.message || 'Error al cargar los datos';
           this.isLoading = false;
+          reject(err);
         }
       });
-    
-    this.subs.push(sub);
-    this.crservice.getCumplimientoRutinas(Number(id), this.rangoSeleccionado,token)
-      .subscribe({
-        next: (data) => {
-          this.datosC = data;
-          this.renderizarGrafico2();
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.errorMessage = err.error?.message || 'Error al cargar los datos';
-          this.isLoading = false;
-        }
-      });
-
-      this.orservice.getProgresoObjetivos(Number(id),token)
-      .subscribe({
-        next: (data) => {
-          this.objetivos = data;
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.errorMessage = 'Error al cargar los objetivos';
-          this.isLoading = false;
-        }
-      });
-  }
+    this.subs.push(sub1);
+    this.crservice.getCumplimientoRutinas(Number(id), this.rangoSeleccionado, token).subscribe({
+      next: (data) => this.datosC = data,
+      error: (err) => this.errorMessage = err.error?.message || 'Error al cargar los datos'
+    });
+    this.orservice.getProgresoObjetivos(Number(id), token).subscribe({
+      next: (data)=> {
+        this.objetivos = data
+        console.log(this.objetivos)
+      },
+      error: (err) => this.errorMessage = 'Error al cargar los objetivos'
+    });
+  });
+}
 
   getClasePorcentaje(porcentaje: number): string {
     if (porcentaje >= 80) return 'bg-success';
@@ -150,37 +185,111 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
     return 'bg-danger';
   }
   renderizarGrafico2() {
-    if (!this.chartRef?.nativeElement || !this.datos) return;
+  if (!this.chartRef?.nativeElement || !this.datos) return;
 
-    if (this.chart2) {
-      this.chart2.destroy();
-    }
+  if (this.chart2) {
+    this.chart2.destroy();
+  }
 
-    const ctx = this.chartRef.nativeElement.getContext('2d');
-    this.chart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Completadas', 'Incompletas'],
-        datasets: [{
-          data: [this.datosC.completadas, this.datosC.incompletas],
-          backgroundColor: ['#4CAF50', '#F44336'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: {
-            display: true,
-            text: `Cumplimiento: ${this.datosC.porcentajeCompletadas}%`,
-            font: { size: 16 }
+  const ctx = this.chartRef.nativeElement.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, '#34d399');  
+  gradient.addColorStop(1, '#059669');  
+  
+  this.chart2 = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Rutinas Completadas', 'Rutinas Incompletas'],
+      datasets: [{
+        data: [this.datosC.completadas, this.datosC.incompletas],
+        backgroundColor: [
+          gradient,
+          'rgba(107, 114, 128, 0.7)' 
+        ],
+        borderColor: [
+          'rgba(6, 78, 59, 0.8)',    
+          'rgba(55, 65, 81, 0.8)'  
+        ],
+        borderWidth: 2,
+        borderRadius: 4,               
+        hoverOffset: 15,               
+        spacing: 2                   
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '75%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#d1d5db',        
+            font: {
+              size: 13,
+              family: "'Inter', sans-serif"
+            },
+            padding: 20,
+            usePointStyle: true,
+            pointStyle: 'circle'
           }
         },
-        cutout: '70%'
+        tooltip: {
+          backgroundColor: 'rgba(17, 24, 39, 0.9)',
+          titleColor: '#34d399',
+          bodyColor: '#d1d5db',
+          borderColor: 'rgba(31, 41, 55, 0.8)',
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.parsed || 0;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = Math.round((value / total) * 100);
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: `CUMPLIMIENTO DE RUTINAS`,
+          color: '#e5e7eb',
+          font: {
+            size: 18,
+            weight: 'bold',
+            family: "'Inter', sans-serif"
+          },
+          padding: {
+            top: 10,
+            bottom: 20
+          }
+        },
+        subtitle: {
+          display: true,
+          text: `Completadas ${this.datosC.porcentajeCompletadas}%`,
+          color: '#34d399',
+          font: {
+            size: 24,
+            weight: 'bold',
+            family: "'Inter', sans-serif"
+          },
+          padding: {
+            bottom: 20
+          }
+        }
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1500,
+        easing: 'easeOutQuart'
       }
-    });
-  }
+    }
+  });
+}
 
   getDiasOrdenados(): string[] {
     const ordenDias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
@@ -190,99 +299,235 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
     this.cargarDatos();
   }
   renderizarGrafico() {
-    const ctx = document.getElementById('evolucionChart') as HTMLCanvasElement;
-    if (this.chart) {
-      this.chart.destroy();
-    }
-    this.chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: this.datos.map(d => new Date(d.fecha).toLocaleDateString()),
-        datasets: [
-          {
-            label: 'Peso (kg)',
-            data: this.datos.map(d => d.peso),
-            borderColor: '#3e95cd',
-            backgroundColor: 'rgba(62, 149, 205, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            yAxisID: 'y'
+  if (this.chart) {
+    this.chart.destroy();  
+  }
+  
+  const ctx = this.evolucionChart.nativeElement.getContext('2d');
+  if (!ctx) {
+    console.error('No se pudo obtener el contexto');
+    return;
+  }
+  const createGradient = (color1:string, color2:string) => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, color1);
+    gradient.addColorStop(1, color2);
+    return gradient;
+  };
+
+  const pesoGradient = createGradient('rgba(56, 189, 248, 0.4)', 'rgba(56, 189, 248, 0.05)');
+  const imcGradient = createGradient('rgba(168, 85, 247, 0.4)', 'rgba(168, 85, 247, 0.05)');
+  const masaGradient = createGradient('rgba(16, 185, 129, 0.4)', 'rgba(16, 185, 129, 0.05)');
+
+  this.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: this.datos.map(d => new Date(d.fecha).toLocaleDateString()),
+      datasets: [
+        {
+          label: 'Peso (kg)',
+          data: this.datos.map(d => d.peso),
+          borderColor: '#0ea5e9',
+          backgroundColor: pesoGradient,
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: '#0ea5e9',
+          pointHoverRadius: 7,
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#fff',
+          tension: 0.3,
+          fill: true,
+          yAxisID: 'y'
+        },
+        {
+          label: 'IMC',
+          data: this.datos.map(d => d.imc),
+          borderColor: '#a855f7',
+          backgroundColor: imcGradient,
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: '#a855f7',
+          pointHoverRadius: 7,
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#fff',
+          tension: 0.3,
+          fill: true,
+          yAxisID: 'y1'
+        },
+        {
+          label: 'Masa Muscular (kg)',
+          data: this.datos.map(d => d.masaMuscular),
+          borderColor: '#10b981',
+          backgroundColor: masaGradient,
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: '#10b981',
+          pointHoverRadius: 7,
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#fff',
+          tension: 0.3,
+          fill: true,
+          yAxisID: 'y'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'EVOLUCIÓN FÍSICA',
+          color: '#f3f4f6',
+          font: {
+            size: 18,
+            weight: 'bold',
+            family: "'Inter', sans-serif"
           },
-          {
-            label: 'IMC',
-            data: this.datos.map(d => d.imc),
-            borderColor: '#8e5ea2',
-            backgroundColor: 'rgba(142, 94, 162, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            yAxisID: 'y1'
-          },
-          {
-            label: 'Masa Muscular (kg)',
-            data: this.datos.map(d => d.masaMuscular),
-            borderColor: '#3cba9f',
-            backgroundColor: 'rgba(60, 186, 159, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            yAxisID: 'y'
+          padding: {
+            top: 10,
+            bottom: 20
           }
-        ]
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          backgroundColor: 'rgba(17, 24, 39, 0.95)',
+          titleColor: '#d1d5db',
+          bodyColor: '#f9fafb',
+          borderColor: 'rgba(31, 41, 55, 0.8)',
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8,
+          usePointStyle: true,
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += context.parsed.y.toFixed(1);
+              }
+              return label;
+            },
+            title: function(context) {
+              return `Fecha: ${context[0].label}`;
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+          labels: {
+            color: '#d1d5db',
+            font: {
+              size: 12,
+              family: "'Inter', sans-serif"
+            },
+            padding: 20,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        }
       },
-      options: {
-        responsive: true,
-        plugins: {
+      scales: {
+        x: {
           title: {
             display: true,
-            text: 'Evolución Física',
-            font: { size: 16 }
+            text: 'FECHA',
+            color: '#9ca3af',
+            font: {
+              size: 12,
+              weight: 'bold',
+              family: "'Inter', sans-serif"
+            }
           },
-          tooltip: {
-            mode: 'index',
-            intersect: false
+          grid: {
+            color: 'rgba(55, 65, 81, 0.3)',
+          },
+          border: {
+      display: false // <- correcta en Chart.js v4
+    },
+          ticks: {
+            color: '#9ca3af'
           }
         },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Fecha'
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          title: {
+            display: true,
+            text: 'PESO Y MASA MUSCULAR (kg)',
+            color: '#9ca3af',
+            font: {
+              size: 12,
+              weight: 'bold',
+              family: "'Inter', sans-serif"
             }
           },
-          y: {
-            type: 'linear',
-            display: true,
-            position: 'left',
-            title: {
-              display: true,
-              text: 'Peso y Masa Muscular (kg)'
-            }
+          grid: {
+            color: 'rgba(55, 65, 81, 0.3)',
           },
-          y1: {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            title: {
-              display: true,
-              text: 'IMC'
-            },
-            grid: {
-              drawOnChartArea: false
-            }
+          border: {
+      display: false // <- correcta en Chart.js v4
+    },
+          ticks: {
+            color: '#9ca3af'
           }
         },
-        interaction: {
-          mode: 'nearest',
-          axis: 'x',
-          intersect: false
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'ÍNDICE DE MASA CORPORAL (IMC)',
+            color: '#9ca3af',
+            font: {
+              size: 12,
+              weight: 'bold',
+              family: "'Inter', sans-serif"
+            }
+          },
+          grid: {
+            drawOnChartArea: false,
+            color: 'rgba(55, 65, 81, 0.3)',
+          },
+          border: {
+      display: false 
+    },
+          ticks: {
+            color: '#9ca3af'
+          }
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      animation: {
+        duration: 1500,
+        easing: 'easeOutQuart'
+      },
+      elements: {
+        line: {
+          tension: 0.3
         }
       }
-    });
+    }
+  });
+}
+  async cambiarRango(nuevoRango: string) {
+  this.rangoSeleccionado = nuevoRango;
+  try {
+    await this.cargarDatos(); 
+    this.renderizarGrafico();
+  } catch (err) {
+    console.error('Error al cambiar el rango:', err);
   }
-
-  cambiarRango(nuevoRango: string) {
-    this.rangoSeleccionado = nuevoRango;
-    this.cargarDatos();
-  }
+}
 
   mostrarFormRendimiento(){
     this.showrendimientoForm= true
@@ -292,6 +537,9 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   }
   mostrarFormObjetivos(){
     this.showgoalsForm=true
+  }
+  mostrarFormMedicion(){
+    this.showmedicionForm=true
   }
   cancelar(){
     this.showmetricaForm=false
@@ -305,12 +553,24 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
     forkJoin({
                 metrics: this.tmservice.list(Number(id), token),
                 records: this.rrservice.list(Number(id), token),
-                goals : this.orservice.list(Number(id),token)
+                goals : this.orservice.list(Number(id),token),
+                mediciones: this.mfservice.list(Number(id),token),
+                medicion: this.mfservice.obtenerUltimaMedicion(Number(id),token)
               }).subscribe({
                 next: (data) => {
                   this.metrics = data.metrics;
                   this.records = data.records;
+                  this.mediciones=data.mediciones
+                  this.ultimaMedicion = data.medicion
+                  console.log(this.records)
+                  this.nombre = localStorage.getItem('nombre') || '';
+                  this.apellido = localStorage.getItem('apellido') || '';
+                  this.posicion = localStorage.getItem('posicion') || '';
+                  const foto = localStorage.getItem('fotoPerfil');
+                  console.log(this.metrics)
                   this.goals = data.goals
+                   console.log(this.goals)
+                  this.filteredRecords = data.records
                   this.loading= false
                 },
                 error: (err) => {
@@ -321,20 +581,41 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   }
 
   filterRecords(): void {
-    this.filteredRecords = [...this.records];
-    
-    if (this.selectedMetric) {
-      this.filteredRecords = this.filteredRecords.filter(r => r.metricId === this.selectedMetric.id);
-    }
-    
-    if (this.dateRange.start && this.dateRange.end) {
-      this.filteredRecords = this.filteredRecords.filter(r => {
-        const recordDate = new Date(r.date);
-        return recordDate >= new Date(this.dateRange.start) && 
-               recordDate <= new Date(this.dateRange.end);
-      });
-    }
+  this.filteredRecords = [...this.records];
+  if (this.selectedMetric) {
+    this.filteredRecords = this.filteredRecords.filter(r => r.metrica.nombre === this.selectedMetric);
   }
+  if (this.dateRange.start && this.dateRange.end) {
+    const startDate = new Date(this.dateRange.start);
+    const endDate = new Date(this.dateRange.end);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    this.filteredRecords = this.filteredRecords.filter(r => {
+      const recordDate = new Date(r.fecha);
+      return recordDate >= startDate && recordDate <= endDate;
+    });
+  }
+}
+deleteObj(obj:ProgresoObjetivoDTO) {
+  const token =localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    this.orservice.eliminar(obj.id,token).subscribe({
+      next:(data)=>{
+        if(data.success){
+          alert("Eliminado")
+        }else{
+          alert("No elimiando")
+        }
+      },
+      error:(err)=>{
+        console.log(err)
+      }
+    })
+}
+
 
   async addMetric(){
     const token =localStorage.getItem("token")
@@ -399,81 +680,71 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
       }
     })
   }
+  addMedicion(){
+    const token =localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    if (this.medicionForm.invalid) return;
+    const newMedicion : MedicionFisicaDTO= this.medicionForm.value
+    newMedicion.idDeportista = Number(localStorage.getItem("id"))
+    console.log(newMedicion)
+    this.mfservice.add(newMedicion,token).subscribe({
+      next:(data)=>{
+        console.log(data)
+        alert("agregado"+data)
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
+  }
 
   toggleGoalCompletion(goal: any): void {
+    const token =localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    this.orservice.completado(goal.id,token).subscribe({
+      next:(data)=>{
+        alert("Completado"+data)
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
   }
 
   deleteItem(type: 'metric' | 'record' | 'goal', id: number): void {
-
-  }
-
-  showSuccess(message: string): void {
-  }
-
-  // Métodos de simulación de API
-  private async getSports(): Promise<any[]> {
-    return [
-      { id: 1, name: 'Fútbol', type: 'Equipo' },
-      { id: 2, name: 'Baloncesto', type: 'Equipo' },
-      { id: 3, name: 'Vóleybol', type: 'Equipo' }
-    ];
-  }
-
-  private async getMetrics(): Promise<any[]> {
-    return [
-      { id: 1, name: 'Velocidad 40m', unit: 'seg', sportId: 1, isGoal: true },
-      { id: 2, name: 'Salto vertical', unit: 'cm', sportId: 1, isGoal: true },
-      { id: 3, name: 'Resistencia', unit: 'min', sportId: 1, isGoal: true },
-      { id: 4, name: 'Precisión de tiro', unit: '%', sportId: 2, isGoal: true },
-      { id: 5, name: 'Fuerza piernas', unit: 'kg', sportId: 1, isGoal: false }
-    ];
-  }
-
-  private async getRecords(): Promise<any[]> {
-    const today = new Date();
-    const records = [];
-    for (let i = 0; i < 5; i++) {
-      const date = new Date();
-      date.setMonth(today.getMonth() - (4 - i));
-      records.push({
-        id: i + 1,
-        athleteId: 1,
-        metricId: 1,
-        value: +(6.5 - (i * 0.2)).toFixed(1),
-        date: date.toISOString().split('T')[0],
-        comments: i === 4 ? 'Mejor marca personal' : ''
-      });
+    const token = localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
     }
-    
-    return records;
-  }
+    if (type == "metric"){
+      this.tmservice.delete(id,token).subscribe({
+        next:(data)=>{
+          if(data.success){
+            alert("Exito al eliminar")
+          }else{
+            alert("error")
+          }
+        },
+        error:(err)=>{
+          console.log(err)
+        }
+      })
+    }else if(type === "record"){
+      this.rrservice.delete(id,token).subscribe({
+        next:(data)=>{
+          if(data.success){
+            alert("Exito")
+          }
+        },
+        error:(err)=>{
+          console.log(err)
+        }
+      })
 
-  private async getGoals(): Promise<any[]> {
-    return [
-      {
-        id: 1,
-        athleteId: 1,
-        metricId: 1,
-        metricName: 'Velocidad 40m',
-        targetValue: 5.8,
-        targetDate: '2024-12-31',
-        establishedDate: '2024-01-15',
-        completed: false,
-        priority: 1,
-        comments: 'Objetivo para fin de temporada'
-      },
-      {
-        id: 2,
-        athleteId: 1,
-        metricId: 2,
-        metricName: 'Salto vertical',
-        targetValue: 65,
-        targetDate: '2024-10-01',
-        establishedDate: '2024-02-20',
-        completed: false,
-        priority: 2,
-        comments: 'Mejorar capacidad de salto'
-      }
-    ];
+    }
   }
 }

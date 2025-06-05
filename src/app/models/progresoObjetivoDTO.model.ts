@@ -1,4 +1,5 @@
 export interface ProgresoObjetivoDTO {
+    id:number
     nombreObjetivo: string;
     unidad: string;
     valorActual: number;

@@ -1,68 +1,87 @@
 <div class="min-h-screen bg-gray-950 font-sans">
-  <!-- Barra de navegación superior -->
-  <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+  <!-- Barra de navegación superior mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center">
-          <span class="text-xl font-bold text-blue-400">AllSports</span>
+        <div class="flex items-center space-x-2">
+          <span class="text-xl font-bold text-blue-400 tracking-tight">AllSports</span>
+          <span class="text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded-full mt-1">Deportista</span>
         </div>
+        
+        <!-- Menú central mejorado -->
         <div class="hidden md:block">
-          <div class="ml-10 flex items-center space-x-8">
-            <a routerLink="proximoseventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Mis Eventos
-            </a>
-            <a routerLink="check" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Check-In Hoy
-            </a>
-            <a routerLink="equipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users mr-2"></i> Mis Equipos
-            </a>
-            <a routerLink="rutinas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-dumbbell mr-2"></i> Mis Rutinas
-            </a>
-            <a routerLink="rendimiento" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-line mr-2"></i> Mi Rendimiento
+          <div class="ml-4 flex items-center space-x-6">
+            <a *ngFor="let nav of navigation" 
+               [routerLink]="nav.route"
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive(nav.route, false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive(nav.route, false)}">
+              <i [class]="nav.icon + ' mr-2 text-lg'"></i>
+              <span class="text-sm font-medium">{{nav.name}}</span>
             </a>
           </div>
         </div>
-        <div class="flex items-center">
-          <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
-              <span class="text-gray-300 text-sm">{{nombre}} {{apellido}}</span>
-              <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-            </div>
-            <!-- Dropdown menu -->
-            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <a routerLink="perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Mi Perfil</a>
-              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Configuración</a>
-              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+
+        <!-- Perfil con efecto neumórfico -->
+        <div class="flex items-center space-x-4">
+          <button mat-icon-button routerLink="chat" class="text-gray-400 hover:text-blue-400">
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-9 w-9 rounded-full border-2 border-blue-400/30 shadow-lg 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100">{{nombre}} {{apellido}}</p>
+                <p class="text-xs text-gray-400 font-light">Deportista</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-2 bg-gray-800 border border-gray-700 z-20">
+              <a routerLink="perfil" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                <mat-icon class="mr-2">person</mat-icon> Perfil
+              </a>
+              <a (click)="cerrarSesion()" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 cursor-pointer">
+                <mat-icon class="mr-2">logout</mat-icon> Cerrar sesión
+              </a>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Contenido principal -->
+  <!-- Contenido principal mejorado -->
   <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <!-- Encabezado personalizado -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Bienvenido, {{nombre}}. 
+    <!-- Encabezado personalizado con animación -->
+    <div class="text-center mb-12 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                  bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 
+                  animate-gradient-x tracking-tight">
+        Bienvenido, {{nombre}}
       </h1>
       <p class="mt-4 text-lg text-gray-400">Tu progreso y actividades</p>
-      <div class="mt-2 flex justify-center items-center space-x-2">
-        <span class="text-sm text-gray-400">{{deporte}}</span>
-        <span class="text-gray-600">•</span>
-        <span class="text-sm text-gray-400">{{posicion}}</span>
+      <div class="mt-2 flex justify-center items-center space-x-3">
+        <span class="text-sm px-2.5 py-1 rounded-full bg-purple-900/30 text-purple-400">
+          <i class="fas fa-map-marker-alt mr-1"></i> {{posicion}}
+        </span>
       </div>
     </div>
 
-    <!-- Tarjetas resumen -->
+    <!-- Tarjetas resumen mejoradas -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
       <!-- Tarjeta Rutinas Completadas -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-blue-500/30 transition-all duration-300 group">
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-blue-400/30 group">
         <div class="flex justify-between items-start">
           <div>
             <p class="text-sm font-medium text-gray-400">Rutinas Completadas</p>
@@ -73,14 +92,18 @@
           </div>
         </div>
         <div class="mt-4">
-          <div class="flex items-center text-sm text-gray-400">
-            <span class="text-yellow-400 mr-1">{{rutinasPendientes}} pendientes</span>
+          <div class="flex items-center text-sm">
+            <span class="px-2 py-1 rounded-full bg-yellow-900/30 text-yellow-400">
+              {{rutinasPendientes}} pendientes
+            </span>
           </div>
         </div>
       </div>
 
       <!-- Tarjeta Eventos Inscritos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-green-500/30 transition-all duration-300 group">
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-green-400/30 group">
         <div class="flex justify-between items-start">
           <div>
             <p class="text-sm font-medium text-gray-400">Eventos Inscritos</p>
@@ -93,7 +116,9 @@
       </div>
 
       <!-- Tarjeta Equipos Activos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300 group">
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-gray-700 hover:border-purple-400/30 group">
         <div class="flex justify-between items-start">
           <div>
             <p class="text-sm font-medium text-gray-400">Equipos Activos</p>
@@ -105,14 +130,19 @@
         </div>
       </div>
 
-      <!-- Tarjeta Acción Rápida -->
-      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/20 rounded-xl p-6 transition-all duration-300 group hover:border-blue-400/50">
+      <!-- Tarjeta Acción Rápida con efecto gradiente -->
+      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-2xl p-6 
+                  shadow-xl hover:shadow-2xl transition-all duration-300 
+                  border border-blue-400/20 hover:border-blue-400/40 group">
         <div class="flex flex-col h-full justify-between">
           <div>
             <p class="text-sm font-medium text-blue-300">Acción rápida</p>
             <h3 class="mt-1 text-xl font-bold text-white">Registrar entrenamiento</h3>
           </div>
-          <button routerLink="rutinas" class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg border border-white/10 transition-all duration-300">
+          <button routerLink="check" 
+                  class="mt-4 w-full flex items-center justify-center space-x-2 
+                         bg-white/10 hover:bg-white/20 text-white py-2.5 px-4 
+                         rounded-xl border border-white/10 transition-all duration-300">
             <i class="fas fa-plus"></i>
             <span>Registrar ahora</span>
           </button>
@@ -120,21 +150,21 @@
       </div>
     </div>
 
-    <!-- Secciones principales -->
+    <!-- Secciones principales mejoradas -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
       <!-- Rutinas pendientes hoy -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
-        <div class="p-6 border-b border-gray-800">
-          <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+      <div class="bg-gray-900/80 rounded-2xl shadow-xl border border-gray-700">
+        <div class="px-6 py-5 border-b border-gray-700">
+          <h3 class="text-lg font-semibold text-white flex items-center">
             <i class="fas fa-dumbbell text-blue-400 mr-2"></i>
             Rutinas para hoy
           </h3>
         </div>
-        <div class="divide-y divide-gray-800">
-          <div *ngFor="let rutina of rutinasPendientesArray" class="p-4 hover:bg-gray-800/50 transition-all duration-200">
+        <div class="divide-y divide-gray-700">
+          <div *ngFor="let rutina of rutinasPendientesArray" class="p-4 hover:bg-gray-800/50 transition-all duration-200 group">
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
-                <div class="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <div class="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-all">
                   <i class="fas fa-running text-blue-400"></i>
                 </div>
               </div>
@@ -142,48 +172,49 @@
                 <p class="text-sm font-medium text-white truncate">{{rutina.nombre}}</p>
                 <p class="text-sm text-gray-400">{{rutina.duracion_esperada}} min • {{rutina.objetivo}}</p>
                 <div class="mt-1 flex items-center space-x-2">
-                  <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-900/50 text-yellow-400">
+                  <span class="text-xs px-2 py-0.5 rounded-full"
+                        [ngClass]="{
+                          'bg-green-900/30 text-green-400': rutina.nivel_dificultad === 'Principiante',
+                          'bg-yellow-900/30 text-yellow-400': rutina.nivel_dificultad === 'Intermedio',
+                          'bg-red-900/30 text-red-400': rutina.nivel_dificultad === 'Avanzado'
+                        }">
                     {{rutina.nivel_dificultad | lowercase}}
                   </span>
                 </div>
               </div>
-              <div>
-                <button (click)="marcarRutinaCompletada(rutina.id)" class="text-green-400 hover:text-green-300">
-                  <i class="fas fa-check-circle"></i>
-                </button>
-              </div>
             </div>
           </div>
           <div *ngIf="rutinasPendientesArray.length === 0" class="p-6 text-center text-gray-500">
-            No hay rutinas pendientes para hoy
+            <i class="fas fa-check-circle text-blue-400 text-xl mb-2"></i>
+            <p>No hay rutinas pendientes para hoy</p>
           </div>
         </div>
-        <div class="p-4 border-t border-gray-800 text-center">
-          <a routerLink="rutinas" class="text-sm text-blue-400 hover:text-blue-300">Ver todas mis rutinas</a>
+        <div class="p-4 border-t border-gray-700 text-center">
+          <a routerLink="rutinas" class="text-sm text-blue-400 hover:text-blue-300 flex items-center justify-center">
+            Ver todas mis rutinas <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </a>
         </div>
       </div>
 
-      <!-- Mis equipos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
-        <div class="p-6 border-b border-gray-800">
-          <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+      <!-- Mis equipos mejorados -->
+      <div class="bg-gray-900/80 rounded-2xl shadow-xl border border-gray-700">
+        <div class="px-6 py-5 border-b border-gray-700">
+          <h3 class="text-lg font-semibold text-white flex items-center">
             <i class="fas fa-users text-green-400 mr-2"></i>
             Mis Equipos
           </h3>
         </div>
-        <div class="divide-y divide-gray-800">
-          <div *ngFor="let equipo of equiposActivosArray" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/equipos', equipo.id]">
+        <div class="divide-y divide-gray-700">
+          <div *ngFor="let equipo of equiposActivosArray" 
+               class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer group" 
+               [routerLink]="['/equipos', equipo.id]">
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <div class="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <div class="flex-shrink-0">
-                <div class="h-14 w-14 rounded-full bg-green-500/10 flex items-center justify-center border border-gray-700 overflow-hidden">
+                <div class="h-14 w-14 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 overflow-hidden">
                   <img 
                     [src]="'http://localhost:8080/' + equipo.img"
                     alt="Logo del equipo"
-                    class="h-full w-full object-cover rounded-full">
-                </div>
-              </div>
+                    class="h-full w-full object-cover">
                 </div>
               </div>
               <div class="flex-1 min-w-0">
@@ -191,46 +222,64 @@
                 <p class="text-sm text-gray-400">{{equipo.deporte.nombre}}</p>
                 <div class="mt-1 flex items-center space-x-2">
                   <span class="text-xs text-gray-400">
-                    {{equipo.jugadoresAsociados}} jugadores
+                    <i class="fas fa-users mr-1"></i> {{equipo.jugadoresAsociados}} jugadores
                   </span>
-                  <span class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
+                  <span class="text-xs px-2 py-0.5 rounded-full"
+                        [ngClass]="{
+                          'bg-green-900/30 text-green-400': equipo.estado === 'activo',
+                          'bg-yellow-900/30 text-yellow-400': equipo.estado === 'inactivo'
+                        }">
                     {{equipo.estado}}
                   </span>
                 </div>
               </div>
-              <div>
-                <i class="fas fa-chevron-right text-gray-500"></i>
+              <div class="text-gray-500 group-hover:text-green-400 transition-all">
+                <i class="fas fa-chevron-right"></i>
               </div>
             </div>
           </div>
           <div *ngIf="equiposActivosArray.length === 0" class="p-6 text-center text-gray-500">
-            No perteneces a ningún equipo actualmente
+            <i class="fas fa-users-slash text-green-400 text-xl mb-2"></i>
+            <p>No perteneces a ningún equipo actualmente</p>
           </div>
         </div>
-        <div class="p-4 border-t border-gray-800 text-center">
-          <a routerLink="equipos" class="text-sm text-green-400 hover:text-green-300">Ver todos mis equipos</a>
+        <div class="p-4 border-t border-gray-700 text-center">
+          <a routerLink="equipos" class="text-sm text-green-400 hover:text-green-300 flex items-center justify-center">
+            Ver todos mis equipos <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </a>
         </div>
       </div>
     </div>
 
-    <!-- Próximos eventos -->
-    <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden mb-12">
-      <div class="p-6 border-b border-gray-800 flex justify-between items-center">
-        <h3 class="text-lg font-semibold text-gray-200 flex items-center">
+    <!-- Próximos eventos mejorados -->
+    <div class="bg-gray-900/80 rounded-2xl shadow-xl border border-gray-700 mb-12">
+      <div class="px-6 py-5 border-b border-gray-700 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-white flex items-center">
           <i class="fas fa-calendar-day text-purple-400 mr-2"></i>
           Mis Próximos Eventos
         </h3>
         <div class="flex space-x-2">
-          <select [(ngModel)]="eventFilter" (change)="filterEvents()" class="bg-gray-800 text-gray-300 text-sm rounded-lg px-3 py-1 border border-gray-700 focus:ring-blue-500 focus:border-blue-500">
-            <option value="all">Todos</option>
-            <option value="active">Activos</option>
-            <option value="planned">Planificados</option>
-          </select>
-          <input type="text" [(ngModel)]="eventSearch" (input)="filterEvents()" placeholder="Buscar eventos..." class="bg-gray-800 text-gray-300 text-sm rounded-lg px-3 py-1 border border-gray-700 focus:ring-blue-500 focus:border-blue-500">
+          <div class="relative">
+            <select [(ngModel)]="eventFilter" (change)="filterEvents()" class="bg-gray-800 text-gray-300 text-sm rounded-lg px-3 py-2 border border-gray-700 focus:ring-blue-500 focus:border-blue-500 appearance-none pr-8">
+              <option value="all">Todos</option>
+              <option value="active">Activos</option>
+              <option value="planned">Planificados</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+              <i class="fas fa-chevron-down text-xs"></i>
+            </div>
+          </div>
+          <div class="relative">
+            <input type="text" [(ngModel)]="eventSearch" (input)="filterEvents()" placeholder="Buscar eventos..." 
+                   class="bg-gray-800 text-gray-300 text-sm rounded-lg px-3 py-2 border border-gray-700 focus:ring-blue-500 focus:border-blue-500 pl-10 w-48">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-500"></i>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-800">
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full">
           <thead class="bg-gray-800">
             <tr>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -250,7 +299,7 @@
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800">
+          <tbody class="divide-y divide-gray-700">
             <tr *ngFor="let event of filteredEvents" class="hover:bg-gray-800/50 transition-all duration-150">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
@@ -268,8 +317,7 @@
                 <div class="text-sm text-gray-400">{{event.horaInicio}} - {{event.horaFin}}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">
-                </span>
+                <span class="text-sm text-gray-300">{{event.equipo}}</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 py-1 text-xs rounded-full" [ngClass]="{
@@ -280,29 +328,34 @@
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button [routerLink]="['/eventos', event.id]" class="text-blue-400 hover:text-blue-300 mr-3">
-                  <i class="fas fa-eye"></i>
+                <button [routerLink]="['/eventos', event.id]" class="text-blue-400 hover:text-blue-300 px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 transition-all">
+                  <i class="fas fa-eye mr-1"></i> Ver
                 </button>
               </td>
             </tr>
             <tr *ngIf="filteredEvents.length === 0">
-              <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
-                No tienes eventos próximos
+              <td colspan="5" class="px-6 py-8 text-center">
+                <i class="fas fa-calendar-times text-purple-400 text-3xl mb-3"></i>
+                <p class="text-sm text-gray-500">No tienes eventos próximos</p>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="p-4 border-t border-gray-800 text-center">
-        <a routerLink="proximoseventos" class="text-sm text-purple-400 hover:text-purple-300">Ver todos mis eventos</a>
+      <div class="p-4 border-t border-gray-700 text-center">
+        <a routerLink="proximoseventos" class="text-sm text-purple-400 hover:text-purple-300 flex items-center justify-center">
+          Ver todos mis eventos <i class="fas fa-arrow-right ml-2 text-xs"></i>
+        </a>
       </div>
     </div>
   </div>
 
-  <!-- Notificaciones flotantes -->
-  <div *ngIf="showNotification" class="fixed bottom-4 right-4 z-50">
-    <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
-      <i class="fas fa-check-circle mr-2"></i>
+  <!-- Notificaciones flotantes mejoradas -->
+  <div *ngIf="showNotification" 
+       class="fixed bottom-6 right-6 z-50 animate-fade-in-up">
+    <div class="bg-green-500 text-white px-4 py-3 rounded-xl shadow-lg flex items-center 
+                border border-green-400/50 animate-pulse-once">
+      <i class="fas fa-check-circle mr-2 text-lg"></i>
       <span>{{notificationMessage}}</span>
     </div>
   </div>

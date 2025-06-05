@@ -36,6 +36,18 @@ export class DeportistaService{
             });
       return this.http.get<ResumenAtletasDTO>(`${appSettings.apiDeportistas}/resumen/${instructorId}`,{headers});
     }
+    getDeportistaById(id:number,token:string):Observable<Deportista>{
+        const headers = new HttpHeaders({
+                            'Authorization': `Bearer ${token}`
+                        });
+                  return this.http.get<Deportista>(`${appSettings.apiGeneral}/deportista/getById/${id}`,{headers})
+      }
+    updateDeportista(id: number, token : string,formData: FormData): Observable<any> {
+      const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+    return this.http.put(`${appSettings.apiGeneral}/deportista/editar/${id}`, formData,{headers});
+  }
 
       logOut():void{
         if(typeof localStorage!=="undefined"){
@@ -59,4 +71,5 @@ export class DeportistaService{
         }
         return false
       }
+
 }

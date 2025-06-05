@@ -1,43 +1,172 @@
-<div class="min-h-screen bg-gray-950 py-8 px-4 sm:px-6 lg:px-8 font-sans">
-    <!-- Encabezado simplificado -->
-    <div class="max-w-4xl mx-auto text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-100">Check-ins Completados</h1>
-        <p class="mt-2 text-gray-400">Historial de rutinas finalizadas</p>
+<div class="min-h-screen bg-gradient-to-br from-gray-950 to-gray-900 font-sans py-8 px-4 sm:px-6 lg:px-8">
+  <!-- Barra de navegación premium -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed top-0 left-0 w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl font-bold text-sky-400 tracking-tight flex items-center">
+            <mat-icon class="mr-2 text-sky-400">sports_soccer</mat-icon>
+            AllSports
+          </span>
+          <span class="text-xs bg-sky-900/30 text-sky-300 px-2 py-1 rounded-full mt-1">Deportista</span>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <button mat-icon-button class="text-gray-400 hover:text-sky-400 transition-colors relative"
+                  matTooltip="Notificaciones">
+            <mat-icon>notifications</mat-icon>
+            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+          </button>
+          
+          <div class="relative">
+            <button class="flex items-center space-x-2 group focus:outline-none transition-all">
+              <div class="relative">
+                <div class="relative h-10 w-10 rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 p-0.5">
+                  <div class="h-full w-full rounded-full bg-gray-800 border-2 border-gray-900 flex items-center justify-center">
+                    <mat-icon class="text-gray-300">person</mat-icon>
+                  </div>
+                </div>
+                <div class="absolute -right-1 -bottom-1 bg-emerald-400 w-3 h-3 rounded-full border-2 border-gray-900"></div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="pt-24 pb-12 max-w-6xl mx-auto">
+    <!-- Encabezado premium -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center mb-6">
+        <div class="h-1 w-24 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full"></div>
+        <div class="mx-4 text-emerald-400 font-medium tracking-wider">HISTORIAL DE ACTIVIDAD</div>
+        <div class="h-1 w-24 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full"></div>
+      </div>
+      
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-500 
+                tracking-tight mb-3">
+        Check-ins Incompletos
+      </h1>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">Tu historial de rutinas finalizadas con excelencia</p>
+      
+      <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+        <div class="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-3 rounded-xl border border-gray-700 shadow-lg flex items-center">
+          <mat-icon class="text-red-400 mr-2">calendar_today</mat-icon>
+          <span class="text-red-300 font-medium">{{checkins.length}} Rutinas incompletas</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Lista simplificada -->
-    <div class="max-w-4xl mx-auto space-y-4">
-        <!-- Mensaje cuando no hay check-ins -->
-        <div *ngIf="checkins.length === 0" class="text-center py-12 bg-gray-900/50 rounded-lg">
-            <i class="fas fa-check-circle text-4xl text-gray-600 mb-3"></i>
-            <p class="text-lg text-gray-400">No hay check-ins completados aún</p>
+    <!-- Estadísticas de rendimiento -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-gradient-to-br from-sky-900/30 to-gray-900/50 rounded-2xl p-5 border border-sky-800/30">
+        <div class="flex items-center">
+          <div class="p-3 bg-sky-900/20 rounded-xl mr-4">
+            <mat-icon class="text-sky-400">trending_up</mat-icon>
+          </div>
+          <div>
+            <p class="text-sm text-sky-400">Consistencia</p>
+          </div>
         </div>
+      </div>
+      
+      <div class="bg-gradient-to-br from-emerald-900/30 to-gray-900/50 rounded-2xl p-5 border border-emerald-800/30">
+        <div class="flex items-center">
+          <div class="p-3 bg-emerald-900/20 rounded-xl mr-4">
+            <mat-icon class="text-emerald-400">fitness_center</mat-icon>
+          </div>
+          <div>
+            <p class="text-sm text-emerald-400">Sesiones/Mes</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gradient-to-br from-purple-900/30 to-gray-900/50 rounded-2xl p-5 border border-purple-800/30">
+        <div class="flex items-center">
+          <div class="p-3 bg-purple-900/20 rounded-xl mr-4">
+            <mat-icon class="text-purple-400">stars</mat-icon>
+          </div>
+          <div>
+            <p class="text-sm text-purple-400">Calidad de ejecución</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Tarjetas simplificadas -->
-        <div *ngFor="let checkin of checkins" class="bg-gray-900 rounded-lg p-4 border border-gray-700 hover:border-blue-500 transition-colors">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h3 class="text-xl font-semibold text-white">{{checkin.rutina.nombre}}</h3>
-                    <div class="flex items-center space-x-4 mt-2">
-                        <span class="text-sm text-gray-400">
-                            <i class="fas fa-calendar-day mr-1"></i>
-                            {{checkin.fecha | date:'dd/MM/yyyy'}}
-                        </span>
-                        <span class="text-sm text-gray-400">
-                            <i class="fas fa-clock mr-1"></i>
-                            {{checkin.hora}} 
-                        </span>
-                    </div>
-                </div>
-                <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-900/50 text-red-400">
-                    {{checkin.estado}} 
+
+    <!-- Lista de check-ins -->
+    <div class="space-y-6">
+      <!-- Mensaje cuando no hay check-ins -->
+      <div *ngIf="checkins.length === 0" class="text-center py-16 bg-gradient-to-br from-gray-900/50 to-gray-800/50 rounded-2xl border border-gray-700 shadow-xl">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-red-900/30 to-cyan-900/20 mb-6">
+          <mat-icon class="text-4xl text-emerald-400">self_improvement</mat-icon>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-200 mb-2">¡Comienza tu primer entrenamiento!</h3>
+        <p class="text-gray-500 max-w-md mx-auto mb-6">Aún no has completado rutinas. Empieza tu primer entrenamiento para ver tu progreso aquí.</p>
+        <button class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl text-white font-medium hover:shadow-lg hover:shadow-emerald-500/30 transition-all flex items-center mx-auto">
+          <mat-icon class="mr-2">directions_run</mat-icon>
+          Empezar entrenamiento
+        </button>
+      </div>
+
+      <!-- Tarjetas premium -->
+      <div *ngFor="let checkin of checkins" 
+           class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-xl overflow-hidden 
+                  border border-gray-700 transition-all duration-300 hover:border-red-500/50 hover:shadow-red-500/10 hover:-translate-y-1">
+        <div class="p-6 pb-4 relative">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center mb-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-sky-900/30 text-sky-400 mr-2">
+                  <mat-icon class="text-xs mr-1">schedule</mat-icon> {{checkin.rutina.duracion_esperada}} min
                 </span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-emerald-900/30 text-emerald-400': checkin.rutina.objetivo === 'FUERZA',
+                        'bg-amber-900/30 text-amber-400': checkin.rutina.objetivo === 'CARDIO',
+                        'bg-cyan-900/30 text-cyan-400': checkin.rutina.objetivo === 'RESISTENCIA'
+                      }">
+                  <mat-icon class="text-xs mr-1">fitness_center</mat-icon> {{checkin.rutina.objetivo}}
+                </span>
+              </div>
+              
+              <h2 class="text-2xl font-bold text-gray-100 mb-2">{{checkin.rutina.nombre}}</h2>
+              
+              <div class="flex flex-wrap items-center gap-4 mt-4 text-sm">
+                <span class="text-sky-400 flex items-center">
+                  <mat-icon class="text-base mr-1">calendar_today</mat-icon>
+                  <span>{{checkin.fecha | date:'dd/MM/yyyy'}}</span>
+                </span>
+                <span class="text-emerald-400 flex items-center">
+                  <mat-icon class="text-base mr-1">schedule</mat-icon>
+                  <span>{{checkin.hora}}</span>
+                </span>
+              </div>
             </div>
             
-            <!-- Comentarios (solo si existen) -->
-            <div *ngIf="checkin.comentarios" class="mt-3 pt-3 border-t border-gray-700">
-                <p class="text-sm text-gray-300 italic">"{{checkin.comentarios}}"</p>
+            <div class="px-4 py-2 bg-gradient-to-r from-red-900/50 to-red-900/30 text-red-400 rounded-xl shadow-lg shadow-red-500/20 flex items-center transition-all hover:shadow-red-500/40">
+              <mat-icon class="mr-2 text-sm">highlight_off</mat-icon>
+              <span class="font-medium">Incompleto</span>
             </div>
+          </div>
         </div>
+        
+        <div class="border-t border-gray-700">
+          <!-- Comentarios -->
+          <div *ngIf="checkin.comentarios" class="p-5 bg-gray-900/20">
+            <div class="flex items-center text-emerald-400 mb-3">
+              <mat-icon class="mr-2">notes</mat-icon>
+              <span class="font-medium">Comentarios del entrenamiento</span>
+            </div>
+            
+            <p class="text-gray-300 italic pl-7">
+              "{{checkin.comentarios}}"
+            </p>
+          </div>
+      </div>
     </div>
+  </div>
 </div>

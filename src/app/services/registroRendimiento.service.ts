@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { appSettings } from "../settings/appSettings";
 import { RegistroRendimiento } from "../models/registroRendimiento.model";
 import { RegistroRendimientoDTO } from "../models/registroRendimientoDTO.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 
 @Injectable({
     providedIn:"root"
@@ -23,5 +24,11 @@ export class RegistroRendimientoService{
                 'Authorization': `Bearer ${token}`
             });
             return this.http.post<RegistroRendimiento>(`${appSettings.apiAgregarRecord}`,rr,{ headers })
+    }
+    delete(id: number, token:string ):Observable<ResponseAPI>{
+        const headers = new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            });
+            return this.http.delete<ResponseAPI>(`${appSettings.apiGeneral}/eliminarRecord/${id}`,{ headers })
     }
 }

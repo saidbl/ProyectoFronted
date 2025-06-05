@@ -2,10 +2,10 @@ import { Component,inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CheckInRutinaService } from '../../../../services/checkinrutina.service';
 import { CheckInRutina } from '../../../../models/checkinRutina.model';
-
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-incompletas',
-  imports: [CommonModule],
+  imports: [CommonModule,MatIcon],
   templateUrl: './incompletas.component.html',
   styleUrl: './incompletas.component.css'
 })

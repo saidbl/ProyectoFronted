@@ -44,11 +44,13 @@ export class LoginComponent {
             console.log(data)
             if (data.statusCode === 200) {
               console.log(data)
+              localStorage.setItem("idInstructor",data.idInstructor)
               localStorage.setItem("token", data.token);
               localStorage.setItem("rol", data.rol);
               localStorage.setItem("id",data.id);
               localStorage.setItem("idDeporte",data.idDeporte)
               localStorage.setItem("posicion",data.posicion)
+              localStorage.setItem("idPosicion",data.posicion.id)
               localStorage.setItem("fotoPerfil",data.fotoPerfil)
               localStorage.setItem("nombre",data.nombre)
               localStorage.setItem("apellido",data.apellido)

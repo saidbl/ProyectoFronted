@@ -16,6 +16,7 @@ export class ChatService {
      const headers = new HttpHeaders({
                     'Authorization': `Bearer ${token}`
                 });
+    console.log(rol + " "+ id)
     return this.http.get<Chat[]>(`${this.apiUrl}/usuario/${id}?tipoUsuario=${rol}`,{headers});
   }
 

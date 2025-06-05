@@ -24,6 +24,8 @@ import { PerfilInstructorComponent } from './pages/instructor-main/perfil-instru
 import { InstructorEstadisticasComponent } from './pages/instructor-main/instructor-estadisticas/instructor-estadisticas.component';
 import { IncompletasComponent } from './pages/deportista-main/check/incompletas/incompletas.component';
 import { ChatComponent } from './pages/chat/chat.component';
+import { PerfilComponent } from './pages/deportista-main/perfil/perfil.component';
+import { ChatDeportistaComponent } from './pages/deportista-main/chat-deportista/chat-deportista.component';
 
 
 export const routes: Routes = [
@@ -43,11 +45,13 @@ export const routes: Routes = [
     { path: 'instructor/reportes',component:InstructorEstadisticasComponent},
     { path: 'deportista/rutinas', component: RutinasDepComponent},
     { path: 'deportista/check', component: CheckComponent},
+    { path: 'deportista/perfil', component: PerfilComponent},
     { path: 'deportista/check/completadas', component: CompletadasComponent},
     { path: 'deportista/check/incompletas', component: IncompletasComponent},
     { path: 'deportista/proximoseventos', component: EventosDeportistaComponent},
     { path: 'deportista/equipos', component: EquiposDeportistaComponent},
     { path: 'deportista/rendimiento', component: RendimientoComponent},
+    { path: 'deportista/chat', component: ChatDeportistaComponent},
     { path: 'organizacion/crear-eventos', component: CrearEventoComponent},
     { path: 'organizacion/eventos', component: EventosOrganizacionComponent},
     { path: 'organizacion/equipos-org', component: EquipoOrgComponent},

@@ -2,10 +2,11 @@ import { Component, OnInit ,inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Equipo } from '../../../models/equipo.model';
 import { EquipoService } from '../../../services/equipo.service';
+import { MatIcon } from '@angular/material/icon';
 @Component({
     selector: 'app-equipos-deportista',
     standalone:true,
-    imports: [CommonModule],
+    imports: [CommonModule,MatIcon],
     templateUrl: './equipos-deportista.component.html',
     styleUrl: './equipos-deportista.component.css'
 })

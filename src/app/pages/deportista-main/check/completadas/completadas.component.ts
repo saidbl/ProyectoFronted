@@ -1,10 +1,11 @@
 import { Component, OnInit, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 import { CheckInRutinaService } from '../../../../services/checkinrutina.service';
 import { CheckInRutina } from '../../../../models/checkinRutina.model';
 @Component({
     selector: 'app-completadas',
-    imports: [CommonModule],
+    imports: [CommonModule,MatIcon ],
     standalone : true,
     templateUrl: './completadas.component.html',
     styleUrl: './completadas.component.css'

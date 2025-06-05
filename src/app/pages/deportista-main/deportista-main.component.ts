@@ -2,7 +2,7 @@ import { Component, OnInit , inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Evento } from '../../models/evento.model';
 import { EventoService } from '../../services/evento.service';
-import { RouterModule } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import { RutinaService } from '../../services/rutina.service';
 import { RutinaDTOR } from '../../models/rutinaDTOr.model';
 import { FormsModule } from '@angular/forms';
@@ -10,9 +10,13 @@ import { CheckInRutinaService } from '../../services/checkinrutina.service';
 import { CheckInRutina } from '../../models/checkinRutina.model';
 import { EquipoService } from '../../services/equipo.service';
 import { Equipo } from '../../models/equipo.model';
+import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
+import { DeportistaService } from '../../services/deportista.service';
+import { Subscription, forkJoin } from 'rxjs';
 @Component({
     selector: 'app-deportista-main',
-    imports: [CommonModule, RouterModule,FormsModule],
+    imports: [CommonModule, RouterModule,FormsModule,MatIcon],
     standalone:true,
     templateUrl: './deportista-main.component.html',
     styleUrl: './deportista-main.component.css'
@@ -22,6 +26,9 @@ export class DeportistaMainComponent implements OnInit{
   private rservice = inject(RutinaService)
   private eservice = inject(EventoService)
   private eqservice = inject(EquipoService)
+  private dservice = inject(DeportistaService)
+  private subscriptions: Subscription = new Subscription();
+   hasError: boolean = false;
   nombre: string | null = '';
   apellido: string | null = '';
   deporte: string = '';
@@ -39,8 +46,15 @@ export class DeportistaMainComponent implements OnInit{
   misEquipos: any[] = [];
   rutinasPendientesHoy: any[] = [];
   medicionesRecientes: any[] = [];
-  
-  // Filtros
+   isLoading: boolean = true;
+  navigation = [
+  { name: 'CheckIn de Hoy', route: 'check', icon: 'event' },
+  { name: 'Eventos', route: 'rutinaDeportista', icon: 'event' },
+  { name: 'Equipos', route: 'equipos', icon: 'groups' },
+  { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
+  { name: 'Rendimiento', route: 'rendimiento', icon: 'analytics' }
+];
+constructor(public router: Router) {}
   notificationMessage: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 10;
@@ -48,139 +62,136 @@ export class DeportistaMainComponent implements OnInit{
   eventSearch: string = '';
   filteredEvents: any[] = [];
   pages:any[]=[]
-  
-  // UI
   showUserDropdown: boolean = false;
   showNotification: boolean = false;
 
-  constructor(
-  ) { }
-
   ngOnInit(): void {
+    this.validateSession();
     this.cargarDatosDeportista();
   }
 
-  cargarDatosDeportista(): void {
-    const fotoPerfil = localStorage.getItem("fotoPerfil")
-    this.cargarRutinasCompletadas ()
-    this.cargarRutinasPendientes()
-    this.cargarProximosEventos();
-    this.cargarMisEquipos()
-    this.nombre=localStorage.getItem("nombre") 
-    this.apellido = localStorage.getItem("apellido")
-    this.fotoPerfil = this.fotoPerfil+ fotoPerfil
-    this.posicion = localStorage.getItem("posicion")   
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
-  cargarRutinasCompletadas(){
-    console.log("hola")
-    const id =Number(localStorage.getItem("id"))
-    const token = localStorage.getItem("token")
-    if(!token){
-      throw new Error("Not Token Found")
-    }
-    this.chservice.list(id,token).subscribe({
-      next:(data)=>{
-        this.rutinasCompletadasArray= data
-        this.rutinasCompletadas = data.length
-      },
-      error:(err)=>{
-        console.error(err)
-      }
-    })
-  }
-
-  cargarEstadisticas(): void {
+  validateSession(): void {
+    const token = localStorage.getItem('token');
+    const id = localStorage.getItem('id');
     
+    if (!token || !id) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sesión expirada',
+        text: 'Por favor inicie sesión nuevamente',
+      }).then(() => {
+        this.router.navigate(['/login']);
+      });
+    }
+  }
+
+  cargarDatosDeportista(): void {
+    this.isLoading = true;
+    this.hasError = false;
+    const id = Number(localStorage.getItem('id'));
+    const token = localStorage.getItem('token');
+    if (!token || !id) {
+      this.handleError('Credenciales inválidas');
+      return;
+    }
+    const loadData$ = forkJoin({
+      rutinasCompletadas: this.chservice.list(id, token),
+      rutinasPendientes: this.rservice.getRutinasByEjerciciosAndDia(id, token),
+      eventos: this.eservice.listEventosByDeportista(id, token),
+      equipos: this.eqservice.listByIdDeportista(id, token),
+    });
+
+    const dataSubscription = loadData$.subscribe({
+      next: ({ 
+        rutinasCompletadas, 
+        rutinasPendientes, 
+        eventos, 
+        equipos,
+      }) => {
+        this.nombre = localStorage.getItem('nombre') || '';
+        this.apellido = localStorage.getItem('apellido') || '';
+        this.posicion = localStorage.getItem('posicion') || '';
+        const foto = localStorage.getItem('fotoPerfil');
+        this.fotoPerfil = foto ? `http://localhost:8080/${foto}` : this.fotoPerfil;
+        this.rutinasCompletadasArray = rutinasCompletadas;
+        this.rutinasCompletadas = rutinasCompletadas.length;
+        this.rutinasPendientesArray = rutinasPendientes;
+        this.rutinasPendientes = rutinasPendientes.length;
+        this.eventosInscritosArray = eventos;
+        this.eventosInscritos = eventos.length;
+        this.equiposActivosArray = equipos;
+        this.equiposActivos = equipos.length;
+        this.filterEvents();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading data:', err);
+        this.handleError('Error al cargar datos. Intente recargar la página');
+        this.isLoading = false;
+      }
+    });
+
+    this.subscriptions.add(dataSubscription);
+  }
+
+  handleError(message: string): void {
+    this.hasError = true;
+    this.notificationMessage = message;
+    this.showNotification = true;
+    
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+      timer: 3000,
+      showConfirmButton: false
+    });
+    
+    setTimeout(() => this.showNotification = false, 5000);
   }
 
   cargarProximosEventos(): void {
-    console.log("hola")
-    const id =Number(localStorage.getItem("id"))
-    const token = localStorage.getItem("token")
-    if(!token){
-      throw new Error("Not Token Found")
-    }
-    this.eservice.listEventosByDeportista(id,token).subscribe({
-      next:(data)=>{
-        console.log(data)
-        this.eventosInscritosArray = data
-        this.eventosInscritos = data.length
-        this.filterEvents()
-      },
-      error:(err)=>{
-
-      }
-    })
-  }
-
-  cargarMisEquipos(): void {
-    const id =Number(localStorage.getItem("id"))
-    const token = localStorage.getItem("token")
-    if(!token){
-      throw new Error("Not Token Found")
-    }
-    this.eqservice.listByIdDeportista(id,token).subscribe({
-      next:(data)=>{
-        this.equiposActivosArray=data
-        this.equiposActivos=data.length
-      },
-      error:(err)=>{
-        console.error(err)
-      }
-    })
-  }
-
-  cargarRutinasPendientes(): void {
-    const id =Number(localStorage.getItem("id"))
-    const token = localStorage.getItem("token")
-    if(!token){
-      throw new Error("Not Token Found")
-    }
-    this.rservice.getRutinasByEjerciciosAndDia(id,token).subscribe({
-      next:(data)=>{
-        this.rutinasPendientesArray=data
-        this.rutinasPendientes=data.length
-      }, 
-      error:(err)=>{
-        console.error(err)
-      }
-    })
-  }
-
-  cargarMedicionesRecientes(): void {
+    const id = Number(localStorage.getItem('id'));
+    const token = localStorage.getItem('token');
     
+    if (!token || !id) {
+      this.handleError('No se pudo cargar eventos');
+      return;
+    }
+
+    const eventSub = this.eservice.listEventosByDeportista(id, token).subscribe({
+      next: (data) => {
+        this.eventosInscritosArray = data;
+        this.eventosInscritos = data.length;
+        this.filterEvents();
+      },
+      error: (err) => this.handleError('Error al cargar eventos')
+    });
+    
+    this.subscriptions.add(eventSub);
   }
 
   filterEvents(): void {
     if (!this.eventosInscritosArray?.length) {
       this.filteredEvents = [];
+      this.pages = [];
       return;
     }
-    let eventosFiltrados = this.eventosInscritosArray.filter(evento => {
-      const fechaEvento = new Date(evento.fecha);
-      const ahora = new Date();
-      let estadoActual = '';
-      if (evento.estado === 'CANCELADO') {
-        estadoActual = 'cancelado';
-      } else if (evento.estado == 'PASADO') {
-        estadoActual = 'PASADO';
-      } else if (evento.estado === 'ACTIVO') {
-        estadoActual = 'ACTIVO';
-      } else {
-        estadoActual = 'PLANIFICADO';
-      }
-      switch (this.eventFilter) {
-        case 'active':
-          return estadoActual === 'ACTIVO';
-        case 'planned':
-          return estadoActual === 'PLANIFICADO';
-        case 'past':
-          return estadoActual === 'PASADO';
-        default: 
-          return true;
-      }
-    });
+    
+    let eventosFiltrados = [...this.eventosInscritosArray];
+    
+    // Filtro por estado
+    if (this.eventFilter !== 'all') {
+      eventosFiltrados = eventosFiltrados.filter(evento => 
+        evento.estado === this.eventFilter.toUpperCase()
+      );
+    }
+    
+    // Filtro de búsqueda
     if (this.eventSearch) {
       const searchText = this.eventSearch.toLowerCase();
       eventosFiltrados = eventosFiltrados.filter(evento => 
@@ -189,31 +200,60 @@ export class DeportistaMainComponent implements OnInit{
         (evento.ubicacion && evento.ubicacion.toLowerCase().includes(searchText))
       );
     }
+    
     this.filteredEvents = eventosFiltrados;
     this.calculatePages();
-    
   }
+
   calculatePages(): void {
     const totalPages = Math.ceil(this.filteredEvents.length / this.itemsPerPage);
-  this.pages = Array.from({length: totalPages}, (_, i) => i + 1);
-  if (this.currentPage > totalPages && totalPages > 0) {
-    this.currentPage = totalPages;
-  }
-  }
-
-  marcarRutinaCompletada(rutinaId: number|undefined): void {
+    this.pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     
+    if (this.currentPage > totalPages && totalPages > 0) {
+      this.currentPage = totalPages;
+    }
   }
 
-  mostrarNotificacion(mensaje: string): void {
+  changePage(page: number): void {
+    this.currentPage = page;
   }
 
-  logout(): void {
+  get paginatedEvents(): Evento[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredEvents.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
   }
 
-}
+  cerrarSesion(): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Quieres cerrar sesión?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.dservice.logOut();
+        this.router.navigate(['/login']);
+        Swal.fire('Sesión cerrada', '', 'success');
+      }
+    });
+  }
+  handleDataChange(): void {
+    Swal.fire({
+      title: 'Datos actualizados',
+      text: 'La información se ha actualizado correctamente',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false
+    });
+    this.cargarDatosDeportista();
 
+}
+}

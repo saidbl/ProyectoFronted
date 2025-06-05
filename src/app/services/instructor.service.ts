@@ -27,6 +27,12 @@ export class InstructorService{
                 });
     return this.http.put(`${appSettings.apiGeneral}/instructor/editar/${id}`, formData,{headers});
   }
+  list( id: number,token: string): Observable<Instructor> {
+              const headers = new HttpHeaders({
+                  'Authorization': `Bearer ${token}`
+              });
+              return this.http.get<Instructor>(`${appSettings.apiGeneral}/instructores?id=${id}`, { headers });
+          }
       logOut():void{
         if(typeof localStorage!=="undefined"){
             localStorage.removeItem("token")
