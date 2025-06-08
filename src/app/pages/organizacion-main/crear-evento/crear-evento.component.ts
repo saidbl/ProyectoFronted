@@ -2,17 +2,20 @@ import { Component, OnInit , inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EventoDTO } from '../../../models/eventoDTO.model';
-import { RouterModule } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import { EventoService } from '../../../services/evento.service';
+import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-crear-evento',
     standalone:true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [CommonModule, FormsModule, RouterModule, MatIcon],
     templateUrl: './crear-evento.component.html',
     styleUrl: './crear-evento.component.css'
 })
 export class CrearEventoComponent implements OnInit {
   private eservice = inject (EventoService)
+  submitted: boolean = false;
   nombre: string = '';
   ubicacion: string = '';
   descripcion: string = '';
@@ -26,6 +29,7 @@ export class CrearEventoComponent implements OnInit {
   frecuencia: string = 'SEMANAL';
   diasSemana: string[] = ['L', 'M', 'X', 'J', 'V'];
   archivo?: File;
+  nombre_organizacion: string = ""
   showUserDropdown: boolean = false;
   diasDisponibles: any[] = [
     { value: 'L', label: 'Lunes' },
@@ -39,10 +43,26 @@ export class CrearEventoComponent implements OnInit {
   excluirFines: boolean = true;
 
 
-  constructor() { }
+  constructor(public router :Router) { }
   ngOnInit(): void {
     const id = localStorage.getItem("id")
     const token = localStorage.getItem("token")
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
+  }
+  private isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
+  }
+  private showAuthError(): void {
+    Swal.fire({
+      title: 'Sesión expirada',
+      text: 'Por favor inicie sesión nuevamente',
+      icon: 'error',
+      confirmButtonText: 'Ir a login'
+    }).then(() => {
+      this.router.navigate(['/login']);
+    });
   }
 
   toggleDiaSeleccionado(dia: string): void {
@@ -54,8 +74,74 @@ export class CrearEventoComponent implements OnInit {
     }
   }
 
+validarFormulario(): boolean {
+  this.submitted = true;
+  const fechaActual = new Date();
+  const fechaMinima = new Date();
+  fechaMinima.setDate(fechaActual.getDate() + 7); 
+  if (!this.nombre.trim()) {
+    Swal.fire('Error', 'El nombre es obligatorio.', 'error');
+    return false;
+  }
+
+  if (!this.ubicacion.trim()) {
+    Swal.fire('Error', 'La ubicación es obligatoria.', 'error');
+    return false;
+  }
+
+  if (!this.descripcion.trim()) {
+    Swal.fire('Error', 'La descripción es obligatoria.', 'error');
+    return false;
+  }
+
+  if (this.numMaxEquipos <= 0) {
+    Swal.fire('Error', 'El número máximo de equipos debe ser mayor que 0.', 'error');
+    return false;
+  }
+
+  if (!this.fechaInicio) {
+    Swal.fire('Error', 'La fecha de inicio es obligatoria.', 'error');
+    return false;
+  }
+
+  const fechaInicio = new Date(this.fechaInicio);
+  if (fechaInicio < fechaMinima) {
+    Swal.fire('Error', 'La fecha de inicio debe ser al menos 7 días después de hoy.', 'error');
+    return false;
+  }
+
+  if (!this.correo.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+    Swal.fire('Error', 'El correo electrónico no es válido.', 'error');
+    return false;
+  }
+  if (this.recurrente) {
+    if (!this.fechaFin) {
+      Swal.fire('Error', 'La fecha de fin es obligatoria para eventos recurrentes.', 'error');
+      return false;
+    }
+    const fechaFin = new Date(this.fechaFin);
+    if (fechaInicio > fechaFin) {
+      Swal.fire('Error', 'La fecha de inicio no puede ser posterior a la fecha de fin.', 'error');
+      return false;
+    }
+    if (this.diasSemana.length === 0) {
+      Swal.fire('Error', 'Debes seleccionar al menos un día de la semana para eventos recurrentes.', 'error');
+      return false;
+    }
+  }
+
+  return true;
+}
 
   onSubmit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+      return;
+    }
+
+    if (!this.validarFormulario()) {
+      return;
+    }
     const id = localStorage.getItem("id")
     const token = localStorage.getItem("token")
     if(!token) {
@@ -86,19 +172,65 @@ export class CrearEventoComponent implements OnInit {
       if(this.archivo){
       this.eservice.addEvento(nuevoEvento,token, this.archivo).subscribe({
         next:(data)=>{
-          alert("Agregado Correctamente")
+          Swal.fire({
+          title: '¡Éxito!',
+          text: 'Evento creado correctamente',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.resetForm();
+          }
+        });
+
         },
         error:(err)=>{
-          console.error(err)
+        console.error(err);
+        
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error al crear el evento: ' + (err.error?.message || ''),
+          icon: 'error',
+          confirmButtonText: 'Entendido'
+        });
         }
       })
+    }else{
+      Swal.fire({
+          title: 'Error',
+          text: 'Imagen Obligatoria',
+          icon: 'error',
+          confirmButtonText: 'Entendido'
+        });
     }
     
   }
-  seleccionarArchivo(event: any) {
-    this.archivo = event.target.files[0];
+  seleccionarArchivo(event: any): void {
+    if (event.target.files.length > 0) {
+      this.archivo = event.target.files[0];
+    }
+  }
+
+  resetForm(): void {
+    this.nombre = '';
+    this.ubicacion = '';
+    this.descripcion = '';
+    this.numMaxEquipos = 0;
+    this.recurrente = false;
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.correo = '';
+    this.horaInicio = '09:00:00';
+    this.horaFin = '18:00';
+    this.frecuencia = 'SEMANAL';
+    this.diasSemana = ['L', 'M', 'X', 'J', 'V'];
+    this.archivo = undefined;
+    this.submitted = false;
   }
   logout(){
+
+  }
+  toggleUserDropdown(){
 
   }
 }

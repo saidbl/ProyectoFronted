@@ -1,4 +1,4 @@
-import { Component, OnInit ,inject} from '@angular/core';
+import { Component, OnInit ,importProvidersFrom,inject} from '@angular/core';
 import { RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { Deporte } from '../../models/deporte.model';
@@ -7,16 +7,17 @@ import { Evento } from '../../models/evento.model';
 import { EventoService } from '../../services/evento.service';
 import { EventoConEquipos } from '../../models/eventoconEquipos.model';
 import { Equipo } from '../../models/equipo.model';
+import { MatIcon } from '@angular/material/icon';
 @Component({
     selector: 'app-organizacion-main',
     standalone:true,
-    imports: [RouterModule, CommonModule, FormsModule],
+    imports: [RouterModule, CommonModule, FormsModule,MatIcon],
     templateUrl: './organizacion-main.component.html',
     styleUrl: './organizacion-main.component.css'
 })
 export class OrganizacionMainComponent implements OnInit {
   private eservice = inject(EventoService)
-  nombre_organizacion:string= ""
+  nombre_organizacion:string|null= ""
   proximoEvento:any 
   totalEventos:number =0
   eventosActivos : number = 0
@@ -40,6 +41,7 @@ export class OrganizacionMainComponent implements OnInit {
   notificationMessage: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 10;
+  nombre: string = ''
   ngOnInit(): void {
     const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
@@ -67,6 +69,7 @@ export class OrganizacionMainComponent implements OnInit {
         this.proximosEventos = this.getProximosEventos(data) 
         this.equiposActivos = this.getTotalEquiposActivos(data)
         this.totalEquipos = this.getTotalEquipos(data)
+        this.nombre_organizacion = localStorage.getItem("nombre") 
         console.log(data)
         this.filterEvents()
       },

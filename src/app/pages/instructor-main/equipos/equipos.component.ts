@@ -72,7 +72,7 @@ export class EquiposComponent implements OnInit{
   imagenPreview: string | ArrayBuffer | null = null;
   formEquipo: any = {
     nombre: '',
-    id_deporte: '',
+    id_deporte: 0,
     categoria: '',
     max_jugadores: 0,
     estado: 'ACTIVO',
@@ -196,7 +196,7 @@ cerrarSesion() {
     this.equipoEditando = false;
     this.formEquipo = {
       nombre: '',
-      id_deporte: '',
+      id_deporte: Number(localStorage.getItem("idDeporte")),
       categoria: '',
       max_jugadores: 0,
       estado: 'ACTIVO',
@@ -228,6 +228,7 @@ cerrarSesion() {
   }
 
   guardarEquipo(): void {
+
     if (!this.validarFormularioEquipo()) return;
     const token=localStorage.getItem("token")
     if(!token) {
@@ -407,6 +408,10 @@ private calcularEstadisticas(): void {
     }
   
   validarFormularioEquipo(): boolean {
+    console.log(this.formEquipo.nombre)
+    console.log(this.formEquipo.categoria)
+    console.log(this.formEquipo.id_deporte)
+    console.log(this.formEquipo.max_jugadores)
    if (!this.formEquipo.nombre || !this.formEquipo.categoria || 
         !this.formEquipo.max_jugadores || !this.formEquipo.id_deporte) {
       this.mostrarAdvertenciaSweetAlert('Campos requeridos', 'Por favor, complete todos los campos obligatorios');

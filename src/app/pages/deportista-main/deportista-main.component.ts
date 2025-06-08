@@ -11,12 +11,13 @@ import { CheckInRutina } from '../../models/checkinRutina.model';
 import { EquipoService } from '../../services/equipo.service';
 import { Equipo } from '../../models/equipo.model';
 import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { DeportistaService } from '../../services/deportista.service';
 import { Subscription, forkJoin } from 'rxjs';
 @Component({
     selector: 'app-deportista-main',
-    imports: [CommonModule, RouterModule,FormsModule,MatIcon],
+    imports: [CommonModule, RouterModule,FormsModule,MatIcon,MatIconModule],
     standalone:true,
     templateUrl: './deportista-main.component.html',
     styleUrl: './deportista-main.component.css'
@@ -49,7 +50,7 @@ export class DeportistaMainComponent implements OnInit{
    isLoading: boolean = true;
   navigation = [
   { name: 'CheckIn de Hoy', route: 'check', icon: 'event' },
-  { name: 'Eventos', route: 'rutinaDeportista', icon: 'event' },
+  { name: 'Eventos', route: 'proximoseventos', icon: 'event' },
   { name: 'Equipos', route: 'equipos', icon: 'groups' },
   { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
   { name: 'Rendimiento', route: 'rendimiento', icon: 'analytics' }

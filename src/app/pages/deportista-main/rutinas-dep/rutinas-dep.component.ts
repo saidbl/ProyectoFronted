@@ -19,7 +19,7 @@ export class RutinasDepComponent implements OnInit{
   diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
   nombre: string | null = '';
   apellido: string | null = '';
-  fotoPerfil: string = "http://localhost:8080/";
+  fotoPerfil: string = "";
     showUserDropdown: boolean = false;
   showNotification: boolean = false;
   diaFiltrado = 'TODOS';
@@ -28,17 +28,18 @@ export class RutinasDepComponent implements OnInit{
   posicion: string|null = '';
   deporte: string = '';
   navigation = [
-  { name: 'CheckIn de Hoy', route: 'check', icon: 'event' },
-  { name: 'Deportistas', route: 'rutinaDeportista', icon: 'people' },
-  { name: 'Equipos', route: 'crearEquipos', icon: 'groups' },
-  { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
-  { name: 'Reportes', route: 'reportes', icon: 'analytics' }
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Eventos', route: '../proximoseventos', icon: 'event' },
+  { name: 'Equipos', route: '../equipos', icon: 'groups' },
+  { name: 'CheckIn', route: '../check', icon: 'event' },
+  { name: 'Rendimiento', route: '../rendimiento', icon: 'analytics' }
 ];
   
     constructor(public router:Router) {}
 
 
   ngOnInit(): void {
+    const foto = localStorage.getItem("fotoPerfil")
     console.log("hola")
     const id =Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
@@ -51,6 +52,8 @@ export class RutinasDepComponent implements OnInit{
         console.log(data)
         console.log("hola")
         this.rutinas = data 
+        this.fotoPerfil = "http://localhost:8080/"+foto
+        console.log(this.fotoPerfil)
         this.filtrarPorDia("TODOS")
       },
       error:(err)=>{

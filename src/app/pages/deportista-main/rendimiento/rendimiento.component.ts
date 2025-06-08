@@ -10,7 +10,7 @@ import { TipoMetrica } from '../../../models/tipoMetrica.model';
 import { RegistroRendimientoDTO } from '../../../models/registroRendimientoDTO.model';
 import { RegistroRendimientoService } from '../../../services/registroRendimiento.service';
 import { RegistroRendimiento } from '../../../models/registroRendimiento.model';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, Subject, Subscription, takeUntil } from 'rxjs';
 import { ObjetivoRendimientoDTO } from '../../../models/objetivoRendimientoDTO.model';
 import { ObjetivoRendimiento } from '../../../models/objetivoRendimiento.model';
 import { ObjetivoRendimientoService } from '../../../services/objetivoRendimiento.service';
@@ -23,10 +23,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MedicionFisica } from '../../../models/medicionFisica.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MedicionFisicaDTO } from '../../../models/medicionFisicaDTO.model';
+import { Router, RouterModule } from '@angular/router';
 Chart.register(...registerables);
 @Component({
   selector: 'app-rendimiento',
-  imports: [FormsModule,CommonModule,ReactiveFormsModule,MatTooltipModule,MatIcon,MatIconModule ],
+  imports: [FormsModule,CommonModule,ReactiveFormsModule,MatTooltipModule,MatIcon,MatIconModule,RouterModule ],
   templateUrl: './rendimiento.component.html',
   styleUrl: './rendimiento.component.css'
 })
@@ -82,9 +83,17 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
     { value: 'todo', label: 'Todo' }
   ];
   rangoSeleccionado = '3m';
+  navigation = [
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Eventos', route: '../proximoseventos', icon: 'event' },
+  { name: 'Equipos', route: '../equipos', icon: 'groups' },
+  { name: 'CheckIn', route: '../check', icon: 'event' },
+  { name: 'Rendimiento', route: '../rendimiento', icon: 'analytics' }
+];
+  
   constructor(
     private fb: FormBuilder,
-  ) {
+  public router:Router) {
     const nextWeek = new Date();
 nextWeek.setDate(nextWeek.getDate() + 7);
     this.metricForm = this.fb.group({
@@ -119,6 +128,12 @@ nextWeek.setDate(nextWeek.getDate() + 7);
     })
   }
 
+  private destroy$ = new Subject<void>();
+
+ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
   ngOnInit(): void {
     this.loadInitialData();
     this.cargarDatos();
@@ -151,8 +166,7 @@ nextWeek.setDate(nextWeek.getDate() + 7);
     }
     this.isLoading = true;
     this.errorMessage = null;
-    const sub1 = this.mfservice.getEvolucionFisica(Number(id), this.rangoSeleccionado, token)
-      .subscribe({
+    const sub1 = this.mfservice.getEvolucionFisica(Number(id), this.rangoSeleccionado, token).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
           this.datos = data;
           this.isLoading = false;
@@ -165,11 +179,11 @@ nextWeek.setDate(nextWeek.getDate() + 7);
         }
       });
     this.subs.push(sub1);
-    this.crservice.getCumplimientoRutinas(Number(id), this.rangoSeleccionado, token).subscribe({
+    this.crservice.getCumplimientoRutinas(Number(id), this.rangoSeleccionado, token).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => this.datosC = data,
       error: (err) => this.errorMessage = err.error?.message || 'Error al cargar los datos'
     });
-    this.orservice.getProgresoObjetivos(Number(id), token).subscribe({
+    this.orservice.getProgresoObjetivos(Number(id), token).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data)=> {
         this.objetivos = data
         console.log(this.objetivos)
@@ -556,7 +570,7 @@ nextWeek.setDate(nextWeek.getDate() + 7);
                 goals : this.orservice.list(Number(id),token),
                 mediciones: this.mfservice.list(Number(id),token),
                 medicion: this.mfservice.obtenerUltimaMedicion(Number(id),token)
-              }).subscribe({
+              }).pipe(takeUntil(this.destroy$)).subscribe({
                 next: (data) => {
                   this.metrics = data.metrics;
                   this.records = data.records;
@@ -602,10 +616,17 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     if(!token) {
       throw new Error("Not Token Found")
     }
-    this.orservice.eliminar(obj.id,token).subscribe({
+    this.orservice.eliminar(obj.id,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         if(data.success){
           alert("Eliminado")
+          this.loadInitialData(); // Para recargar datos principales
+        if (this.currentView === 'stats') {
+          this.cargarDatos().then(() => {
+            this.renderizarGrafico();
+            this.renderizarGrafico2();
+          });
+        }
         }else{
           alert("No elimiando")
         }
@@ -627,9 +648,16 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     newMetric.iddeporte = Number(localStorage.getItem("idDeporte"))
     newMetric.iddeportista = Number(localStorage.getItem("id"))
     console.log(newMetric)
-    this.tmservice.add(newMetric,token).subscribe({
+    this.tmservice.add(newMetric,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         console.log(data)
+        this.loadInitialData(); // Para recargar datos principales
+        if (this.currentView === 'stats') {
+          this.cargarDatos().then(() => {
+            this.renderizarGrafico();
+            this.renderizarGrafico2();
+          });
+        }
 
       },
       error:(err)=>{
@@ -650,9 +678,16 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     const newRecord : RegistroRendimientoDTO= this.recordForm.value
     newRecord.iddeportista = Number(localStorage.getItem("id"))
     console.log(newRecord)
-    this.rrservice.add(newRecord,token).subscribe({
+    this.rrservice.add(newRecord,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         console.log(data)
+        this.loadInitialData(); // Para recargar datos principales
+if (this.currentView === 'stats') {
+  this.cargarDatos().then(() => {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  });
+}
 
       },
       error:(err)=>{
@@ -670,10 +705,16 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     if (this.goalForm.invalid) return;
     const newGoal : ObjetivoRendimientoDTO= this.goalForm.value
     newGoal.iddeportista = Number(localStorage.getItem("id"))
-    this.orservice.add(newGoal,token).subscribe({
+    this.orservice.add(newGoal,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
-        console.log(data)
-
+        alert("Exito")
+        this.loadInitialData(); // Para recargar datos principales
+if (this.currentView === 'stats') {
+  this.cargarDatos().then(() => {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  });
+}
       },
       error:(err)=>{
         console.error(err)
@@ -689,10 +730,17 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     const newMedicion : MedicionFisicaDTO= this.medicionForm.value
     newMedicion.idDeportista = Number(localStorage.getItem("id"))
     console.log(newMedicion)
-    this.mfservice.add(newMedicion,token).subscribe({
+    this.mfservice.add(newMedicion,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         console.log(data)
         alert("agregado"+data)
+        this.loadInitialData(); // Para recargar datos principales
+if (this.currentView === 'stats') {
+  this.cargarDatos().then(() => {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  });
+}
       },
       error:(err)=>{
         console.error(err)
@@ -705,9 +753,16 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     if(!token) {
       throw new Error("Not Token Found")
     }
-    this.orservice.completado(goal.id,token).subscribe({
+    this.orservice.completado(goal.id,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         alert("Completado"+data)
+        this.loadInitialData(); // Para recargar datos principales
+if (this.currentView === 'stats') {
+  this.cargarDatos().then(() => {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  });
+}
       },
       error:(err)=>{
         console.error(err)
@@ -721,10 +776,17 @@ deleteObj(obj:ProgresoObjetivoDTO) {
       throw new Error("Not Token Found")
     }
     if (type == "metric"){
-      this.tmservice.delete(id,token).subscribe({
+      this.tmservice.delete(id,token).pipe(takeUntil(this.destroy$)).subscribe({
         next:(data)=>{
           if(data.success){
             alert("Exito al eliminar")
+            this.loadInitialData(); // Para recargar datos principales
+if (this.currentView === 'stats') {
+  this.cargarDatos().then(() => {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  });
+}
           }else{
             alert("error")
           }
@@ -734,10 +796,17 @@ deleteObj(obj:ProgresoObjetivoDTO) {
         }
       })
     }else if(type === "record"){
-      this.rrservice.delete(id,token).subscribe({
+      this.rrservice.delete(id,token).pipe(takeUntil(this.destroy$)).subscribe({
         next:(data)=>{
           if(data.success){
             alert("Exito")
+            this.loadInitialData(); // Para recargar datos principales
+if (this.currentView === 'stats') {
+  this.cargarDatos().then(() => {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  });
+}
           }
         },
         error:(err)=>{

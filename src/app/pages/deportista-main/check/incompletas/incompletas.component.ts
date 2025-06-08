@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { CheckInRutinaService } from '../../../../services/checkinrutina.service';
 import { CheckInRutina } from '../../../../models/checkinRutina.model';
 import { MatIcon } from '@angular/material/icon';
+import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-incompletas',
-  imports: [CommonModule,MatIcon],
+  imports: [CommonModule,MatIcon,RouterModule],
   templateUrl: './incompletas.component.html',
   styleUrl: './incompletas.component.css'
 })
@@ -16,8 +17,14 @@ export class IncompletasComponent implements OnInit{
   loading = true;
   error = false;
 
-  constructor(
-  ) { }
+   navigation = [
+  { name: 'CheckIn de Hoy', route: '..', icon: 'event' },
+  { name: 'Eventos', route: '../../proximoseventos', icon: 'event' },
+  { name: 'Equipos', route: '../../equipos', icon: 'groups' },
+  { name: 'Rutinas', route: '../../rutinas', icon: 'fitness_center' },
+  { name: 'Rendimiento', route: '../../rendimiento', icon: 'analytics' }
+];
+  constructor(public router: Router) {}
 
   ngOnInit(): void {
     const id = Number(localStorage.getItem("id"))

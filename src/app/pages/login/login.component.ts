@@ -78,6 +78,7 @@ export class LoginComponent {
             localStorage.setItem("rol", data.rol);
             localStorage.setItem("id",data.id);
             localStorage.setItem("idDeporte",data.idDeporte)
+            localStorage.setItem("nombre",data.nombre)
             console.log(data.id);
             this.router.navigate(['/organizacion']);
             console.log("Exito en conexion")

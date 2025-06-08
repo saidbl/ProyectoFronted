@@ -7,6 +7,7 @@ import { JugadorEquipoDTO } from "../models/jugadorEquipoDTO.model";
 import { EventoEquipo } from "../models/eventoEquipo.model";
 import { EventoEquipoDTO } from "../models/eventoEquipoDTO.model";
 import { Equipo } from "../models/equipo.model";
+import { Evento } from "../models/evento.model";
 @Injectable({
     providedIn:"root"
 })
@@ -31,4 +32,11 @@ export class EventoEquipoService{
             });
             return this.http.get<Equipo[]>(`${appSettings.apiEquiposEvento}/${id}`, { headers });
         }
-}
+
+    listEventosEquipo(id: number,token: string): Observable<Evento[]> {
+            const headers = new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            });
+            return this.http.get<Evento[]>(`${appSettings.apiGeneral}/equiposEvento/listar/${id}`, { headers });
+        }
+    }

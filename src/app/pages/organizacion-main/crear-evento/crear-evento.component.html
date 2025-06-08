@@ -1,89 +1,122 @@
 <div class="min-h-[calc(100vh-4rem)] bg-gray-950 text-white">
-  <!-- Encabezado con gradiente -->
+  <!-- Navbar superior consistente con el dashboard -->
   <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-2">
           <span class="text-xl font-bold text-blue-400">AllSports</span>
+          <span class="text-xs bg-indigo-900/30 text-indigo-300 px-2 py-1 rounded-full">Organizador</span>
         </div>
+
+        <!-- Menú central -->
         <div class="hidden md:block">
           <div class="ml-10 flex items-center space-x-8">
-            <a routerLink=".." class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Principal
+            <a routerLink="eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">calendar_today</mat-icon> Mis Eventos
             </a>
-            <a routerLink="crear-eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-plus-circle mr-2"></i> Crear Evento
+            <a routerLink="crear-eventos" class="text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">add_circle</mat-icon> Crear Evento
             </a>
-            <a routerLink="equipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users mr-2"></i> Equipos
+            <a routerLink="equipos-org" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">groups</mat-icon> Equipos
             </a>
-            <a routerLink="estadisticas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-bar mr-2"></i> Estadísticas
+            <a routerLink="estadistica-org" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">bar_chart</mat-icon> Estadísticas
             </a>
           </div>
         </div>
+
+        <!-- Perfil de organización -->
         <div class="flex items-center">
           <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer" >
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
+              <span class="text-gray-300 text-sm">{{nombre_organizacion}}</span>
+              <img class="h-8 w-8 rounded-full" [src]="'https://ui-avatars.com/api/?name='+nombre_organizacion+'&background=1e3a8a&color=fff'" alt="">
+              <mat-icon class="text-gray-400 text-xs">expand_more</mat-icon>
             </div>
-            <!-- Dropdown menu -->
-            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Configuración</a>
-              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+            
+            <!-- Menú desplegable -->
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
+              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center">
+                <mat-icon class="mr-2 text-sm">settings</mat-icon> Configuración
+              </a>
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer flex items-center">
+                <mat-icon class="mr-2 text-sm">logout</mat-icon> Cerrar sesión
+              </a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </nav>
-  <div class="mb-8 text-center p-20">
-    <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
-      Crear Nuevo Evento
-    </h1>
-    <p class="text-gray-400">Completa los detalles para organizar tu evento deportivo</p>
-  </div>
 
-  <form (ngSubmit)="onSubmit()" class="max-w-4xl mx-auto bg-gray-900/50 border border-gray-800 rounded-xl p-6 shadow-2xl">
-
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
-        <i class="fas fa-info-circle mr-2"></i> Información Básica
-      </h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Campo Nombre -->
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-300">Nombre del Evento *</label>
-          <input type="text" [(ngModel)]="nombre" name="nombre" required
-                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500">
-        </div>
-        
-        <!-- Campo Ubicación -->
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-300">Ubicación *</label>
-          <input type="text" [(ngModel)]="ubicacion" name="ubicacion" required
-                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500">
-        </div>
-        
-        <!-- Campo Número Máximo de Equipos -->
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-300">Número Máximo de Equipos *</label>
-          <input type="number" [(ngModel)]="numMaxEquipos" name="numMaxEquipos" min="1" required
-                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
-        </div>
-        
-        <!-- Campo Correo -->
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-300">Correo de Contacto *</label>
-          <input type="email" [(ngModel)]="correo" name="correo" required
-                 class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500">
-        </div>
-      </div>
+  <!-- Contenido principal con gradiente y animación -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <!-- Encabezado mejorado -->
+    <div class="text-center mb-10 animate-fade-in">
+      <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text 
+                  bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 
+                  animate-gradient-x tracking-tight">
+        Crear Nuevo Evento
+      </h1>
+      <p class="mt-2 text-gray-400 max-w-xl mx-auto">
+        Completa los detalles para organizar tu evento deportivo
+      </p>
     </div>
 
-    <!-- Sección de Imagen -->
-    <div class="mb-8">
+    <!-- Formulario con estilo de tarjeta -->
+    <form (ngSubmit)="onSubmit()" class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 shadow-2xl animate-slide-up">
+      <!-- Sección de información básica -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
+          <mat-icon class="mr-2 text-blue-400">info</mat-icon> Información Básica
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Campo Nombre -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300">Nombre del Evento *</label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">title</mat-icon>
+              <input type="text" [(ngModel)]="nombre" name="nombre" required
+                     class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500">
+            </div>
+          </div>
+          
+          <!-- Campo Ubicación -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300">Ubicación *</label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">location_on</mat-icon>
+              <input type="text" [(ngModel)]="ubicacion" name="ubicacion" required
+                     class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500">
+            </div>
+          </div>
+          
+          <!-- Campo Número Máximo de Equipos -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300">Número Máximo de Equipos *</label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">group</mat-icon>
+              <input type="number" [(ngModel)]="numMaxEquipos" name="numMaxEquipos" min="1" required
+                     class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+            </div>
+          </div>
+          
+          <!-- Campo Correo -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300">Correo de Contacto *</label>
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">email</mat-icon>
+              <input type="email" [(ngModel)]="correo" name="correo" required
+                     class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Imagen mejorada -->
+      <div class="mb-8">
       <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
         <i class="fas fa-image mr-2"></i> Imagen del Evento
       </h2>
@@ -102,131 +135,158 @@
       </div>
     </div>
 
-    <!-- Sección de Fechas -->
-    <div class="mb-8 bg-gray-800/30 border border-gray-800 rounded-xl p-6">
-      <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
-        <i class="fas fa-calendar-alt mr-2"></i> Configuración de Fechas
-      </h2>
-      
-      <!-- Toggle Recurrente -->
-      <div class="flex items-center mb-6">
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" [(ngModel)]="recurrente" name="recurrente" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          <span class="ml-3 text-sm font-medium text-gray-300">Evento recurrente</span>
-        </label>
-      </div>
-      
-      <!-- Evento no recurrente -->
-      <div *ngIf="!recurrente" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Fecha *</label>
-            <input type="date" [(ngModel)]="fechaInicio" name="fechaInicio" required
-                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+      <!-- Sección de Fechas con mejor diseño -->
+      <div class="mb-8 bg-gray-800/30 border border-gray-800 rounded-xl p-6">
+        <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
+          <mat-icon class="mr-2 text-blue-400">calendar_today</mat-icon> Configuración de Fechas
+        </h2>
+        
+        <!-- Toggle Recurrente mejorado -->
+        <div class="flex items-center mb-6">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" [(ngModel)]="recurrente" name="recurrente" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            <span class="ml-3 text-sm font-medium text-gray-300">Evento recurrente</span>
+          </label>
+        </div>
+        
+        <!-- Evento no recurrente -->
+        <div *ngIf="!recurrente" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-300">Fecha *</label>
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">calendar_month</mat-icon>
+                <input type="date" [(ngModel)]="fechaInicio" name="fechaInicio" required
+                       class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">Hora Inicio *</label>
+                <div class="relative">
+                  <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">schedule</mat-icon>
+                  <input type="time" [(ngModel)]="horaInicio" name="horaInicio" required
+                         class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">Hora Fin *</label>
+                <div class="relative">
+                  <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">schedule</mat-icon>
+                  <input type="time" [(ngModel)]="horaFin" name="horaFin" required
+                         class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Evento recurrente con mejor diseño -->
+        <div *ngIf="recurrente" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-300">Fecha Inicio *</label>
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">calendar_month</mat-icon>
+                <input type="date" [(ngModel)]="fechaInicio" name="fechaInicioRecurrente" required
+                       class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-300">Fecha Fin</label>
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">calendar_month</mat-icon>
+                <input type="date" [(ngModel)]="fechaFin" name="fechaFin"
+                       class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              </div>
+            </div>
           </div>
           
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-300">Frecuencia *</label>
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">update</mat-icon>
+                <select [(ngModel)]="frecuencia" name="frecuencia" required
+                        class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+                  <option value="DIARIO">Diario</option>
+                  <option value="SEMANAL">Semanal</option>
+                  <option value="MENSUAL">Mensual</option>
+                  <option value="ANUAL">Anual</option>
+                </select>
+              </div>
+            </div>
+            
+            <div *ngIf="frecuencia === 'SEMANAL'" class="space-y-2">
+              <label class="block text-sm font-medium text-gray-300">Días de la semana *</label>
+              <div class="flex flex-wrap gap-2">
+                <label *ngFor="let dia of diasDisponibles"
+                       class="flex items-center px-3 py-1 rounded-full transition-all duration-200 cursor-pointer
+                              text-sm font-medium
+                              hover:bg-gray-700"
+                       [ngClass]="{
+                         'bg-gray-800 text-white': !diasSemana.includes(dia.value),
+                         'bg-blue-600 text-white shadow': diasSemana.includes(dia.value)
+                       }">
+                  <input type="checkbox"
+                         [checked]="diasSemana.includes(dia.value)"
+                         (change)="toggleDiaSeleccionado(dia.value)"
+                         class="hidden">
+                  {{ dia.label }}
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center">
+            <input type="checkbox" id="excluirFines" [(ngModel)]="excluirFines" name="excluirFines" 
+                   class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500 focus:ring-2">
+            <label for="excluirFines" class="ml-2 text-sm text-gray-300">Excluir fines de semana</label>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-300">Hora Inicio *</label>
-              <input type="time" [(ngModel)]="horaInicio" name="horaInicio" required
-                     class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">schedule</mat-icon>
+                <input type="time" [(ngModel)]="horaInicio" name="horaInicioRecurrente" required
+                       class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              </div>
             </div>
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-300">Hora Fin *</label>
-              <input type="time" [(ngModel)]="horaFin" name="horaFin" required
-                     class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">schedule</mat-icon>
+                <input type="time" [(ngModel)]="horaFin" name="horaFinRecurrente" required
+                       class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- Evento recurrente -->
-      <div *ngIf="recurrente" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Fecha Inicio *</label>
-            <input type="date" [(ngModel)]="fechaInicio" name="fechaInicioRecurrente" required
-                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
-          </div>
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Fecha Fin</label>
-            <input type="date" [(ngModel)]="fechaFin" name="fechaFin"
-                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
-          </div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Frecuencia *</label>
-            <select [(ngModel)]="frecuencia" name="frecuencia" required
-                    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
-              <option value="DIARIO">Diario</option>
-              <option value="SEMANAL">Semanal</option>
-              <option value="MENSUAL">Mensual</option>
-              <option value="ANUAL">Anual</option>
-            </select>
-          </div>
-          
-          <div *ngIf="frecuencia === 'SEMANAL'" class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Días de la semana *</label>
-            <div class="flex flex-wrap gap-2">
-              <label *ngFor="let dia of diasDisponibles"
-                     class="flex items-center px-3 py-1 rounded-full transition-all duration-200 cursor-pointer
-                            text-sm font-medium
-                            hover:bg-gray-700"
-                     [ngClass]="{
-                       'bg-gray-800 text-white': !diasSemana.includes(dia.value),
-                       'bg-blue-600 text-white shadow': diasSemana.includes(dia.value)
-                     }">
-                <input type="checkbox"
-                       [checked]="diasSemana.includes(dia.value)"
-                       (change)="toggleDiaSeleccionado(dia.value)"
-                       class="hidden">
-                {{ dia.label }}
-              </label>
-            </div>
-          </div>
-          
-        </div>
-        
-        <div class="flex items-center">
-          <input type="checkbox" id="excluirFines" [(ngModel)]="excluirFines" name="excluirFines" 
-                 class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500 focus:ring-2">
-          <label for="excluirFines" class="ml-2 text-sm text-gray-300">Excluir fines de semana</label>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Hora Inicio *</label>
-            <input type="time" [(ngModel)]="horaInicio" name="horaInicioRecurrente" required
-                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
-          </div>
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Hora Fin *</label>
-            <input type="time" [(ngModel)]="horaFin" name="horaFinRecurrente" required
-                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
-          </div>
+
+      <!-- Descripción con mejor diseño -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
+          <mat-icon class="mr-2 text-blue-400">description</mat-icon> Descripción del Evento
+        </h2>
+        <div class="relative">
+          <mat-icon class="absolute left-3 top-4 text-gray-500">notes</mat-icon>
+          <textarea [(ngModel)]="descripcion" name="descripcion" rows="4" required
+                    class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500"
+                    placeholder="Describe los detalles del evento..."></textarea>
         </div>
       </div>
-    </div>
 
-    <!-- Descripción -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-400">
-        <i class="fas fa-align-left mr-2"></i> Descripción del Evento
-      </h2>
-      <textarea [(ngModel)]="descripcion" name="descripcion" rows="4" required
-                class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500"
-                placeholder="Describe los detalles del evento..."></textarea>
-    </div>
-
-    <!-- Botón de envío -->
-    <div class="flex justify-end">
-      <button type="submit" 
-              class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-lg font-medium text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center">
-        <i class="fas fa-calendar-plus mr-2"></i> Crear Evento
-      </button>
-    </div>
-  </form>
+      <!-- Botón de envío mejorado -->
+      <div class="flex justify-end">
+        <button type="submit" 
+                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg font-medium text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center">
+          <mat-icon class="mr-2">add_circle</mat-icon> Crear Evento
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

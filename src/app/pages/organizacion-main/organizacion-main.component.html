@@ -3,36 +3,46 @@
   <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-2">
           <span class="text-xl font-bold text-blue-400">AllSports</span>
+          <span class="text-xs bg-indigo-900/30 text-indigo-300 px-2 py-1 rounded-full">Organizador</span>
         </div>
+
+        <!-- Menú central -->
         <div class="hidden md:block">
           <div class="ml-10 flex items-center space-x-8">
             <a routerLink="eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-calendar-alt mr-2"></i> Mis Eventos
+              <mat-icon class="mr-2">calendar_today</mat-icon> Mis Eventos
             </a>
             <a routerLink="crear-eventos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-plus-circle mr-2"></i> Crear Evento
+              <mat-icon class="mr-2">add_circle</mat-icon> Crear Evento
             </a>
             <a routerLink="equipos-org" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-users mr-2"></i> Equipos
+              <mat-icon class="mr-2">groups</mat-icon> Equipos
             </a>
             <a routerLink="estadistica-org" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-              <i class="fas fa-chart-bar mr-2"></i> Estadísticas
+              <mat-icon class="mr-2">bar_chart</mat-icon> Estadísticas
             </a>
           </div>
         </div>
+
+        <!-- Perfil de organización -->
         <div class="flex items-center">
           <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer" routerLink="configuracionOrg">
+            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
               <span class="text-gray-300 text-sm">{{nombre_organizacion}}</span>
-              <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{nombre_organizacion}}&background=1e3a8a&color=fff" alt="">
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+              <img class="h-8 w-8 rounded-full" [src]="'https://ui-avatars.com/api/?name='+nombre_organizacion+'&background=1e3a8a&color=fff'" alt="">
+              <mat-icon class="text-gray-400 text-xs">expand_more</mat-icon>
             </div>
-            <!-- Dropdown menu -->
-            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Configuración</a>
-              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+            
+            <!-- Menú desplegable -->
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
+              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center">
+                <mat-icon class="mr-2 text-sm">settings</mat-icon> Configuración
+              </a>
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer flex items-center">
+                <mat-icon class="mr-2 text-sm">logout</mat-icon> Cerrar sesión
+              </a>
             </div>
           </div>
         </div>
@@ -42,25 +52,27 @@
 
   <!-- Contenido principal -->
   <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <!-- Encabezado personalizado -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Panel de Organización
+    <!-- Encabezado -->
+    <div class="text-center mb-16 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                  bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 
+                  animate-gradient-x tracking-tight">
+        Bienvenido, {{nombre_organizacion}}
       </h1>
-      <p class="mt-4 text-lg text-gray-400">Gestión completa de tus eventos deportivos</p>
+      <p class="mt-4 text-lg text-gray-400 font-light max-w-2xl mx-auto">
+        Gestión integral de deportistas, equipos y rutinas deportivas
+      </p>
     </div>
 
     <!-- Tarjetas resumen -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
       <!-- Tarjeta Total Eventos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-blue-500/30 transition-all duration-300 group">
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 shadow-xl border border-gray-700 hover:border-blue-400/30 transition-all duration-300">
         <div class="flex justify-between items-start">
           <div>
+            <mat-icon class="text-blue-400 mb-2">event</mat-icon>
             <p class="text-sm font-medium text-gray-400">Total Eventos</p>
             <h3 class="mt-1 text-3xl font-bold text-white">{{totalEventos}}</h3>
-          </div>
-          <div class="p-3 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300">
-            <i class="fas fa-calendar text-blue-400 text-xl"></i>
           </div>
         </div>
         <div class="mt-4">
@@ -72,14 +84,12 @@
       </div>
 
       <!-- Tarjeta Equipos -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-green-500/30 transition-all duration-300 group">
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 shadow-xl border border-gray-700 hover:border-green-400/30 transition-all duration-300">
         <div class="flex justify-between items-start">
           <div>
+            <mat-icon class="text-green-400 mb-2">groups</mat-icon>
             <p class="text-sm font-medium text-gray-400">Equipos</p>
             <h3 class="mt-1 text-3xl font-bold text-white">{{totalEquipos}}</h3>
-          </div>
-          <div class="p-3 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-all duration-300">
-            <i class="fas fa-users text-green-400 text-xl"></i>
           </div>
         </div>
         <div class="mt-4">
@@ -90,34 +100,32 @@
       </div>
 
       <!-- Tarjeta Próximo Evento -->
-      <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300 group">
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 shadow-xl border border-gray-700 hover:border-purple-400/30 transition-all duration-300">
         <div class="flex justify-between items-start">
           <div>
+            <mat-icon class="text-purple-400 mb-2">emoji_events</mat-icon>
             <p class="text-sm font-medium text-gray-400">Próximo Evento</p>
             <h3 *ngIf="proximoEvento" class="mt-1 text-xl font-bold text-white truncate">{{proximoEvento.nombre}}</h3>
             <h3 *ngIf="!proximoEvento" class="mt-1 text-xl font-bold text-gray-400">No hay eventos</h3>
           </div>
-          <div class="p-3 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-all duration-300">
-            <i class="fas fa-trophy text-purple-400 text-xl"></i>
-          </div>
         </div>
         <div *ngIf="proximoEvento" class="mt-4">
           <div class="flex items-center text-sm text-gray-400">
-            <i class="far fa-calendar mr-2"></i>
+            <mat-icon class="mr-2 text-sm">calendar_today</mat-icon>
             <span>{{proximoEvento.fecha | date:'mediumDate'}}</span>
           </div>
         </div>
       </div>
 
       <!-- Tarjeta Acción Rápida -->
-      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/20 rounded-xl p-6 transition-all duration-300 group hover:border-blue-400/50">
+      <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/20 rounded-xl p-6 transition-all duration-300 hover:border-blue-400/50">
         <div class="flex flex-col h-full justify-between">
           <div>
             <p class="text-sm font-medium text-blue-300">Acción rápida</p>
             <h3 class="mt-1 text-xl font-bold text-white">Crear nuevo evento</h3>
           </div>
           <button routerLink="crear-eventos" class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg border border-white/10 transition-all duration-300">
-            <i class="fas fa-plus"></i>
+            <mat-icon>add</mat-icon>
             <span>Crear ahora</span>
           </button>
         </div>
@@ -130,7 +138,7 @@
       <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
         <div class="p-6 border-b border-gray-800">
           <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-            <i class="fas fa-calendar-day text-blue-400 mr-2"></i>
+            <mat-icon class="text-blue-400 mr-2">event_upcoming</mat-icon>
             Próximos Eventos
           </h3>
         </div>
@@ -139,7 +147,7 @@
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
                 <div class="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <i class="fas fa-calendar text-blue-400"></i>
+                  <mat-icon class="text-blue-400">event</mat-icon>
                 </div>
               </div>
               <div class="flex-1 min-w-0">
@@ -159,7 +167,7 @@
                 </div>
               </div>
               <div>
-                <i class="fas fa-chevron-right text-gray-500"></i>
+                <mat-icon class="text-gray-500">chevron_right</mat-icon>
               </div>
             </div>
           </div>
@@ -176,7 +184,7 @@
       <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
         <div class="p-6 border-b border-gray-800">
           <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-            <i class="fas fa-users text-green-400 mr-2"></i>
+            <mat-icon class="text-green-400 mr-2">diversity_3</mat-icon>
             Últimos Equipos
           </h3>
         </div>
@@ -184,12 +192,7 @@
           <div *ngFor="let team of ultimosEquipos" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/equipos', team.id]">
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <div class="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <i class="fas fa-users text-green-400"><img 
-                    [src]="'http://localhost:8080/' + team.img"
-                    alt="Logo del equipo"
-                    class="h-24 w-24 rounded-full border-4 border-gray-700 object-cover shadow-md"></i>
-                </div>
+                <img [src]="'http://localhost:8080/' + team.img" class="h-10 w-10 rounded-full object-cover border border-gray-700">
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">{{team.nombre}}</p>
@@ -201,7 +204,7 @@
                 </div>
               </div>
               <div>
-                <i class="fas fa-chevron-right text-gray-500"></i>
+                <mat-icon class="text-gray-500">chevron_right</mat-icon>
               </div>
             </div>
           </div>
@@ -219,7 +222,7 @@
     <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden mb-12">
       <div class="p-6 border-b border-gray-800 flex justify-between items-center">
         <h3 class="text-lg font-semibold text-gray-200 flex items-center">
-          <i class="fas fa-list-ul text-purple-400 mr-2"></i>
+          <mat-icon class="text-purple-400 mr-2">list_alt</mat-icon>
           Todos los Eventos
         </h3>
         <div class="flex space-x-2">
@@ -261,7 +264,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <i class="fas fa-calendar text-purple-400"></i>
+                    <mat-icon class="text-purple-400">event</mat-icon>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-white">{{event.nombre}}</div>
@@ -301,13 +304,13 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button [routerLink]="['/eventos', event.id]" class="text-blue-400 hover:text-blue-300 mr-3">
-                  <i class="fas fa-eye"></i>
+                  <mat-icon>visibility</mat-icon>
                 </button>
                 <button [routerLink]="['/eventos/editar', event.id]" class="text-yellow-400 hover:text-yellow-300 mr-3">
-                  <i class="fas fa-edit"></i>
+                  <mat-icon>edit</mat-icon>
                 </button>
                 <button (click)="deleteEvent(event.id)" class="text-red-400 hover:text-red-300">
-                  <i class="fas fa-trash"></i>
+                  <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </tr>
@@ -335,9 +338,9 @@
   </div>
 
   <!-- Notificaciones flotantes -->
-  <div *ngIf="showNotification" class="fixed bottom-4 right-4 z-50">
+  <div *ngIf="showNotification" class="fixed bottom-4 right-4 z-50 animate-fade-in">
     <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
-      <i class="fas fa-check-circle mr-2"></i>
+      <mat-icon class="mr-2">check_circle</mat-icon>
       <span>{{notificationMessage}}</span>
     </div>
   </div>

@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { CheckInRutinaService } from '../../../../services/checkinrutina.service';
 import { CheckInRutina } from '../../../../models/checkinRutina.model';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 @Component({
     selector: 'app-completadas',
-    imports: [CommonModule,MatIcon ],
+    imports: [CommonModule,MatIcon,RouterModule ],
     standalone : true,
     templateUrl: './completadas.component.html',
     styleUrl: './completadas.component.css'
@@ -17,8 +19,14 @@ export class CompletadasComponent implements OnInit{
   loading = true;
   error = false;
 
-  constructor(
-  ) { }
+  navigation = [
+  { name: 'CheckIn de Hoy', route: '..', icon: 'event' },
+  { name: 'Eventos', route: '../../proximoseventos', icon: 'event' },
+  { name: 'Equipos', route: '../../equipos', icon: 'groups' },
+  { name: 'Rutinas', route: '../../rutinas', icon: 'fitness_center' },
+  { name: 'Rendimiento', route: '../../rendimiento', icon: 'analytics' }
+];
+  constructor(public router: Router) {}
 
   ngOnInit(): void {
     const id = Number(localStorage.getItem("id"))

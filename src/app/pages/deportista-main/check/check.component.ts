@@ -37,12 +37,12 @@ export class CheckComponent {
   notificationMessage: string = '';
    comentarioMap: Map<number, string> = new Map(); 
     private destroy$ = new Subject<void>(); 
-     navigation = [
-  { name: 'CheckIn de Hoy', route: 'check', icon: 'event' },
-  { name: 'Deportistas', route: 'rutinaDeportista', icon: 'people' },
-  { name: 'Equipos', route: 'crearEquipos', icon: 'groups' },
-  { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
-  { name: 'Reportes', route: 'reportes', icon: 'analytics' }
+   navigation = [
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Eventos', route: '../proximoseventos', icon: 'event' },
+  { name: 'Equipos', route: '../equipos', icon: 'groups' },
+  { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
+  { name: 'Rendimiento', route: '../rendimiento', icon: 'analytics' }
 ];
   
     constructor(public router:Router) {}
