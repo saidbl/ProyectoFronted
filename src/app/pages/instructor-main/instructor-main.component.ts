@@ -1,4 +1,4 @@
-import { Component, OnInit , inject} from '@angular/core';
+import { Component, NgZone, OnInit , inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,7 +27,11 @@ import { DeportistaService } from '../../services/deportista.service';
 import { Deportista } from '../../models/deportista.model';
 import Swal from 'sweetalert2';
 import { InstructorService } from '../../services/instructor.service';
-
+import { MensajeDTO } from '../../models/mensajeDTO.model';
+import { delay, filter, skipWhile, Subject, Subscription, switchMap, take, takeUntil } from 'rxjs';
+import {  WsService } from '../../services/websocket.service';
+import { UnreadMessagesService } from '../../services/unreadmessagesservice.service';
+import { LocalTime } from '../../models/LocalTime';
 @Component({
     selector: 'app-instructor-main',
     standalone:true,
@@ -52,7 +56,8 @@ export class InstructorMainComponent implements OnInit {
   { name: 'Reportes', route: 'reportes', icon: 'analytics' }
 ];
 
-constructor(public router: Router) {}
+constructor(public router: Router,private unreadMessagesService: UnreadMessagesService,
+    private ngZone: NgZone,private wsService: WsService) {}
   rutinas : Rutina[] = []
   nombre: string = '';
   apellido: string = '';
@@ -71,8 +76,31 @@ constructor(public router: Router) {}
   showNotification: boolean = false;
   notificationMessage: string = '';
   showUserDropdown: boolean = false;
-  ngOnInit(): void {
+  mensajes : MensajeDTO[]=[]
+  nuevosMensajes = 0;
+  private destroy$ = new Subject<void>();
+  
+ ngOnInit() {
     try{
+      const savedCount = localStorage.getItem('unreadMessages');
+    const initialCount = savedCount ? parseInt(savedCount, 10) : 0;
+    this.nuevosMensajes = initialCount;
+    this.wsService.connect();
+  
+  this.wsService.connectionEstablished.pipe(
+    filter(connected => connected),
+    take(1),
+    delay(150), // Pequeño delay adicional
+    switchMap(() => this.wsService.getNotificationCount()),
+    takeUntil(this.destroy$)
+  ).subscribe(count => {
+    this.nuevosMensajes = count;
+    console.log('Notificaciones:', count);
+    if(Number(localStorage.getItem("unreadMessages"))==0){
+      localStorage.setItem('unreadMessages', count.toString());
+    }
+    this.nuevosMensajes= Number(localStorage.getItem("unreadMessages"))
+  });
       const fotoPerfil = localStorage.getItem("fotoPerfil")
       const nom=localStorage.getItem("nombre")
       const ap = localStorage.getItem("apellido")
@@ -80,9 +108,18 @@ constructor(public router: Router) {}
       const token=localStorage.getItem("token")
       const instructorId = Number(localStorage.getItem("id"))
       console.log(localStorage)
-      if(!token) {
-        throw new Error("Not Token Found")
+      if (!token) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sesión no válida',
+            text: 'No se encontró el token de autenticación. Serás redirigido al login.',
+            confirmButtonText: 'Aceptar'
+          }).then(() => {
+            this.router.navigate(['/login']);
+          });
+          return;
       }
+      
       this.rservice.getTotalRutinasByInstructorId(instructorId,token).subscribe({
         next:(data)=>{
           console.log(data)
@@ -135,6 +172,15 @@ constructor(public router: Router) {}
       alert(error.message)
     }
     
+  }
+  verNotificaciones() {
+  localStorage.setItem('unreadMessages', "0");
+  this.nuevosMensajes = 0;
+  this.wsService.resetNotificationCount();
+}
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
   toggleUserDropdown() {
   this.showUserDropdown = !this.showUserDropdown;

@@ -11,4 +11,5 @@ export interface Organizacion{
     tipo:string
     rol:string
     deporte:Deporte
+    imagen:string
 }

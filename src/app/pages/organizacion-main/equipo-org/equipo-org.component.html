@@ -1,158 +1,298 @@
-<div class="min-h-screen bg-gray-950 font-sans pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <!-- Encabezado compacto -->
-    <div class="text-center mb-8">
-      <h1 class="text-3xl md:text-4xl font-bold text-gray-100 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Eventos y Equipos
-      </h1>
-      <p class="mt-2 text-md text-gray-400">Gestión de participación en eventos</p>
-    </div>
-  
-    <!-- Estados de carga -->
-    <div *ngIf="isLoading" class="flex justify-center py-8">
-      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
-  
-    <div *ngIf="errorMessage" class="bg-red-900/50 border border-red-800 rounded-lg p-4 mb-6 text-center">
-      <p class="text-red-400">{{errorMessage}}</p>
-      <button (click)="loadEventosEquipos()" class="mt-2 px-3 py-1 bg-red-800/50 hover:bg-red-800 text-white rounded transition-colors text-sm">
-        Reintentar
-      </button>
-    </div>
-  
-    <!-- Contenido principal compacto -->
-    <div *ngIf="!isLoading && !errorMessage">
-      <!-- Filtros compactos -->
-      <div class="mb-6 bg-gray-900/50 border border-gray-800 rounded-lg p-4">
-        <div class="flex flex-col sm:flex-row gap-3">
-          <input type="text" [(ngModel)]="searchText" (input)="filterEvents()"
-                 placeholder="Buscar eventos..." 
-                 class="flex-1 bg-gray-800 text-gray-300 rounded px-3 py-1.5 border border-gray-700 focus:ring-blue-500 focus:border-blue-500 text-sm">
-          <select [(ngModel)]="eventFilter" (change)="filterEvents()"
-                  class="bg-gray-800 text-gray-300 text-sm rounded px-3 py-1.5 border border-gray-700 focus:ring-blue-500 focus:border-blue-500">
-            <option value="all">Todos</option>
-            <option value="future">Próximos</option>
-            <option value="past">Pasados</option>
-            <option value="active">Activos</option>
-          </select>
+<div class="min-h-screen bg-gray-950 text-white">
+  <!-- Encabezado con gradiente animado -->
+     <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl font-bold text-blue-400">AllSports</span>
+          <span class="text-xs bg-indigo-900/30 text-indigo-300 px-2 py-1 rounded-full">Organizador</span>
         </div>
-      </div>
-  
-      <!-- Lista compacta de eventos -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Tarjeta de evento compacta -->
-        <div *ngFor="let e of filteredEventos" 
-             class="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden hover:border-blue-500/30 transition-all duration-200">
-          <div class="p-4">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-semibold text-white text-lg truncate">{{e.evento.nombre}}</h3>
-                <div class="flex items-center text-xs text-gray-400 mt-1 space-x-2">
-                  <span><i class="far fa-calendar mr-1"></i> {{e.evento.fecha | date:'shortDate'}}</span>
-                  <span><i class="far fa-clock mr-1"></i> {{e.evento.fechaFin}}</span>
-                </div>
-              </div>
-              <span class="text-xs px-2 py-0.5 rounded-full" 
-                    [ngClass]="getStatusClass(e.evento.estado)">
-                {{e.evento.estado | lowercase | titlecase}}
-              </span>
+
+        <!-- Menú central con mat-icons -->
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-center space-x-8">
+            <a routerLink=".." class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">dashboard</mat-icon> Principal
+            </a>
+            <a routerLink="../crear-eventos" class="text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">add_circle</mat-icon> Crear Evento
+            </a>
+            <a routerLink="../equipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">groups</mat-icon> Equipos
+            </a>
+            <a routerLink="estadisticas" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
+              <mat-icon class="mr-2">bar_chart</mat-icon> Estadísticas
+            </a>
+          </div>
+        </div>
+
+        <!-- Perfil de organización -->
+        <div class="flex items-center">
+          <div class="relative ml-3">
+            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
+              <span class="text-gray-300 text-sm">{{nombre_organizacion}}</span>
+              <img class="h-8 w-8 rounded-full" [src]="'https://ui-avatars.com/api/?name='+nombre_organizacion+'&background=1e3a8a&color=fff'" alt="">
+              <mat-icon class="text-gray-400 text-xs">expand_more</mat-icon>
             </div>
             
-            <div class="mt-3">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-400">Participación:</span>
-                <span class="text-gray-300">{{e.evento.equiposInscritos}}/{{e.evento.numMaxEquipos}} equipos</span>
-              </div>
-              <div class="w-full bg-gray-700 rounded-full h-1.5 mt-1">
-                <div class="bg-blue-500 h-1.5 rounded-full" 
-                     [style.width]="getParticipationPercentage(e.evento) + '%'"></div>
-              </div>
+            <!-- Menú desplegable mejorado -->
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
+              <a routerLink="configuracion" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center">
+                <mat-icon class="mr-2 text-sm">settings</mat-icon> Configuración
+              </a>
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer flex items-center">
+                <mat-icon class="mr-2 text-sm">logout</mat-icon> Cerrar sesión
+              </a>
             </div>
-            
-            <button (click)="openTeamsModal(e)"
-                    class="mt-3 w-full py-1.5 bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 rounded text-sm flex items-center justify-center">
-              <i class="fas fa-users mr-2"></i> Ver equipos ({{e.equipos.length || 0}})
-            </button>
           </div>
         </div>
       </div>
-  
-      <!-- Paginación compacta -->
-      <div class="mt-6 flex justify-center" *ngIf="pages.length > 1">
-        <nav class="inline-flex rounded shadow-sm">
-          <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
-                  class="px-2.5 py-1 rounded-l bg-gray-800 text-gray-300 hover:bg-gray-700 disabled:opacity-50 text-sm">
-            &larr;
-          </button>
-          <button *ngFor="let page of pages" (click)="goToPage(page)"
-                  [class]="currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'"
-                  class="px-3 py-1 border-l border-gray-700 text-sm">
-            {{page}}
-          </button>
-          <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === pages.length"
-                  class="px-2.5 py-1 rounded-r bg-gray-800 text-gray-300 hover:bg-gray-700 border-l border-gray-700 disabled:opacity-50 text-sm">
-            &rarr;
-          </button>
-        </nav>
-      </div>
     </div>
-  
-    <!-- Modal de equipos -->
-    <div *ngIf="selectedEvent" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-gray-900 border border-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <!-- Encabezado del modal -->
-        <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-white">{{selectedEvent.nombre}}</h3>
-          <button (click)="selectedEvent = null" class="text-gray-400 hover:text-white">
-            <i class="fas fa-times"></i>
-          </button>
+  </nav>
+  <div class="pt-24 pb-12 px-10 sm:px-1o lg:px-8 max-w-7xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 
+                animate-gradient-x tracking-tight">
+      Gestión de Eventos
+    </h1>
+    <p class="mt-4 text-lg text-gray-400 font-light max-w-2xl mx-auto">
+      Administra la participación de equipos en tus eventos deportivos
+    </p>
+  </div>
+
+  <!-- Estados de carga mejorados -->
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="animate-pulse flex flex-col items-center">
+      <div class="h-16 w-16 bg-blue-500/20 rounded-full mb-4"></div>
+      <p class="text-gray-400">Cargando eventos...</p>
+    </div>
+  </div>
+
+  <!-- Mensaje de error estilizado -->
+  <div *ngIf="errorMessage" class="bg-red-900/50 border border-red-800 rounded-xl p-6 mb-8 text-center max-w-2xl mx-auto">
+    <div class="flex flex-col items-center">
+      <mat-icon class="text-red-400 text-4xl mb-3">error</mat-icon>
+      <p class="text-red-300 text-lg mb-4">{{errorMessage}}</p>
+      <button (click)="loadEventosEquipos()" 
+              class="px-4 py-2 bg-gradient-to-r from-red-700/50 to-red-800/50 hover:from-red-600/50 hover:to-red-700/50 text-white rounded-lg transition-all flex items-center">
+        <mat-icon class="mr-2">refresh</mat-icon>
+        Reintentar
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!isLoading && !errorMessage" class="space-y-8">
+    <!-- Filtros con diseño mejorado -->
+    <div class="mb-10 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-800 rounded-xl p-5 shadow-lg">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1 relative">
+          <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">search</mat-icon>
+          <input type="text" [(ngModel)]="searchText" (input)="filterEvents()"
+                 placeholder="Buscar eventos por nombre, ubicación..." 
+                 class="w-full pl-10 pr-4 py-2.5 bg-gray-800/60 text-gray-300 rounded-lg border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all">
         </div>
         
-        <!-- Cuerpo del modal -->
-        <div class="flex-1 overflow-y-auto p-4">
-          <div *ngIf="selectedEvent.equipos?.length; else noTeams" class="space-y-3">
-            <!-- Tarjeta compacta de equipo -->
-            <div *ngFor="let equipo of selectedEvent.equipos" 
-                 class="bg-gray-800/50 border border-gray-700 rounded-lg p-3 hover:border-blue-500/30 transition-all">
-              <div class="flex justify-between items-center">
-                <div>
-                  <h4 class="font-medium text-white">{{equipo.nombre}}</h4>
-                  <div class="flex items-center text-xs text-gray-400 mt-1 space-x-3">
-                    <span><i class="fas fa-user-tie mr-1"></i> {{equipo.instructor.nombre}}</span>
-                    <span><i class="fas fa-users mr-1"></i> {{equipo.jugadoresAsociados}}</span>
-                  </div>
-                </div>
-                <button (click)="toggleTeamPlayers(equipo.id)"
-                        class="text-xs px-2.5 py-1 bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 rounded">
-                  {{showPlayers[equipo.id] ? 'Ocultar' : 'Jugadores'}}
-                </button>
+        <div class="flex gap-3">
+          <select [(ngModel)]="eventFilter" (change)="filterEvents()"
+                  class="bg-gray-800/60 text-gray-300 rounded-lg px-4 py-2.5 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all">
+            <option value="all">Todos los eventos</option>
+            <option value="future">Próximos</option>
+            <option value="past">Finalizados</option>
+            <option value="active">En curso</option>
+          </select>
+        
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de eventos con tarjetas mejoradas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let e of filteredEventos" 
+           class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-400/40 transition-all duration-300 shadow-lg">
+        <div class="p-5">
+          <!-- Encabezado de tarjeta -->
+          <div class="flex justify-between items-start">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs px-2 py-1 rounded-full" 
+                      [ngClass]="getStatusClass(e.evento.estado)">
+                  {{e.evento.estado | lowercase | titlecase}}
+                </span>
+                <span class="text-xs px-2 py-1 bg-purple-900/30 text-purple-400 rounded-full">
+                  {{e.evento.deporte.nombre}}
+                </span>
               </div>
-              <div class="mt-3 pt-3 border-t border-gray-700">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div *ngFor="let jugador of showPlayers" 
-                       class="bg-gray-900/30 rounded p-2 flex items-center space-x-2 text-sm">
-                    <img [src]="'https://ui-avatars.com/api/?name=' + jugador.deportista.nombre" 
-                         class="w-6 h-6 rounded-full">
-                    <span class="text-white truncate">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
-                    <span class="text-xs text-gray-400 ml-auto">{{jugador.deportista.posicion.nombre}}</span>
-                  </div>
-                </div>
+              
+              <h3 class="font-semibold text-white text-xl truncate">{{e.evento.nombre}}</h3>
+              <div class="flex items-center text-sm text-gray-400 mt-1.5 gap-3">
+                <span class="flex items-center">
+                  <mat-icon class="text-sm mr-1 text-blue-400">calendar_today</mat-icon>
+                  {{e.evento.fecha | date:'mediumDate'}}
+                </span>
+                <span class="flex items-center">
+                  <mat-icon class="text-sm mr-1 text-purple-400">schedule</mat-icon>
+                  {{e.evento.horaInicio}}
+                </span>
               </div>
             </div>
           </div>
           
-          <ng-template #noTeams>
-            <div class="text-center py-8 text-gray-500">
-              No hay equipos registrados para este evento
+          <!-- Barra de progreso mejorada -->
+          <div class="mt-5">
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span class="text-gray-400">Equipos inscritos:</span>
+              <span class="font-medium text-gray-300">{{e.evento.equiposInscritos}}/{{e.evento.numMaxEquipos}}</span>
             </div>
-          </ng-template>
-        </div>
-        
-        <!-- Pie del modal -->
-        <div class="p-3 border-t border-gray-800 text-right">
-          <button (click)="selectedEvent = null" class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-sm">
-            Cerrar
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" 
+                   [style.width]="getParticipationPercentage(e.evento) + '%'"></div>
+            </div>
+          </div>
+          
+          <!-- Botón de acción -->
+          <button (click)="openTeamsModal(e)"
+                  class="mt-5 w-full py-2.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 hover:from-blue-900/40 hover:to-purple-900/40 border border-blue-500/20 text-blue-400 rounded-lg text-sm flex items-center justify-center transition-all">
+            <mat-icon class="mr-2">groups</mat-icon>
+            Ver equipos inscritos ({{e.equipos.length || 0}})
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Paginación mejorada -->
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-sm text-gray-400">
+        Mostrando {{ filteredEventos.length }} de {{ totalEventos }} eventos
+      </div>
+      
+      <div class="flex items-center">
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+                class="px-3 py-2 rounded-l-lg bg-gray-900/60 border border-gray-700 text-gray-300 hover:bg-gray-800 disabled:opacity-40">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        
+        <div class="flex bg-gray-900/60 border border-gray-700">
+          <button *ngFor="let page of pages" (click)="goToPage(page)"
+                  [class]="currentPage === page ? 
+                    'bg-blue-500 text-white' : 
+                    'bg-transparent text-gray-300 hover:bg-gray-800'"
+                  class="px-4 py-2 border-r border-gray-700 last:border-r-0 transition-colors">
+            {{page}}
+          </button>
+        </div>
+        
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === pages.length"
+                class="px-3 py-2 rounded-r-lg bg-gray-900/60 border border-gray-700 text-gray-300 hover:bg-gray-800 disabled:opacity-40">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
+
+  <!-- Modal de equipos mejorado -->
+  <div *ngIf="selectedEvent" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-800 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <!-- Encabezado del modal -->
+      <div class="p-5 border-b border-gray-800 flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <mat-icon class="text-blue-400">event</mat-icon>
+            {{selectedEvent.nombre}}
+          </h3>
+          <p class="text-sm text-gray-400 mt-1">
+            {{selectedEvent.fecha | date:'fullDate'}} • {{selectedEvent.horaInicio}}
+          </p>
+        </div>
+        <button (click)="selectedEvent = null" class="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-800">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <!-- Cuerpo del modal -->
+      <div class="flex-1 overflow-y-auto p-5">
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="font-semibold text-gray-300">
+            Equipos participantes ({{selectedEvent.equipos?.length || 0}})
+          </h4>
+          <div class="text-sm bg-blue-900/30 text-blue-400 px-3 py-1 rounded-full">
+            {{selectedEvent.equiposInscritos}}/{{selectedEvent.numMaxEquipos}} cupos
+          </div>
+        </div>
+        
+        <div *ngIf="selectedEvent.equipos?.length; else noTeams" class="space-y-4">
+          <div *ngFor="let equipo of selectedEvent.equipos" 
+               class="bg-gray-800/40 border border-gray-800 rounded-xl p-4 hover:border-blue-500/30 transition-all">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-3">
+                <img [src]="'http://localhost:8080/' + equipo.img || 'assets/default-team.png'" 
+                     class="w-12 h-12 rounded-full object-cover border border-gray-700">
+                <div>
+                  <h4 class="font-medium text-white">{{equipo.nombre}}</h4>
+                  <div class="flex items-center text-xs text-gray-400 mt-1 gap-2">
+                    <span class="flex items-center">
+                      <mat-icon class="text-xs mr-1">person</mat-icon>
+                      {{equipo.instructor.nombre}}
+                    </span>
+                    <span class="flex items-center">
+                      <mat-icon class="text-xs mr-1">people</mat-icon>
+                      {{equipo.jugadoresAsociados}} jugadores
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button (click)="toggleTeamPlayers(equipo.id)"
+                      class="text-xs px-3 py-1.5 bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 rounded-lg flex items-center transition-colors">
+                <mat-icon class="mr-1 text-sm">{{showPlayers[equipo.id] ? 'visibility_off' : 'visibility'}}</mat-icon>
+                {{modalshowPlayers? 'Ocultar' : 'Ver'}}
+              </button>
+            </div>
+            
+            <!-- Jugadores expandibles -->
+            <div *ngIf="modalshowPlayers" class="mt-4 pt-4 border-t border-gray-800">
+              <h5 class="text-sm font-medium text-gray-400 mb-2">Jugadores del equipo:</h5>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div *ngFor="let jugador of showPlayers" 
+                     class="bg-gray-900/30 rounded-lg p-3 flex items-center gap-3">
+                  <img [src]="'https://ui-avatars.com/api/?name=' + jugador.deportista.nombre + ' ' + jugador.deportista.apellido" 
+                       class="w-10 h-10 rounded-full border border-gray-700">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate">
+                      {{jugador.deportista.nombre}} {{jugador.deportista.apellido}}
+                    </p>
+                    <p class="text-xs text-gray-400 flex items-center gap-1">
+                      <mat-icon class="text-xs">emoji_events</mat-icon>
+                  {{jugador?.deportista?.posicion?.nombre || 'Sin posición'}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noTeams>
+          <div class="text-center py-8 border border-gray-800 border-dashed rounded-xl">
+            <mat-icon class="text-gray-600 text-4xl mb-3">group_off</mat-icon>
+            <h4 class="text-gray-400 font-medium">No hay equipos registrados</h4>
+            <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">
+              Aún no hay equipos inscritos en este evento. Invita equipos usando el botón de compartir.
+            </p>
+            <button class="mt-4 px-4 py-2 bg-gray-800/50 hover:bg-gray-800 border border-gray-700 rounded-lg text-gray-300 flex items-center mx-auto">
+              <mat-icon class="mr-2">share</mat-icon>
+              Compartir evento
+            </button>
+          </div>
+        </ng-template>
+      </div>
+      
+      <!-- Pie del modal -->
+      <div class="p-4 border-t border-gray-800 bg-gray-900/30 flex justify-end">
+        <button (click)="selectedEvent = null" 
+                class="px-4 py-2 bg-gray-800/60 hover:bg-gray-800 text-gray-300 rounded-lg flex items-center transition-colors">
+          Cerrar vista
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

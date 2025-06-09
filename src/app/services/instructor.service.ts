@@ -15,6 +15,20 @@ export class InstructorService{
             return this.http.post<any>(this.apiLog,{email,password})
     }
 
+    crearInstructor(token:string, formData:FormData): Observable<Instructor> {
+      const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+    return this.http.post<Instructor>(`${appSettings.apiGeneral}/instructorOrg/agregar`, formData,{headers});
+
+    }
+    obtenerInstructores(id:number, token:string):Observable<Instructor[]>{
+      const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+      return this.http.get<Instructor[]>(`${appSettings.apiGeneral}/instructorOrg/${id}`,{headers})
+    }
+
     getInstructorById(id:number, token:string): Observable<Instructor>{
       const headers = new HttpHeaders({
                     'Authorization': `Bearer ${token}`

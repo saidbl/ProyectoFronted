@@ -9,4 +9,6 @@ export interface InstructorDTO{
     experiencia:number
     idDeporte:number
     fotoPerfil:string
+    password?:string
+    rol?:string
 }

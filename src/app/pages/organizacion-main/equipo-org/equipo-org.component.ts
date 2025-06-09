@@ -1,20 +1,16 @@
 import { Component , inject, OnInit} from '@angular/core';
 import { EventoService } from '../../../services/evento.service';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EventoConEquipos } from '../../../models/eventoconEquipos.model';
 import { Evento } from '../../../models/evento.model';
 import { Equipo } from '../../../models/equipo.model';
-import { Deportista } from '../../../models/deportista.model';
-import { EquipoService } from '../../../services/equipo.service';
-import { DeportistaService } from '../../../services/deportista.service';
 import { JugadorEquipoService } from '../../../services/jugadorequipo.service';
 import { JugadorEquipo } from '../../../models/jugadorEquipo.model';
-
+import { MatIcon } from '@angular/material/icon';
 @Component({
     selector: 'app-equipo-org',
-    imports: [FormsModule, CommonModule],
+    imports: [FormsModule, CommonModule,MatIcon],
     templateUrl: './equipo-org.component.html',
     styleUrl: './equipo-org.component.css',
     standalone : true
@@ -35,6 +31,10 @@ export class EquipoOrgComponent implements OnInit {
   itemsPerPage = 5;
   pages: number[] = [];
   selectedEvent: any = null;
+  totalEventos : number = 0
+  nombre_organizacion = ""
+  showUserDropdown : boolean = false
+  modalshowPlayers : boolean = false
 
   ngOnInit(): void {
     this.loadEventosEquipos();
@@ -54,6 +54,7 @@ export class EquipoOrgComponent implements OnInit {
     this.eeservice.getProximosEventosConEquipos(id,token).subscribe({
       next: (data) => {
         this.eventosEquipos = data;
+        this.totalEventos = this.eventosEquipos.length
         this.filteredEventos = [...data];
         this.calculatePages();
         this.isLoading = false;
@@ -68,6 +69,10 @@ export class EquipoOrgComponent implements OnInit {
   }
 
   toggleTeamPlayers(teamId: number): void {
+    if (this.modalshowPlayers){
+      this.modalshowPlayers = false
+      return
+    }
     const id = Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
     if(!token) {
@@ -76,6 +81,7 @@ export class EquipoOrgComponent implements OnInit {
     this.deservice.list(teamId,token).subscribe({
       next:(data)=>{
        this.showPlayers = data
+       this.modalshowPlayers = true
       },
       error:(err)=>{
         console.error(err)
@@ -120,6 +126,9 @@ export class EquipoOrgComponent implements OnInit {
     return this.filteredEventos.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
+  toggleUserDropdown(){
+
+  }
 
   getUniqueSports(): any[] {
     const sportsMap = new Map();
@@ -151,5 +160,8 @@ export class EquipoOrgComponent implements OnInit {
   getParticipationPercentage(evento: Evento): number {
     if (!evento.numMaxEquipos || evento.numMaxEquipos === 0) return 0;
     return (evento.equiposInscritos / evento.numMaxEquipos) * 100;
+  }
+  logout(){
+
   }
 }

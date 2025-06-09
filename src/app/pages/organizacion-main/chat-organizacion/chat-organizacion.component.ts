@@ -1,33 +1,30 @@
 import { Component, inject } from '@angular/core';
+import { Mensaje } from '../../../models/mensaje.model';
+import { Chat } from '../../../models/chat.model';
+import { MensajeDTO } from '../../../models/mensajeDTO.model';
+import { RemitenteTipo } from '../../../models/remitentetipo.model';
+import { finalize, forkJoin, Subject, takeUntil} from 'rxjs';
 import { ChatService } from '../../../services/chat.service';
 import { WsService } from '../../../services/websocket.service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { EquipoService } from '../../../services/equipo.service';
 import { DeportistaService } from '../../../services/deportista.service';
 import { MensajeService } from '../../../services/mensaje.service';
 import { OrganizacionService } from '../../../services/organizacion.service';
-import { Chat } from '../../../models/chat.model';
-import { finalize, forkJoin, Subject, takeUntil} from 'rxjs';
-import { MensajeDTO } from '../../../models/mensajeDTO.model';
 import { ChatTipo } from '../../../models/chatTipo.model';
-import { RemitenteTipo } from '../../../models/remitentetipo.model';
-import { Mensaje } from '../../../models/mensaje.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { InstructorService } from '../../../services/instructor.service';
 @Component({
-  selector: 'app-chat-deportista',
-  imports: [FormsModule,CommonModule],
-  templateUrl: './chat-deportista.component.html',
-  styleUrl: './chat-deportista.component.css'
+  selector: 'app-chat-organizacion',
+  imports: [CommonModule,FormsModule],
+  templateUrl: './chat-organizacion.component.html',
+  styleUrl: './chat-organizacion.component.css'
 })
-export class ChatDeportistaComponent {
+export class ChatOrganizacionComponent {
 private cservice = inject(ChatService)
   private wsservice = inject(WsService)
-  private eservice = inject(EquipoService)
-  private dservice = inject(DeportistaService)
-  private mservice = inject(MensajeService)
-  private oservice = inject(OrganizacionService)
   private iservice = inject(InstructorService)
+  private mservice = inject(MensajeService)
   chats: any[] = [];
   selectedChat: Chat | null= null;
   messages: any[] = [];
@@ -44,38 +41,25 @@ private cservice = inject(ChatService)
     this.messages.push(mensaje);
     this.scrollToBottom();
   });
-    const idDeportista =Number(localStorage.getItem("id"));
+    const idOrg =Number(localStorage.getItem("id"));
     const token = localStorage.getItem("token")
     const deporte = Number(localStorage.getItem("idDeporte"))
     if(!token) {
             throw new Error("Not Token Found")
           }
     forkJoin({
-      instructor: this.iservice.list(idDeportista,token),
-      equipos: this.eservice.list(idDeportista,token),
-      organizaciones: this.oservice.getbyDeporte(deporte,token),
-    }).subscribe(({ instructor, equipos, organizaciones }) => {
+      instructores: this.iservice.obtenerInstructores(deporte,token),
+    }).subscribe(({ instructores }) => {
       const solicitudesChats: any[] = [];
-        solicitudesChats.push(
-          this.cservice.createChat(token,{
-            instructorId: instructor.id,
-            deportistaId: idDeportista,
-            equipoId: 0,
-            organizacionId:0,
-            deporteId: deporte,
-            tipo: ChatTipo.INSTRUCTOR_DEPORTISTA,
-          })
-        );
-      console.log(solicitudesChats)
-      equipos.forEach(equipo => {
+      instructores.forEach(instructor => {
         solicitudesChats.push(
           this.cservice.createChat(token,{
             instructorId: instructor.id,
             deportistaId: 0,
-            equipoId: equipo.id,
-            tipo: ChatTipo.EQUIPO,
-            organizacionId:0,
+            equipoId: 0,
+            organizacionId:idOrg,
             deporteId: deporte,
+            tipo: ChatTipo.INSTRUCTOR_ORGANIZACION,
           })
         );
       });
@@ -99,7 +83,7 @@ private cservice = inject(ChatService)
 
   loadUserChats(): void {
     const id = Number(localStorage.getItem("id"))
-    const rol = localStorage.getItem("rol")?.toUpperCase()
+    const rol = localStorage.getItem("rol")
     const token = localStorage.getItem("token")
     if(!token || !rol) {
             throw new Error("Not Token Found")
@@ -185,7 +169,7 @@ private cservice = inject(ChatService)
     const message :MensajeDTO = {
       idChat: this.selectedChat.id,
       contenido: this.newMessage,
-      remitenteTipo : RemitenteTipo.DEPORTISTA,
+      remitenteTipo : RemitenteTipo.ORGANIZACION,
       remitenteId: id,
       fechaEnvio: new Date(),
       leido : false
@@ -263,14 +247,15 @@ private cservice = inject(ChatService)
   getChatName(chat: Chat): string {
     switch(chat.tipo) {
       case 'INSTRUCTOR_DEPORTISTA':
-        if(localStorage.getItem("rol")=="deportista"){
-          return chat.instructor?.nombre + ' ' + chat.instructor.apellido
-        }
         return chat.deportista?.nombre + ' ' + chat.deportista?.apellido;
       case 'EQUIPO':
         return chat.equipo?.nombre;
       case 'INSTRUCTOR_ORGANIZACION':
+        if(localStorage.getItem("rol")=="organizacion"){
+          return chat.instructor?.nombre
+        }else{
         return chat.organizacion?.nombre;
+        }
       default:
         return 'Chat';
     }
@@ -278,19 +263,19 @@ private cservice = inject(ChatService)
 
 isCurrentUser(mensaje: Mensaje): boolean {
   const currentUserId = Number(localStorage.getItem("id"));
-  return mensaje.remitenteId === currentUserId && mensaje.remitenteTipo=="DEPORTISTA";
+  return mensaje.remitenteId === currentUserId && mensaje.remitenteTipo=="ORGANIZACION";
 }
 
   formatDate(dateString: string | Date | undefined | null): string {
-  if (!dateString) return ''; 
+  if (!dateString) return ''; // Devuelve vacío si es null o undefined
 
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
 
-  if (isNaN(date.getTime())) return '';
+  if (isNaN(date.getTime())) return ''; // Fecha inválida (como new Date(''))
 
   return date.toLocaleTimeString('es-ES', {
-    hour: '2-digit',    
-    minute: '2-digit',  
+    hour: '2-digit',
+    minute: '2-digit',
     day: '2-digit',
     month: '2-digit'
   });

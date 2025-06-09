@@ -8,10 +8,12 @@ import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { EventoEditarComponent } from './evento-editar/evento-editar.component';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { MatIcon } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-eventos-organizacion',
-    imports: [CommonModule, RouterModule, MatNativeDateModule],
+    imports: [CommonModule, RouterModule, MatNativeDateModule,MatIcon ],
     templateUrl: './eventos-organizacion.component.html',
     styleUrl: './eventos-organizacion.component.css'
 })
@@ -21,39 +23,51 @@ export class EventosOrganizacionComponent {
     private dialog = inject(MatDialog)
     eventos: Evento[] = [];
     cargando = true;
+    nombre_organizacion: string = ""
     modalAbierto = false;
     cargandoFechas = false;
     fechasEvento: EventoFecha[] = [];
     eventoIdActual: number | null = null;
     showUserDropdown: boolean = false;
     tabs = [
-    { id: 'planificados', label: 'Planificados' },
-    { id: 'activos', label: 'Activos' },
-    { id: 'pasados', label: 'Pasados' }
+    { id: 'planificados', label: 'Planificados', icon: 'event_note' },
+    { id: 'activos', label: 'Activos', icon:'event_available' },
+    { id: 'pasados', label: 'Pasados' , icon: 'history'}
     ];
   eventosPlanificados: Evento[] = [];
   eventosActivos: Evento[] = [];
   eventosPasados: Evento[] = [];
   currentTab: string = 'planificados';
+   private subscriptions: Subscription = new Subscription();
   
     ngOnInit(): void {
+      this.cargarEventos();
+    }
+    cargarEventos() {
       const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
       if(!token) {
+        this.mostrarErrorSesion();
         throw new Error("Not Token Found")
       }
-      this.eservice.listEventosByOrganizacion(id,token).subscribe({
+      this.cargando = true;
+      const sub =  this.eservice.listEventosByOrganizacion(id,token).subscribe({
         next:(data)=>{
           this.eventos=data
           this.clasificarEventos(data);
           this.cargando = false;
         },
         error:(err)=>{
-          console.error(err)
-          this.cargando = false;
+          console.error(err);
+        this.cargando = false;
+        this.mostrarError('Error al cargar eventos', 'No se pudieron obtener los eventos. Intente nuevamente.');
         }
       })
+      this.subscriptions.add(sub);
     }
+    ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
     clasificarEventos(eventos: Evento[]): void {
       const ahora = new Date();
       this.eventosPlanificados = eventos.filter(evento => {
@@ -83,11 +97,12 @@ export class EventosOrganizacionComponent {
       const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
       if(!token) {
+        this.mostrarErrorSesion();
         throw new Error("Not Token Found")
       }
       this.cargandoFechas = true;
       this.modalAbierto = true;
-      this.efservice.list(eventoId,token).subscribe({
+      const sub = this.efservice.list(eventoId,token).subscribe({
         next:(data)=>{
           this.fechasEvento=data
           console.log(data)
@@ -96,8 +111,10 @@ export class EventosOrganizacionComponent {
         error:(err)=>{
           this.cargandoFechas = false;
           console.error(err)
+          this.mostrarError('Error al cargar fechas', 'No se pudieron obtener las fechas del evento.');
         }
       })
+      this.subscriptions.add(sub);
     }
   
     cerrarModal(): void {
@@ -108,6 +125,10 @@ export class EventosOrganizacionComponent {
     editarEvento(evento:Evento):void{
       const id = Number(localStorage.getItem("id"))
       const idDeporte = Number(localStorage.getItem("idDeporte"))
+      if (!id || !idDeporte) {
+      this.mostrarErrorSesion();
+      return;
+    }
       const dialogRef = this.dialog.open(EventoEditarComponent, {
         width: '800px',
         data: { 
@@ -116,37 +137,87 @@ export class EventosOrganizacionComponent {
           idDeporte:idDeporte
         }
       });
-      dialogRef.afterClosed().subscribe(result => {
+      const sub = dialogRef.afterClosed().subscribe(result => {
         if (result === 'actualizado') {
+          this.cargarEventos();
+        this.mostrarExito('Evento actualizado', 'El evento se ha actualizado correctamente');
         }
       });
     }
-    eliminarEvento(evento: Evento): void {
-      const token = localStorage.getItem("token")
-      if(!token) {
-        throw new Error("Not Token Found")
-      }
-      if (confirm('¿Estás seguro de eliminar este evento?')) {
-        this.eservice.delete(evento.id, token).subscribe({
-          next:(data)=>{
-            this.eventos = this.eventos.filter(e => e !== evento);
-            if(data.success){
-              console.log("eliminado")
-            }else{
-              alert("No se pudo eliminar")
-            }
-          },
-          error:(err)=>{
-            if (err.status === 0) {
-              console.error('No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
-            } else {
-              console.error('Error al eliminar la persona', err);
-            }
+    async eliminarEvento(evento: Evento): Promise<void> {
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      this.mostrarErrorSesion();
+      return;
+    }
+
+    const confirmResult = await Swal.fire({
+      title: '¿Eliminar evento?',
+      text: `¿Estás seguro de eliminar el evento "${evento.nombre}"? Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirmResult.isConfirmed) {
+      Swal.fire({
+        title: 'Eliminando evento...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const sub = this.eservice.delete(evento.id, token).subscribe({
+        next: (data) => {
+          if (data.success) {
+            Swal.close();
+            this.cargarEventos();
+            this.mostrarExito('Evento eliminado', 'El evento se ha eliminado correctamente');
+          } else {
+            Swal.close();
+            this.mostrarError('Error al eliminar', data.message || 'No se pudo eliminar el evento');
           }
-        })
-      }
+        },
+        error: (err) => {
+          Swal.close();
+          console.error(err);
+          this.mostrarError('Error al eliminar', 'Ocurrió un error al intentar eliminar el evento');
+        }
+      });
+      
+      this.subscriptions.add(sub);
+    }
+  }
+    toggleUserDropdown(){
+
     }
     logout(){
 
     }
+    private mostrarError(titulo: string, mensaje: string): void {
+    Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'error',
+      confirmButtonText: 'Aceptar'
+    });
+  }
+
+  private mostrarExito(titulo: string, mensaje: string): void {
+    Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      timer: 3000
+    });
+  }
+
+  private mostrarErrorSesion(): void {
+    this.mostrarError('Sesión expirada', 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
+    this.logout();
+  }
 }

@@ -26,6 +26,8 @@ import { IncompletasComponent } from './pages/deportista-main/check/incompletas/
 import { ChatComponent } from './pages/chat/chat.component';
 import { PerfilComponent } from './pages/deportista-main/perfil/perfil.component';
 import { ChatDeportistaComponent } from './pages/deportista-main/chat-deportista/chat-deportista.component';
+import { InstructoresControlComponent } from './pages/organizacion-main/instructores-control/instructores-control.component';
+import { ChatOrganizacionComponent } from './pages/organizacion-main/chat-organizacion/chat-organizacion.component';
 
 
 export const routes: Routes = [
@@ -57,6 +59,8 @@ export const routes: Routes = [
     { path: 'organizacion/equipos-org', component: EquipoOrgComponent},
     { path: 'organizacion/estadistica-org', component: EstadisticasOrgComponent},
     { path: 'organizacion/configuracionOrg', component: ConfiguracionOrganizacionComponent},
+    { path: 'organizacion/instructor', component: InstructoresControlComponent},
+    { path: 'organizacion/chat', component: ChatOrganizacionComponent},
     { path: '', redirectTo: '/rutinas', pathMatch: 'full' },
     { path: '**', component:LoginComponent },
 ];

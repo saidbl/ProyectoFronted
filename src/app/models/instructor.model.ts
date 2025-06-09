@@ -2,14 +2,14 @@ import { Deporte } from "./deporte.model"
 
 export interface Instructor{
     id:number
-    email:String
-    password:String
-    nombre: String
-    apellido:String
-    telefono:String
-    especialidad:String
+    email:string
+    password:string
+    nombre: string
+    apellido:string
+    telefono:string
+    especialidad:string
     experiencia:number
-    rol:String
+    rol:string
     deporte:Deporte
     fotoPerfil:string
 }

@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
-import { finalize, forkJoin, Subject, takeUntil} from 'rxjs';
+import { finalize, forkJoin, Subject, Subscription, takeUntil } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DeportistaService } from '../../services/deportista.service';
@@ -12,258 +12,327 @@ import { WsService } from '../../services/websocket.service';
 import { RemitenteTipo } from '../../models/remitentetipo.model';
 import { MensajeService } from '../../services/mensaje.service';
 import { OrganizacionService } from '../../services/organizacion.service';
-import { Mensaje } from '../../models/mensaje.model';
+import { Deportista } from '../../models/deportista.model';
+import { JugadorEquipoService } from '../../services/jugadorequipo.service';
+import { JugadorEquipo } from '../../models/jugadorEquipo.model';
+
 @Component({
   selector: 'app-chat',
-  imports: [FormsModule,CommonModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.css'
+  styleUrls: ['./chat.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatComponent {
-  private cservice = inject(ChatService)
-  private wsservice = inject(WsService)
-  private eservice = inject(EquipoService)
-  private dservice = inject(DeportistaService)
-  private mservice = inject(MensajeService)
-  private oservice = inject(OrganizacionService)
-  chats: any[] = [];
-  selectedChat: Chat | null= null;
-  messages: any[] = [];
+export class ChatComponent implements OnInit, OnDestroy {
+  private cservice = inject(ChatService);
+  private wsservice = inject(WsService);
+  private eservice = inject(EquipoService);
+  private dservice = inject(DeportistaService);
+  private mservice = inject(MensajeService);
+  private oservice = inject(OrganizacionService);
+  private cdRef = inject(ChangeDetectorRef);
+  private jeservice = inject(JugadorEquipoService)
+
+  chats: Chat[] = [];
+  selectedChat: Chat | null = null;
+  messages: MensajeDTO[] = [];
   newMessage = '';
-  currentUser: any;
   private destroy$ = new Subject<void>();
+  private wsSubscription!: Subscription;
+  
   currentPage = 0;
   pageSize = 20;
   totalMessages = 0;
   loadingMessages = false;
+  
+  esChatEquipo = false;
+  nombresDeportistas: Map<number, string> = new Map<number, string>();
+  fotosDeportistas: Map<number, string> = new Map<number, string>();
 
   ngOnInit(): void {
-    this.wsservice.connect().subscribe((mensaje: MensajeDTO) => {
-    this.messages.push(mensaje);
-    this.scrollToBottom();
-  });
-    const idInstructor =Number(localStorage.getItem("id"));
-    const token = localStorage.getItem("token")
-    const deporte = Number(localStorage.getItem("idDeporte"))
-    if(!token) {
-            throw new Error("Not Token Found")
-          }
-    forkJoin({
-      deportistas: this.dservice.list(idInstructor,token),
-      equipos: this.eservice.list(idInstructor,token),
-      organizaciones: this.oservice.getbyDeporte(deporte,token),
-    }).subscribe(({ deportistas, equipos, organizaciones }) => {
-      const solicitudesChats: any[] = [];
-      console.log(deportistas)
-      deportistas.forEach(deportista => {
-        solicitudesChats.push(
-          this.cservice.createChat(token,{
-            instructorId: idInstructor,
-            deportistaId: deportista.id,
-            equipoId: 0,
-            organizacionId:0,
-            deporteId: deporte,
-            tipo: ChatTipo.INSTRUCTOR_DEPORTISTA,
-          })
-        );
-      });
-      console.log(solicitudesChats)
-      equipos.forEach(equipo => {
-
-        solicitudesChats.push(
-          this.cservice.createChat(token,{
-            instructorId: idInstructor,
-            deportistaId: 0,
-            equipoId: equipo.id,
-            tipo: ChatTipo.EQUIPO,
-            organizacionId:0,
-            deporteId: deporte,
-          })
-        );
-      });
-      organizaciones.forEach(organizacion => {
-        solicitudesChats.push(
-          this.cservice.createChat(token,{
-            instructorId: idInstructor,
-            deportistaId: 0,
-            equipoId: 0,
-            organizacionId:organizacion.id,
-            deporteId: deporte,
-            tipo: ChatTipo.INSTRUCTOR_ORGANIZACION,
-          })
-        );
-      });
-      forkJoin(solicitudesChats).subscribe({
-        next: (respuestas) => {
-          console.log('Todos los chats fueron creados:', respuestas);
-        },
-        error: (err) => {
-          console.error('Error al crear chats:', err);
-        }
-      });
-    });
-    this.loadUserChats();
+    this.initializeChats();
     this.setupWebSocket();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
+  }
+
+  private getToken(): string {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Token no encontrado");
+    }
+    return token;
+  }
+
+  private initializeChats(): void {
+    const idInstructor = Number(localStorage.getItem("id"));
+    const token = this.getToken();
+    const deporte = Number(localStorage.getItem("idDeporte"));
+
+    forkJoin({
+      deportistas: this.dservice.list(idInstructor, token),
+      equipos: this.eservice.list(idInstructor, token),
+      organizaciones: this.oservice.getbyDeporte(deporte, token),
+    }).subscribe({
+      next: ({ deportistas, equipos, organizaciones }) => {
+        const solicitudesChats = [];
+        
+        // Crear chats para deportistas
+        for (const deportista of deportistas) {
+          solicitudesChats.push(this.cservice.createChat(token, {
+            instructorId: idInstructor,
+            deportistaId: deportista.id,
+            equipoId: 0,
+            organizacionId: 0,
+            deporteId: deporte,
+            tipo: ChatTipo.INSTRUCTOR_DEPORTISTA,
+          }));
+        }
+
+        // Crear chats para equipos
+        for (const equipo of equipos) {
+          solicitudesChats.push(this.cservice.createChat(token, {
+            instructorId: idInstructor,
+            deportistaId: 0,
+            equipoId: equipo.id,
+            tipo: ChatTipo.EQUIPO,
+            organizacionId: 0,
+            deporteId: deporte,
+          }));
+        }
+
+        // Crear chats para organizaciones
+        for (const organizacion of organizaciones) {
+          solicitudesChats.push(this.cservice.createChat(token, {
+            instructorId: idInstructor,
+            deportistaId: 0,
+            equipoId: 0,
+            organizacionId: organizacion.id,
+            deporteId: deporte,
+            tipo: ChatTipo.INSTRUCTOR_ORGANIZACION,
+          }));
+        }
+
+        // Ejecutar todas las solicitudes
+        forkJoin(solicitudesChats).subscribe({
+          next: () => this.loadUserChats(),
+          error: (err) => console.error('Error al crear chats:', err)
+        });
+      },
+      error: (err) => console.error('Error cargando datos iniciales:', err)
+    });
   }
 
   loadUserChats(): void {
-    const id = Number(localStorage.getItem("id"))
-    const rol = localStorage.getItem("rol")
-    const token = localStorage.getItem("token")
-    if(!token || !rol) {
-            throw new Error("Not Token Found")
-          }
-    this.cservice.getChats(token,rol,id).pipe(
+    const id = Number(localStorage.getItem("id"));
+    const rol = localStorage.getItem("rol") || '';
+    const token = this.getToken();
+
+    this.cservice.getChats(token, rol, id).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
       next: (chats) => {
         this.chats = chats;
-        console.log(chats)
-        this.chats.forEach(chat => {
-          chat.unread = this.calculateUnreadMessages(chat);
-        });
+        this.cdRef.markForCheck();
       },
-      error: (err) => console.error('Error loading chats:', err)
+      error: (err) => console.error('Error cargando chats:', err)
     });
   }
 
-  selectChat(chat: any): void {
+  selectChat(chat: Chat): void {
+    // Limpiar datos previos
+    this.nombresDeportistas.clear();
+    this.fotosDeportistas.clear();
+
+    if (chat.tipo === ChatTipo.EQUIPO) {
+      this.loadEquipoMembers(chat);
+    } else {
+      this.esChatEquipo = false;
+      this.finalizeChatSelection(chat);
+    }
+  }
+
+  private loadEquipoMembers(chat: Chat): void {
+    const token = this.getToken();
+    const equipoId = chat.equipo?.id;
+    
+    if (!equipoId) {
+      this.finalizeChatSelection(chat);
+      return;
+    }
+
+    this.jeservice.list(equipoId, token).subscribe({
+      next: (deportistas: JugadorEquipo[]) => {
+        deportistas.forEach(d => {
+          this.nombresDeportistas.set(d.deportista.id, `${d.deportista.nombre} ${d.deportista.apellido}`);
+          this.fotosDeportistas.set(d.deportista.id, d.deportista.fotoPerfil);
+        });
+        this.esChatEquipo = true;
+        this.finalizeChatSelection(chat);
+      },
+      error: (err) => {
+        console.error('Error cargando miembros del equipo:', err);
+        this.finalizeChatSelection(chat);
+      }
+    });
+  }
+
+  private finalizeChatSelection(chat: Chat): void {
     this.selectedChat = chat;
-    this.loadMessages(chat.id);
-    this.markMessagesAsRead(chat.id);
+    this.loadMessages(true);
+    this.cdRef.markForCheck();
+  }
+
+  getNombreRemitente(mensaje: MensajeDTO): string {
+    console.log(this.selectedChat?.tipo)
+    switch (mensaje.remitenteTipo) {
+      case RemitenteTipo.INSTRUCTOR:
+        return `${localStorage.getItem("nombre")} ${localStorage.getItem("apellido")}`;
+      
+      case RemitenteTipo.DEPORTISTA:
+        if (this.selectedChat?.tipo === ChatTipo.EQUIPO) {
+          console.log(this.nombresDeportistas)
+          console.log(mensaje.remitenteId)
+          console.log(this.nombresDeportistas.get(mensaje.remitenteId))
+          return this.nombresDeportistas.get(mensaje.remitenteId) || 'Deportista';
+        }
+        return this.selectedChat?.deportista?.nombre 
+          ? `${this.selectedChat.deportista.nombre} ${this.selectedChat.deportista.apellido}`
+          : 'Deportista';
+      
+      case RemitenteTipo.ORGANIZACION:
+        return this.selectedChat?.organizacion?.nombre || 'Organización';
+      
+      default:
+        return 'Remitente';
+    }
+  }
+
+  getImagenMensaje(mensaje: MensajeDTO): string {
+    if (!mensaje.remitenteTipo) return 'assets/default.png';
+
+    switch (mensaje.remitenteTipo) {
+      case RemitenteTipo.INSTRUCTOR:
+        return localStorage.getItem("fotoPerfil") || 'assets/default.png';
+      
+      case RemitenteTipo.DEPORTISTA:
+        if (this.selectedChat?.tipo === ChatTipo.EQUIPO) {
+          return this.fotosDeportistas.get(mensaje.remitenteId) || 'assets/default.png';
+        }
+        return this.selectedChat?.deportista?.fotoPerfil || 'assets/default.png';
+      
+      case RemitenteTipo.ORGANIZACION:
+        return this.selectedChat?.organizacion?.imagen || 'assets/default.png';
+      
+      default:
+        return 'assets/default.png';
+    }
+  }
+
+  sendMessage(): void {
+    if (!this.newMessage.trim() || !this.selectedChat) return;
+
+    const message: MensajeDTO = {
+      idChat: this.selectedChat.id,
+      contenido: this.newMessage,
+      remitenteTipo: RemitenteTipo.INSTRUCTOR,
+      remitenteId: Number(localStorage.getItem("id")),
+      fechaEnvio: new Date(),
+      leido: false
+    };
+
+    this.wsservice.sendMessage(message);
+    this.messages = [...this.messages, message];
+    this.newMessage = '';
+    this.scrollToBottom();
+    this.cdRef.markForCheck();
+  }
+
+  private setupWebSocket(): void {
+    this.wsSubscription = this.wsservice.connect().subscribe({
+      next: (mensaje: MensajeDTO) => {
+        if (mensaje.idChat === this.selectedChat?.id) {
+          this.messages = [...this.messages, mensaje];
+          this.scrollToBottom();
+        }
+        this.updateChatList(mensaje);
+        this.cdRef.markForCheck();
+      },
+      error: (err) => console.error('Error en WebSocket:', err)
+    });
+  }
+
+  private updateChatList(newMessage: MensajeDTO): void {
+    const chatIndex = this.chats.findIndex(c => c.id === newMessage.idChat);
+    if (chatIndex === -1) return;
+
+    const chat = this.chats[chatIndex];
+    
+    if (this.selectedChat?.id !== newMessage.idChat) {
+    }
+
+    // Mover el chat actualizado al principio
+    this.chats.splice(chatIndex, 1);
+    this.chats.unshift(chat);
   }
 
   loadMessages(reset: boolean = false): void {
-    const token = localStorage.getItem("token")
-    if(!token ) {
-            throw new Error("Not Token Found")
-          }
     if (!this.selectedChat || this.loadingMessages) return;
+    
+    const token = this.getToken();
 
     if (reset) {
       this.currentPage = 0;
       this.messages = [];
+      this.totalMessages = 0;
+    }
+
+    if (this.totalMessages > 0 && this.messages.length >= this.totalMessages) {
+      return;
     }
 
     this.loadingMessages = true;
-    
+
     this.mservice.getMensajesPaginados(
       this.selectedChat.id,
       this.currentPage,
       this.pageSize,
       token
     ).pipe(
-      finalize(() => this.loadingMessages = false)
+      finalize(() => {
+        this.loadingMessages = false;
+        this.cdRef.markForCheck();
+      })
     ).subscribe({
       next: (pagina) => {
-        const nuevosMensajes = pagina.content.map(msg => ({
-        ...msg,
-        sentAt: msg.fechaEnvio,
-        content: msg.contenido,
-        senderId: msg.remitenteId,
-        read: msg.leido
-      }));
-      
-      this.messages = reset ? nuevosMensajes : [...nuevosMensajes, ...this.messages];
+        const nuevosMensajes = pagina.content;
+        this.messages = reset 
+          ? nuevosMensajes 
+          : [...nuevosMensajes, ...this.messages];
+        
         this.totalMessages = pagina.totalElements;
         this.currentPage++;
-        this.messages.reverse()
-        this.scrollToBottom();
+        
+        if (reset) this.scrollToBottom();
       },
-      error: (err) => console.error('Error loading messages:', err)
+      error: (err) => console.error('Error cargando mensajes:', err)
     });
   }
 
-  onScroll(event: any): void {
-    const element = event.target;
-    const atTop = element.scrollTop === 0;
-    
-    if (atTop && this.currentPage * this.pageSize < this.totalMessages) {
+  onScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    if (element.scrollTop === 0 && !this.loadingMessages) {
       this.loadMessages();
     }
   }
 
-  sendMessage(): void {
-    const id = Number(localStorage.getItem("id"))
-    const rol = localStorage.getItem("rol")
-    console.log(rol)
-    if (!rol){
-      throw new Error("Not Token Found")
-    }
-    if (!this.newMessage.trim() || !this.selectedChat) return;
-    const message :MensajeDTO = {
-      idChat: this.selectedChat.id,
-      contenido: this.newMessage,
-      remitenteTipo : RemitenteTipo.INSTRUCTOR,
-      remitenteId: id,
-      fechaEnvio: new Date(),
-      leido : false
-    };
-    console.log(message)
-    this.wsservice.sendMessage(message);
-    this.messages.push({
-      ...message,
-      sentAt: new Date().toISOString(),
-      read: false
-    });
-    
-    this.newMessage = '';
-    this.scrollToBottom();
-  }
-
-  private setupWebSocket(): void {
-    this.wsservice.connect().subscribe({
-    next: (mensaje: MensajeDTO) => {
-      if (mensaje.idChat === this.selectedChat?.id) {
-        this.messages.push(mensaje);
-        this.scrollToBottom();
-      }
-      this.updateChatList(mensaje);
-    },
-    error: (err) => console.error('Error en WebSocket:', err)
-  });
-  }
-
-  private updateChatList(newMessage: any): void {
-    const chat = this.chats.find(c => c.id === newMessage.chatId);
-    if (chat) {
-      chat.lastMessage = newMessage.content;
-      chat.lastMessageDate = newMessage.sentAt;
-      if (this.selectedChat?.id !== newMessage.chatId) {
-        chat.unread += 1;
-      }
-    }
-  }
-
-  private calculateUnreadMessages(chat: any): number {
-    return chat.messages?.filter((m: any) => 
-      !m.read && m.senderId !== this.currentUser.id
-    ).length || 0;
-  }
-
-  private markMessagesAsRead(chatId: number): void {
-    const token = localStorage.getItem("token");
-  if (!token) return;
-
-  this.cservice.markAsRead(token, chatId)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        this.chats = this.chats.map(chat => {
-          if (chat.id === chatId) {
-            chat.unread = 0;
-          }
-          return chat;
-        });
-      },
-      error: (err) => console.error('Error marcando como leído:', err)
-    });
-  }
 
   private scrollToBottom(): void {
     setTimeout(() => {
@@ -274,36 +343,53 @@ export class ChatComponent {
     }, 100);
   }
 
-  getChatName(chat: Chat): string {
-    switch(chat.tipo) {
-      case 'INSTRUCTOR_DEPORTISTA':
-        return chat.deportista?.nombre + ' ' + chat.deportista?.apellido;
-      case 'EQUIPO':
-        return chat.equipo?.nombre;
-      case 'INSTRUCTOR_ORGANIZACION':
-        return chat.organizacion?.nombre;
+  getChatName(chat: Chat | null): string {
+    if (!chat) return 'Chat';
+    
+    switch (chat.tipo) {
+      case ChatTipo.INSTRUCTOR_DEPORTISTA:
+        return `${chat.deportista?.nombre} ${chat.deportista?.apellido}`;
+      case ChatTipo.EQUIPO:
+        return chat.equipo?.nombre || 'Equipo';
+      case ChatTipo.INSTRUCTOR_ORGANIZACION:
+        return chat.organizacion?.nombre || 'Organización';
       default:
         return 'Chat';
     }
   }
 
-isCurrentUser(mensaje: Mensaje): boolean {
-  const currentUserId = Number(localStorage.getItem("id"));
-  return mensaje.remitenteId === currentUserId && mensaje.remitenteTipo=="INSTRUCTOR";
-}
+  getImagenUrl(chat: Chat | null): string {
+    if (!chat) return 'assets/default.png';
+    
+    switch (chat.tipo) {
+      case ChatTipo.INSTRUCTOR_DEPORTISTA:
+        return chat.deportista?.fotoPerfil || 'assets/default.png';
+      case ChatTipo.EQUIPO:
+        return chat.equipo?.img || 'assets/default.png';
+      case ChatTipo.INSTRUCTOR_ORGANIZACION:
+        return chat.organizacion?.imagen || 'assets/default.png';
+      default:
+        return 'assets/default.png';
+    }
+  }
 
-  formatDate(dateString: string | Date | undefined | null): string {
-  if (!dateString) return ''; // Devuelve vacío si es null o undefined
+  isCurrentUser(mensaje: MensajeDTO): boolean {
+    const currentUserId = Number(localStorage.getItem("id"));
+    return mensaje.remitenteId === currentUserId && 
+           mensaje.remitenteTipo === RemitenteTipo.INSTRUCTOR;
+  }
 
-  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-
-  if (isNaN(date.getTime())) return ''; // Fecha inválida (como new Date(''))
-
-  return date.toLocaleTimeString('es-ES', {
-    hour: '2-digit',
-    minute: '2-digit',
-    day: '2-digit',
-    month: '2-digit'
-  });
-}
+  formatDate(date: Date | string | null | undefined): string {
+    if (!date) return '';
+    
+    const fecha = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(fecha.getTime())) return '';
+    
+    return fecha.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit'
+    });
+  }
 }
