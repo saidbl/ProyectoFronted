@@ -65,7 +65,7 @@ export class EquiposComponent implements OnInit{
   navigation = [
   { name: 'Eventos', route: '../equipoEvento', icon: 'event' },
   { name: 'Deportistas', route: '../rutinaDeportista', icon: 'people' },
-  { name: 'Equipos', route: '../crearEquipos', icon: 'groups' },
+  { name: 'Principal', route: '..', icon: 'home' },
   { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
   { name: 'Reportes', route: '../reportes', icon: 'analytics' }
 ];
@@ -390,6 +390,7 @@ private calcularEstadisticas(): void {
           this.equipos = this.equipos.filter(e => e !== equipo);
           if(data.success){
             this.cargando = false;
+            this.mostrarConfirmacionEliminar=false
             this.mostrarExitoSweetAlert('Equipo eliminado', 'El equipo se ha eliminado correctamente');
             this.actualizarListaEquipos();
           }else{

@@ -1,7 +1,8 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { DeportistaService } from '../../../services/deportista.service';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RutinaJugadorService } from '../../../services/rutinajugador.service';
 import { RutinaJugador } from '../../../models/rutinajugador.model';
 import { RutinaService } from '../../../services/rutina.service';
@@ -17,11 +18,13 @@ import { EvolucionFisicaDTO } from '../../../models/evolucionFisicaDTO.model';
 import { MatIcon } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { InstructorService } from '../../../services/instructor.service';
+import { Posicion } from '../../../models/posicion.model';
+
 Chart.register(...registerables);
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-rutina-deportista',
-    imports: [FormsModule, CommonModule, RouterModule,MatIcon],
+    imports: [FormsModule, CommonModule, RouterModule,MatIcon,ReactiveFormsModule],
     standalone: true,
     templateUrl: './rutina-deportista.component.html',
     styleUrl: './rutina-deportista.component.css'
@@ -38,6 +41,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   deportistas: DeportistaRendimiento[] = [];
   rutinasF : Rutina[]=[]
   rutinasJugador: RutinaJugador[] = [];
+  disabledbutton : boolean = false
   rutinas: Rutina[] = []
   jugadorSeleccionado: DeportistaRendimiento|null = null;
   rutinaSeleccionada!: number;
@@ -64,7 +68,6 @@ contadorProgresos: number = 0;
   deportistasFiltrados: DeportistaRendimiento[] = [];
   mostrarFiltros: boolean = false;
   cargando: boolean = true;
-  posiciones: any[] = [];
   busquedaRutina: string = '';
   filtroTipoRutina: string = '';
   tiposRutina = [
@@ -78,8 +81,12 @@ contadorProgresos: number = 0;
   
   nombre: string = '';
   apellido: string = '';
+  previewImage: string | ArrayBuffer | null = null;
   metricasRendimiento: any[] = [];
   objetivosJugador: any[] = [];
+  fotoPerfilFile: File | null = null;
+  modalRegistroJugador:boolean = false
+  posiciones: Posicion[] = [];
   evolucionChart: any;
   medicionesJugador: any[] = [];
   totalJugadores: number = 0;
@@ -89,15 +96,46 @@ contadorProgresos: number = 0;
   progresoPromedio: number = 0;
   jugadoresDestacados: number = 0;
   private chart: Chart | undefined = undefined;
+  @Output() close = new EventEmitter<void>();
+  jugadorForm: FormGroup;
   navigation = [
   { name: 'Eventos', route: '../equipoEvento', icon: 'event' },
-  { name: 'Deportistas', route: '../rutinaDeportista', icon: 'people' },
+  { name: 'Principal', route: '..', icon: 'people' },
   { name: 'Equipos', route: '../crearEquipos', icon: 'groups' },
   { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
   { name: 'Reportes', route: '../reportes', icon: 'analytics' }
 ];
 userAvatar:string= ""
-constructor(public router: Router) {}
+constructor(public router: Router,private fb: FormBuilder,private cd: ChangeDetectorRef) {
+  this.jugadorForm = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+  apellido: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+  email: ['', [Validators.required, Validators.email]],
+  password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(30)]],
+  id_instructor:['', [Validators.required]],
+  id_deporte: [Number(localStorage.getItem("idDeporte")), [Validators.required]],
+  id_posicion: ['', [Validators.required]],
+  genero: ['', [Validators.required, Validators.pattern(/^(masculino|femenino)$/i)]],
+  fecha_nacimiento: ['', [Validators.required,this.mayorDeEdadValidator,this.noFuturoValidator]],
+  telefono: ['', [Validators.pattern(/^\d{7,15}$/)]], 
+  direccion: ['', [Validators.maxLength(200)]],
+  fotoPerfil: [null, Validators.required],
+  peso: ['', [Validators.required, Validators.min(20), Validators.max(300)]], 
+  estatura: ['', [Validators.required, Validators.min(100), Validators.max(250)]], // en cm
+
+  porcentaje_grasa: ['', [Validators.min(0), Validators.max(100)]], // % corporal
+  masa_muscular: ['', [Validators.min(0), Validators.max(100)]], // % corporal (o puedes ajustar el límite superior si se usa en kg)
+
+  circunferencia_brazo: ['', [Validators.min(10), Validators.max(80)]],
+  circunferencia_cintura: ['', [Validators.min(30), Validators.max(200)]], 
+  circunferencia_cadera: ['', [Validators.min(30), Validators.max(200)]],
+
+  presion_arterial: ['', [Validators.pattern(/^\d{2,3}\/\d{2,3}$/)]], 
+  frecuencia_cardiaca_reposo: ['', [Validators.min(30), Validators.max(200)]], 
+
+  notas: ['', [Validators.maxLength(500)]]
+    });
+}
 
 
   ngOnInit() {
@@ -154,11 +192,62 @@ constructor(public router: Router) {}
             this.cdRef.markForCheck();
     }
   }
+  noFuturoValidator(control: AbstractControl): ValidationErrors | null {
+  const fecha = new Date(control.value);
+  const hoy = new Date();
+  return fecha > hoy ? { fechaFutura: true } : null;
+}
+  mayorDeEdadValidator(control: AbstractControl): ValidationErrors | null {
+  const fechaNacimiento = new Date(control.value);
+  const hoy = new Date();
+  
+  const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+  const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+  const dia = hoy.getDate() - fechaNacimiento.getDate();
+
+  const esMayorDeEdad =
+    edad > 14 ||
+    (edad === 14 && (mes > 0 || (mes === 0 && dia >= 0)));
+
+  return esMayorDeEdad ? null : { menorDeEdad: true };
+}
+
   ngOnDestroy() {
   this.destroy$.next();
   this.destroy$.complete();
   this.destruirGraficos();
 }
+onFileChange(event: any): void {
+  const fileInput = event.target as HTMLInputElement;
+  const file: File | null = fileInput.files?.[0] || null;
+  if (!file) return;
+
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+  const maxSizeMB = 2;
+
+  if (!allowedTypes.includes(file.type)) {
+    alert('Tipo de archivo no permitido. Usa PNG o JPG.');
+    fileInput.value = '';
+    return;
+  }
+
+  if (file.size > maxSizeMB * 1024 * 1024) {
+    alert('El archivo supera los 2MB.');
+    fileInput.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    this.previewImage = reader.result; 
+    this.fotoPerfilFile = file;
+    this.jugadorForm.get('fotoPerfil')?.setValue(file);
+    this.cd.detectChanges(); 
+  };
+  reader.readAsDataURL(file);
+}
+
+
 private mostrarErrorAutenticacion(): void {
         Swal.fire({
             icon: 'error',
@@ -215,6 +304,99 @@ cerrarSesion() {
   }
   return edad;
 }
+private showSuccessAlert(title: string, message: string): void {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'success',
+      confirmButtonColor: '#10b981',
+      background: '#1f2937',
+      color: '#fff',
+      iconColor: '#10b981',
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+private showErrorAlert(title: string, message: string): void {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'error',
+      confirmButtonColor: '#ef4444',
+      background: '#1f2937',
+      color: '#fff',
+      iconColor: '#ef4444'
+    });
+  }
+  private showWarningAlert(title: string, message: string): void {
+      Swal.fire({
+        title: title,
+        text: message,
+        icon: 'warning',
+        confirmButtonColor: '#f59e0b',
+        background: '#1f2937',
+        color: '#fff',
+        iconColor: '#f59e0b'
+      });
+    }
+onSubmit(): void {
+  const id = Number(localStorage.getItem("id"))
+  const deporte = Number(localStorage.getItem("idDeporte"))
+  const token=localStorage.getItem("token")
+  this.jugadorForm.get('id_instructor')?.setValue(id);
+   this.jugadorForm.get('id_deporte')?.setValue(deporte);
+      if(!token) {
+        this.mostrarErrorAutenticacion();
+        return;
+      }
+    if (this.jugadorForm.invalid) {
+       this.showErrorAlert("Formulario Invalido","Favor de llenar todos los campos o corregir validaciones")
+      return;
+    }
+    const formData = new FormData();
+    Object.keys(this.jugadorForm.controls).forEach(key => {
+      if (key !== 'foto_perfil') {
+        formData.append(key, this.jugadorForm.get(key)?.value);
+      }
+    });
+    if (this.fotoPerfilFile) {
+      const foto = this.jugadorForm.get('fotoPerfil')?.value;
+      formData.append('foto_perfil', foto);
+    }
+    const medicionData = {
+      fecha: new Date().toISOString().split('T')[0],
+      peso: this.jugadorForm.get('peso')?.value,
+      estatura: this.jugadorForm.get('estatura')?.value,
+      porcentajeGrasa: this.jugadorForm.get('porcentaje_grasa')?.value,
+      masaMuscular: this.jugadorForm.get('masa_muscular')?.value,
+      circunferenciaBrazo: this.jugadorForm.get('circunferencia_brazo')?.value,
+      circunferenciaCintura: this.jugadorForm.get('circunferencia_cintura')?.value,
+      circunferenciaCadera: this.jugadorForm.get('circunferencia_cadera')?.value,
+      presionArterial: this.jugadorForm.get('presion_arterial')?.value,
+      frecuenciaCardiacaReposo: this.jugadorForm.get('frecuencia_cardiaca_reposo')?.value,
+      notas: this.jugadorForm.get('notas')?.value
+    };
+
+    formData.append('medicion', JSON.stringify(medicionData));
+
+    this.dservice.add(token,formData).subscribe({
+      next:(data) => {
+        console.log('Jugador registrado con éxito', data);
+        this.closeModal();
+        this.showSuccessAlert("Registrado","Jugador registrado correctamente")
+        this.modalRegistroJugador= false
+        this.cargarDatosIniciales()
+      },
+      error:(err) => {
+        console.error('Error registrando jugador', err);
+        this.showErrorAlert(err.error,"Error de registro")
+      }
+});
+  }
+
+  closeModal(): void {
+    this.close.emit();
+  }
 toggleUserDropdown() {
     this.showUserDropdown =  !this.showUserDropdown;
   }
@@ -252,6 +434,7 @@ toggleUserDropdown() {
     }
     forkJoin({
       rutinasJugador: this.rservice.list(deportista.deportista.id, token),
+      
     }).subscribe({
       next: (data) => {
         this.rutinasJugador = data.rutinasJugador;
@@ -262,8 +445,6 @@ toggleUserDropdown() {
         console.error("Error loading data", err);
       }
     });
-  }
-  async exportarDatos() {
   }
    aplicarFiltros() {
     this.filtrarDeportistas();
@@ -602,6 +783,7 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
 }
 
 
+
     abrirModalAsignar(deportista: DeportistaRendimiento|null) {
     const token=localStorage.getItem("token")
     if(!token) {
@@ -632,6 +814,9 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
                 this.cdRef.markForCheck();
       }
     });
+    if(this.rutinasFiltradas.length> 0){
+      this.disabledbutton=true
+    }
     this.busquedaRutina = '';
     this.filtroTipoRutina = '';
   }

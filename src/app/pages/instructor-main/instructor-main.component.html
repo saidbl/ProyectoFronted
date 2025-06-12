@@ -166,7 +166,7 @@
                       duration-300 border border-gray-700 hover:border-blue-400/30">
             <div class="flex items-center space-x-4">
               <img class="h-12 w-12 rounded-full object-cover border-2 border-blue-400/20" 
-                   [src]="deportista.genero" alt="Foto perfil">
+                   [src]="'http://localhost:8080/'+deportista.fotoPerfil" alt="Foto perfil">
               <div class="flex-1">
                 <h4 class="text-sm font-medium text-white">{{deportista.nombre}} {{deportista.apellido}}</h4>
                 <div class="flex items-center space-x-2 mt-1">
@@ -200,10 +200,6 @@
               <div class="relative">
                 <img class="h-12 w-12 rounded-full object-cover border-2 border-green-400/20" 
                      [src]="'http://localhost:8080/' + equipo.img" alt="Logo equipo">
-                <div class="absolute -right-1 -bottom-1 w-3 h-3 rounded-full 
-                            border-2 border-gray-800" 
-                     [ngClass]="{'bg-green-400': equipo.estado === 'activo', 
-                                 'bg-yellow-400': equipo.estado === 'inactivo'}"></div>
               </div>
               <div class="flex-1">
                 <h4 class="text-sm font-medium text-white">{{equipo.nombre}}</h4>

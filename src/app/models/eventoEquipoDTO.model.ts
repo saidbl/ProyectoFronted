@@ -1,5 +1,5 @@
 export interface EventoEquipoDTO{
     id?: number;
-    idEvento: number;
+    idEvento?: number;
     idEquipo: number;
 }

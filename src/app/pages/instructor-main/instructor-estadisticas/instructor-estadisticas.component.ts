@@ -27,6 +27,13 @@ export class InstructorEstadisticasComponent implements OnInit {
   private crservice = inject(CheckInRutinaService);
   private dservice = inject(DeportistaService)
   private iservice = inject (InstructorService)
+   navigation = [
+  { name: 'Eventos', route: '../equipoEvento', icon: 'event' },
+  { name: 'Deportistas', route: '../rutinaDeportista', icon: 'people' },
+  { name: 'Equipos', route: '../crearEquipos', icon: 'groups' },
+  { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
+  { name: 'Principal', route: '..', icon: 'home' }
+];
     showNotification: boolean = false;
   notificationMessage: string = '';
   showUserDropdown: boolean = false;
@@ -145,6 +152,9 @@ export class InstructorEstadisticasComponent implements OnInit {
       }]
     };
   }
+  isNumber(value: any): value is number {
+  return typeof value === 'number' && !isNaN(value);
+}
 
   get chartDataGeneral() {
     return {

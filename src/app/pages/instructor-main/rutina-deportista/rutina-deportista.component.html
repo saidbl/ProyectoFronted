@@ -22,9 +22,6 @@
         </div>
 
         <div class="flex items-center space-x-4">
-          <button  mat-icon-button class="text-gray-400 hover:text-blue-400">
-            <mat-icon>notifications</mat-icon>
-          </button>
           <div class="relative">
             <button (click)="toggleUserDropdown()" 
                     class="flex items-center space-x-2 group focus:outline-none">
@@ -131,11 +128,11 @@
 
       <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-2xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition-all">
         <div class="flex flex-col h-full justify-between">
-          <div>
+          <div >
             <mat-icon class="text-white mb-2">add_circle</mat-icon>
             <h3 class="text-lg font-semibold text-white">Nuevo Jugador</h3>
           </div>
-          <button class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/5 hover:bg-white/10 text-white py-2.5 px-4 rounded-xl border border-white/10 transition-all">
+          <button (click)="modalRegistroJugador=true" class="mt-4 w-full flex items-center justify-center space-x-2 bg-white/5 hover:bg-white/10 text-white py-2.5 px-4 rounded-xl border border-white/10 transition-all">
             <mat-icon>person_add</mat-icon>
             <span class="text-sm">Agregar nuevo</span>
           </button>
@@ -149,7 +146,7 @@
            class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6 hover:border-blue-500/30 transition-all group">
         <div class="flex items-start space-x-4 mb-4">
           <div class="relative">
-            <img [src]="dep.deportista.genero === 'Femenino' ? 'assets/female-athlete.jpg' : 'assets/male-athlete.jpg'" 
+            <img [src]="'http://localhost:8080/'+dep.deportista.fotoPerfil" 
                  class="w-14 h-14 rounded-full border-2 border-gray-600 object-cover">
             <div class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900"
                  [class.bg-green-500]="dep.deportista.activo"
@@ -160,10 +157,6 @@
             <p class="text-sm text-blue-400">{{ dep.deportista.posicion.nombre }}</p>
             <div class="flex items-center space-x-2 mt-1">
               <span class="text-xs text-gray-400">{{ calcularEdad(dep.deportista.fechaNacimiento) }} años</span>
-              <span class="text-xs bg-yellow-900/30 text-yellow-400 px-2 py-0.5 rounded-full flex items-center">
-                <mat-icon class="text-xs mr-1">star</mat-icon>
-                Destacado
-              </span>
             </div>
           </div>
         </div>
@@ -367,7 +360,7 @@
         Cancelar
       </button>
       <button (click)="asignarRutina()" 
-              [disabled]="!rutinaSeleccionada" 
+              [disabled]="!rutinaSeleccionada || disabledbutton" 
               class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-md hover:to-blue-600 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -417,7 +410,7 @@
               <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div class="flex flex-col items-center">
                   <div class="relative mb-4">
-                    <img [src]="jugadorSeleccionado?.deportista?.genero === 'Femenino' ? 'assets/female-athlete.jpg' : 'assets/male-athlete.jpg'" 
+                    <img [src]="'http://localhost:8080/'+jugadorSeleccionado?.deportista?.fotoPerfil" 
                          class="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-xl">
                     <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full border-2 border-white dark:border-gray-800"
                          [ngClass]="{
@@ -461,17 +454,6 @@
                       <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {{ jugadorSeleccionado?.deportista?.fechaNacimiento | date:'mediumDate' }}
                       </p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    <div>
-                      <p class="text-xs font-medium text-gray-500 dark:text-gray-400">EQUIPO</p>
-                      <p class="text-gray-900 dark:text-gray-100">Primer Equipo</p>
-                      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Dorsal #{{ jugadorSeleccionado?.deportista }}</p>
                     </div>
                   </div>
                 </div>
@@ -631,14 +613,6 @@
                   {{rutinasJugador.length || 0}} en progreso
                 </span>
               </h4>
-              <div class="flex space-x-2">
-                <button class="text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Ordenar por
-                  <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                </button>
-              </div>
             </div>
 
             <div class="grid gap-3">
@@ -708,60 +682,248 @@
               </div>
             </div>
           </div>
-
-          <div>
-            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-5 flex items-center">
-              <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full"></span>
-              Historial de Ejecución
-            </h4>
-            
-            <div class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-              <div class="grid grid-cols-4 bg-gray-50 dark:bg-gray-800 px-5 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
-                <div>Rutina</div>
-                <div>Fecha</div>
-                <div>Estado</div>
-                <div>Feedback</div>
-              </div>
-              <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                <div *ngFor="let checkin of checkinsJugador" 
-                     class="grid grid-cols-4 px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <div class="font-medium text-gray-900 dark:text-white">{{checkin.rutina.nombre}}</div>
-                  <div class="text-gray-500 dark:text-gray-400">{{checkin.fecha | date:'mediumDate'}}</div>
-                  <div>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
-                      'text-emerald-700 bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-900/30': checkin.estado === 'COMPLETADA',
-                      'text-rose-700 bg-rose-100 dark:text-rose-300 dark:bg-rose-900/30': checkin.estado === 'INCOMPLETA',
-                      'text-amber-700 bg-amber-100 dark:text-amber-300 dark:bg-amber-900/30': checkin.estado === 'PENDIENTE'
-                    }">
-                      {{checkin.estado | lowercase}}
-                    </span>
-                  </div>
-                  <div class="text-gray-500 dark:text-gray-400 truncate">{{checkin.comentarios || 'Sin comentarios'}}</div>
-                </div>
-                <div *ngIf="!checkinsJugador?.length" class="p-8 text-center">
-                  <div class="text-gray-400 dark:text-gray-500">No hay registros de ejecución disponibles</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <!-- Footer -->
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/70 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
           <button (click)="cerrarModal()" 
                   class="px-5 py-2.5 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
             Cerrar
           </button>
-          <button (click)="abrirModalAsignar(jugadorSeleccionado)" 
-                  class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:to-blue-600 transition-all shadow-sm hover:shadow-md flex items-center">
-            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-            </svg>
-            Nueva Rutina
-          </button>
         </div>
       </div>
     </div>
+  </div>
+</div>
+<div *ngIf="modalRegistroJugador" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-lg">
+  <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+    <!-- Encabezado -->
+    <div class="p-6 border-b border-gray-700 bg-gray-800/50 backdrop-blur relative top-0">
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-white">
+          <i class="fas fa-user-plus mr-2 text-blue-400"></i>
+          Registrar Nuevo Jugador
+        </h2>
+        <button
+          (click)="modalRegistroJugador = false"
+          class="text-white hover:text-white bg-red-700/70 rounded-md w-10 h-10 flex items-center justify-center shadow transition duration-200"
+        >
+          <mat-icon class="text-xl leading-none">close</mat-icon>
+        </button>
+
+
+
+      </div>
+      <p class="text-gray-400 mt-2">Completa los datos del jugador y su primera medición física</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="jugadorForm" (ngSubmit)="onSubmit()" class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Columna Izquierda - Datos Personales -->
+        <div class="md:col-span-1">
+          <h3 class="text-lg font-semibold text-white mb-4 pb-2 border-b border-gray-700">
+            <i class="fas fa-id-card mr-2 text-blue-400"></i>Datos Personales
+          </h3>
+          
+          <!-- Foto de perfil -->
+<div class="flex justify-center">
+        <div class="relative group w-36 h-36">
+          <img [src]="previewImage" 
+               class="w-full h-full rounded-full border-4 border-blue-400/30 object-cover hover:border-blue-500 transition-all duration-300 shadow-md"/>
+          
+          <label class="absolute bottom-2 right-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:opacity-90 transition-all shadow-md">
+            <input type="file" accept="image/*" (change)="onFileChange($event)" class="hidden"/>
+            <mat-icon class="!text-white !text-xl leading-none">photo_camera</mat-icon>
+          </label>
+        </div>
+      </div>
+
+          <!-- Campos del formulario -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-gray-300 mb-2">Nombre *</label>
+              <input type="text" formControlName="nombre" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+            </div>
+            <div *ngIf="jugadorForm.get('nombre')?.invalid && jugadorForm.get('nombre')?.touched" class="text-red-500 text-sm mt-1">
+              El nombre es obligatorio.
+            </div>
+            
+            <div>
+              <label class="block text-gray-300 mb-2">Apellido *</label>
+              <input type="text" formControlName="apellido" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+            </div>
+            <div *ngIf="jugadorForm.get('apellido')?.invalid && jugadorForm.get('apellido')?.touched" class="text-red-500 text-sm mt-1">
+              El apellido es obligatorio.
+            </div>
+            
+            <div>
+              <label class="block text-gray-300 mb-2">Email *</label>
+              <input type="email" formControlName="email" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+            </div>
+            <div *ngIf="jugadorForm.get('email')?.invalid && jugadorForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+              El email es obligatorio.
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">Contraseña *</label>
+              <input type="password" formControlName="password" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+            </div>
+            <div *ngIf="jugadorForm.get('password')?.invalid && jugadorForm.get('password')?.touched" class="text-red-500 text-sm mt-1">
+              El password es obligatorio y debe de tener de 6 a 30 digitos
+            </div>
+            
+            <div>
+              <label class="block text-gray-300 mb-2">Fecha de Nacimiento *</label>
+              <input type="date" formControlName="fecha_nacimiento" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+            </div>
+            <div *ngIf="jugadorForm.get('fecha_nacimiento')?.invalid && jugadorForm.get('fecha_nacimiento')?.touched" class="text-red-500 text-sm mt-1">
+              El fecha de nacimiento es obligatorio. Mayor a 18 años y no fecha futura
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna Derecha - Detalles Deportivos y Medición -->
+        <div class="md:col-span-1">
+          <!-- Detalles Deportivos -->
+          <div class="mb-8">
+            <h3 class="text-lg font-semibold text-white mb-4 pb-2 border-b border-gray-700">
+              <i class="fas fa-running mr-2 text-green-400"></i>Detalles Deportivos
+            </h3>
+            
+            <div class="space-y-4">
+            
+              <div>
+                <label class="block text-gray-300 mb-2">Posición *</label>
+                <select formControlName="id_posicion" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+                  <option value="">Seleccionar posición</option>
+                  <option *ngFor="let posicion of posiciones" [value]="posicion.id">{{posicion.nombre}}</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 mb-2">Género *</label>
+                <select formControlName="genero" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+                  <option value="">Seleccionar género</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                </select>
+              </div>
+              <div *ngIf="jugadorForm.get('genero')?.invalid && jugadorForm.get('genero')?.touched" class="text-red-500 text-sm mt-1">
+              El genero es obligatorio.
+            </div>
+              
+              <div>
+                <label class="block text-gray-300 mb-2">Teléfono</label>
+                <input type="text" formControlName="telefono" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('telefono')?.invalid && jugadorForm.get('telefono')?.touched" class="text-red-500 text-sm mt-1">
+              El telefono es obligatorio.Debe de ser de 7 a 15 numeros
+            </div>
+              
+              <div>
+                <label class="block text-gray-300 mb-2">Dirección</label>
+                <input type="text" formControlName="direccion" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('direccion')?.invalid && jugadorForm.get('direccion')?.touched" class="text-red-500 text-sm mt-1">
+              El direccion es obligatorio.
+            </div>
+            </div>
+          </div>
+
+          <!-- Primera Medición Física -->
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-4 pb-2 border-b border-gray-700">
+              <i class="fas fa-weight-scale mr-2 text-purple-400"></i>Primera Medición Física
+            </h3>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">Peso (kg) *</label>
+                <input type="number" step="0.01" formControlName="peso" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('peso')?.invalid && jugadorForm.get('peso')?.touched" class="text-red-500 text-sm mt-1">
+              El peso es obligatorio. El minimo es de 20 a 300
+            </div>
+              <div>
+                <label class="block text-gray-300 mb-2">Estatura (cm) *</label>
+                <input type="number" formControlName="estatura" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('estatura')?.invalid && jugadorForm.get('estatura')?.touched" class="text-red-500 text-sm mt-1">
+              El estatura es obligatorio. De 100 a 250 cm
+            </div>
+              <div>
+                <label class="block text-gray-300 mb-2">% Grasa Corporal</label>
+                <input type="number" step="0.01" formControlName="porcentaje_grasa" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('porcentaje_grasa')?.invalid && jugadorForm.get('porcentaje_grasa')?.touched" class="text-red-500 text-sm mt-1">
+              El porcentaje de grasa es obligatorio.De 0 a 100
+            </div>
+              <div>
+                <label class="block text-gray-300 mb-2">Masa Muscular (kg)</label>
+                <input type="number" step="0.01" formControlName="masa_muscular" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('masa_muscular')?.invalid && jugadorForm.get('masa_muscular')?.touched" class="text-red-500 text-sm mt-1">
+              La masa muscular es obligatorio. De 0 a 100
+            </div>
+              <div class="col-span-2">
+                <label class="block text-gray-300 mb-2">Circunferencias (cm)</label>
+                <div class="grid grid-cols-3 gap-3">
+                  <div>
+                    <input type="number" step="0.01" formControlName="circunferencia_brazo" placeholder="Brazo" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+                  </div>
+                  <div *ngIf="jugadorForm.get('circunferencia_brazo')?.invalid && jugadorForm.get('circunferencia_brazo')?.touched" class="text-red-500 text-sm mt-1">
+              Obligatorio.De 10 a 80
+            </div>
+                  <div>
+                    <input type="number" step="0.01" formControlName="circunferencia_cintura" placeholder="Cintura" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+                  </div>
+                  <div *ngIf="jugadorForm.get('circunferencia_cintura')?.invalid && jugadorForm.get('circunferencia_cintura')?.touched" class="text-red-500 text-sm mt-1">
+              Obligatorio. De 30 a 200
+            </div>
+                  <div>
+                    <input type="number" step="0.01" formControlName="circunferencia_cadera" placeholder="Cadera" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+                  </div>
+                  <div *ngIf="jugadorForm.get('circunferencia_cadera')?.invalid && jugadorForm.get('circunferencia_cadera')?.touched" class="text-red-500 text-sm mt-1">
+              Obligatorio. De 30 a 200
+            </div>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 mb-2">Presión Arterial</label>
+                <input type="text" formControlName="presion_arterial" placeholder="Ej: 120/80" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+               <div *ngIf="jugadorForm.get('presion_arterial')?.invalid && jugadorForm.get('presion_arterial')?.touched" class="text-red-500 text-sm mt-1">
+              Obligatorio.
+            </div>
+              <div>
+                <label class="block text-gray-300 mb-2">Frec. Cardíaca</label>
+                <input type="number" formControlName="frecuencia_cardiaca_reposo" placeholder="En reposo" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
+              </div>
+              <div *ngIf="jugadorForm.get('frecuencia_cardiaca_reposo')?.invalid && jugadorForm.get('frecuencia_cardiaca_reposo')?.touched" class="text-red-500 text-sm mt-1">
+              Obligatorio. De 30 a 200
+            </div>
+              <div class="col-span-2">
+                <label class="block text-gray-300 mb-2">Notas</label>
+                <textarea formControlName="notas" rows="2" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur"></textarea>
+              </div>
+              <div *ngIf="jugadorForm.get('notas')?.invalid && jugadorForm.get('notas')?.touched" class="text-red-500 text-sm mt-1">
+              Obligatorio.
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-700">
+        <button type="button" (click)="modalRegistroJugador=false" class="px-6 py-3 bg-gray-700 text-white rounded-xl hover:bg-gray-600 transition-colors">
+          Cancelar
+        </button>
+        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all transform hover:-translate-y-0.5 shadow-lg disabled:opacity-50">
+          <i class="fas fa-save mr-2"></i>Registrar Jugador
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 </div>

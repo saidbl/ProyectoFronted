@@ -1,7 +1,7 @@
 import { Component, OnInit,inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import { Evento } from '../../../models/evento.model';
 import { forkJoin } from 'rxjs';
 import { EventoService } from '../../../services/evento.service';
@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
+import { InstructorService } from '../../../services/instructor.service';
 @Component({
     selector: 'app-evento-equipo',
     standalone: true,
@@ -25,6 +26,7 @@ import Swal from 'sweetalert2';
     styleUrl: './evento-equipo.component.css'
 })
 export class EventoEquipoComponent implements OnInit{
+  private iservice = inject(InstructorService)
   private eservice= inject(EventoService)
   private eeservice = inject(EventoEquipoService)
   private eqservice = inject(EquipoService)
@@ -32,6 +34,9 @@ export class EventoEquipoComponent implements OnInit{
   private snackBar = inject(MatSnackBar);
    private dialog = inject(MatDialog);
   eventoSeleccionado:any= null
+  nombre: string = '';
+  apellido: string = '';
+  fotoPerfil: string = "http://localhost:8080/";
   eventos : Evento[] = []
   terminoBusqueda: string = '';
   mostrarDetallesEvento = false
@@ -45,7 +50,6 @@ export class EventoEquipoComponent implements OnInit{
   categoriaSeleccionada : string = ""
   nombreInstructor: string = '';
   vistaActual: 'detalles' | 'equipos' | 'fechas' = 'detalles';
-  fotoPerfil: string = '';
   showUserDropdown: boolean = false;
   eventosFiltrados: Evento[] = [];
   filtroDeporte: string = '';
@@ -53,12 +57,23 @@ export class EventoEquipoComponent implements OnInit{
   equipoSeleccionadoId: string | null = null;
   isLoading = false;
   equipos : Equipo[]=[]
+  navigation = [
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Deportistas', route: '../rutinaDeportista', icon: 'people' },
+  { name: 'Equipos', route: '../crearEquipos', icon: 'groups' },
+  { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
+  { name: 'Reportes', route: '../reportes', icon: 'analytics' }
+];
+constructor(public router:Router){}
   ngOnInit(): void {
     this.isLoading = true;
     try{
       const token=localStorage.getItem("token")
       const idDeporte = Number(localStorage.getItem("idDeporte"))
       const idInstructor= Number(localStorage.getItem("id"))
+      const fotoPerfil = localStorage.getItem("fotoPerfil")
+      const nom=localStorage.getItem("nombre")
+      const ap = localStorage.getItem("apellido")
       if(!token) {
         throw new Error("Not Token Found")
       }
@@ -72,6 +87,10 @@ export class EventoEquipoComponent implements OnInit{
           this.equipos = data.equipos
           this.filtrarEquipos()
           this.isLoading = false;
+          this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+          console.log(this.fotoPerfil)
+          this.nombre=nom ?? ''
+          this.apellido= ap ?? ''
         },
         error: (err) => {
           console.error("Error loading data", err);
@@ -243,6 +262,20 @@ export class EventoEquipoComponent implements OnInit{
       this.showUserDropdown = !this.showUserDropdown;
     }
   
-    logout(): void {
+    cerrarSesion() {
+     Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Quieres cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.iservice.logOut();
+        this.router.navigate(['/login']);
+        Swal.fire('Sesión cerrada', '', 'success');
+      }
+    });
     }
 }

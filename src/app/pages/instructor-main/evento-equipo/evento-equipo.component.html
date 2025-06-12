@@ -1,182 +1,232 @@
-<div *ngIf="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-  <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+<div *ngIf="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+  <div class="animate-pulse rounded-full h-16 w-16 bg-gradient-to-r from-blue-500 to-purple-600"></div>
 </div>
-<div class="min-h-screen bg-gray-950 font-sans">
-    <!-- Barra de navegación -->
-    <nav class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-10">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-          <div class="flex items-center">
-            <span class="text-xl font-bold text-blue-400">AllSports</span>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 font-sans">
+  <!-- Barra de navegación mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <mat-icon class="text-blue-400">sports</mat-icon>
+          <span class="text-xl font-bold text-blue-400 tracking-tighter">ALLSPORTS</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Instructor</span>
+        </div>
+        <!-- Menú central mejorado -->
+        <div class="hidden md:block">
+          <div class="ml-4 flex items-center space-x-6">
+            <a *ngFor="let nav of navigation" 
+               [routerLink]="nav.route"
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive(nav.route, false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive(nav.route, false)}">
+              <mat-icon class="mr-2 text-lg">{{nav.icon}}</mat-icon>
+              <span class="text-sm font-medium">{{nav.name}}</span>
+            </a>
           </div>
-          <div class="hidden md:block">
-            <div class="ml-10 flex items-center space-x-8">
-              <a routerLink="/instructor" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-                <i class="fas fa-home mr-2"></i> Inicio
+        </div>
+
+        <!-- Perfil con efecto neumórfico -->
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-9 w-9 rounded-full border-2 border-blue-400/30 shadow-lg 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100">{{nombre}} {{apellido}}</p>
+                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-2 bg-gray-800 border border-gray-700 z-20">
+              <a routerLink="../perfil" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                <mat-icon class="mr-2">person</mat-icon> Perfil
               </a>
-              <a routerLink="/instructor/equipos" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-                <i class="fas fa-users mr-2"></i> Mis Equipos
-              </a>
-              <a routerLink="/instructor/eventos" class="text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center">
-                <i class="fas fa-calendar-alt mr-2"></i> Eventos
+              <a (click)="cerrarSesion()" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 cursor-pointer">
+                <mat-icon class="mr-2">logout</mat-icon> Cerrar sesión
               </a>
             </div>
           </div>
-          <div class="flex items-center">
-            <div class="relative ml-3">
-              <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleUserDropdown()">
-                <span class="text-gray-300 text-sm">{{nombreInstructor}}</span>
-                <img class="h-8 w-8 rounded-full" [src]="fotoPerfil" alt="Foto perfil">
-                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-              </div>
-              <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-                <a routerLink="/instructor/perfil" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Mi Perfil</a>
-                <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">Cerrar sesión</a>
+          
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal mejorado -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Encabezado con efecto gradiente -->
+    <div class="text-center mb-10 animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent tracking-tight">
+        Gestión de Eventos
+      </h1>
+      <div class="mt-4 w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full mx-auto"></div>
+      <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
+        Asocia tus equipos a eventos disponibles y gestiona su participación
+      </p>
+    </div>
+
+    <!-- Filtros con efecto vidrio -->
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-search text-blue-400"></i>
+        </div>
+        <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarEventos()" 
+               class="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-xl bg-gray-800/60 backdrop-blur text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg" 
+               placeholder="Buscar eventos...">
+      </div>
+      
+      <div>
+        <select [(ngModel)]="filtroEstado" (change)="filtrarEventos()" 
+                class="block w-full pl-3 pr-10 py-3 border border-gray-700 rounded-xl bg-gray-800/60 backdrop-blur text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg">
+          <option value="">Todos los estados</option>
+          <option value="PLANIFICADO">Planificados</option>
+          <option value="ACTIVO">Activos</option>
+          <option value="PASADO">Completados</option>
+        </select>
+      </div>
+      
+    </div>
+
+    <!-- Tarjetas de eventos mejoradas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let evento of eventosFiltrados" 
+           class="bg-gradient-to-br from-gray-900/70 to-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 group hover:border-blue-400/30">
+        
+        <!-- Imagen con efecto de iluminación -->
+        <div class="relative h-48 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+          <img [src]="getImagenEvento(evento)" alt="{{evento.nombre}}" 
+               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+          
+          <!-- Estado con efecto neumórfico -->
+          <div class="absolute top-4 right-4 z-20">
+            <span class="text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg" 
+                  [ngClass]="{
+                    'bg-blue-900/30 text-blue-300 shadow-blue-500/20': evento.estado === 'PLANIFICADO',
+                    'bg-green-900/30 text-green-300 shadow-green-500/20': evento.estado === 'ACTIVO',
+                    'bg-purple-900/30 text-purple-300 shadow-purple-500/20': evento.estado === 'PASADO'
+                  }">
+              {{evento.estado | lowercase | titlecase}}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Contenido de la tarjeta -->
+        <div class="p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-xl font-bold text-white">{{evento.nombre}}</h3>
+              <div class="mt-2 inline-block bg-gray-800/60 px-3 py-1 rounded-full text-xs text-cyan-300">
+                {{evento.deporte.nombre}}
               </div>
             </div>
+            <div class="text-right">
+              <p class="text-sm font-medium text-white">{{evento.fecha | date:'mediumDate'}}</p>
+              <p class="text-xs text-gray-400">{{evento.horaInicio}} - {{evento.horaFin}}</p>
+            </div>
+          </div>
+          
+          <p class="mt-4 text-gray-300 text-sm line-clamp-2">{{evento.descripcion}}</p>
+          
+          <!-- Barra de progreso equipos -->
+          <div class="mt-5">
+            <div class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Equipos inscritos</span>
+              <span>{{evento.equiposInscritos}}/{{evento.numMaxEquipos}}</span>
+            </div>
+            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full" 
+                   [style.width]="(evento.equiposInscritos / evento.numMaxEquipos * 100) + '%'"></div>
+            </div>
+          </div>
+          
+          <!-- Botones con efecto vidrio -->
+          <div class="mt-6 flex justify-end space-x-3">
+            <button (click)="verDetallesEvento(evento)" 
+                    class="bg-gray-700/50 hover:bg-gray-700/70 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-medium backdrop-blur transition-all flex items-center">
+              <i class="fas fa-eye mr-2"></i> Detalles
+            </button>
+            
+            <button *ngIf="evento.estado === 'PLANIFICADO'" 
+                    (click)="abrirModalAsociarEquipo(evento)"
+                    class="bg-gradient-to-r from-blue-600/70 to-cyan-600/70 hover:from-blue-500/80 hover:to-cyan-500/80 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center">
+              <i class="fas fa-link mr-2"></i> Asociar
+            </button>
           </div>
         </div>
       </div>
-    </nav>
-  
-    <!-- Contenido principal -->
-    <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <!-- Encabezado -->
-      <div class="text-center mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-100 font-playfair bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Gestión de Eventos
-        </h1>
-        <p class="mt-3 text-lg text-gray-400">Asocia tus equipos a eventos disponibles</p>
+    </div>
+
+    <!-- Mensaje cuando no hay eventos -->
+    <div *ngIf="eventos.length === 0" class="text-center py-16 rounded-2xl bg-gray-900/30 backdrop-blur border border-gray-700 mt-6">
+      <div class="inline-block p-5 rounded-full bg-gray-800/50 mb-4">
+        <i class="fas fa-calendar-times text-4xl text-cyan-500"></i>
       </div>
-  
-      <!-- Filtros y búsqueda -->
-      <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <h3 class="text-xl font-medium text-gray-200">No se encontraron eventos</h3>
+      <p class="text-gray-500 mt-2 max-w-md mx-auto">Parece que no hay eventos disponibles en este momento. Intenta cambiar tus filtros de búsqueda.</p>
+    </div>
+
+    <!-- Modal de detalles del evento (mejorado) -->
+    <div *ngIf="mostrarDetallesEvento" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-lg">
+      <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+        
+        <!-- Cabecera modal con gradiente -->
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fas fa-search text-gray-500"></i>
-          </div>
-          <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarEventos()" 
-                 class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                 placeholder="Buscar eventos...">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 z-10"></div>
+          <img [src]="getImagenEvento(eventoSeleccionado)" alt="{{eventoSeleccionado.nombre}}" 
+               class="w-full h-64 object-cover">
+          <button (click)="mostrarDetallesEvento = false"
+                  class="absolute top-4 right-4 z-20 bg-red-600 hover:bg-red-700 rounded-full p-2 shadow-lg transition-colors">
+            <i class="fas fa-times text-white"></i>
+          </button>
         </div>
-        <div>
-            <select [(ngModel)]="filtroEstado" (change)="filtrarEventos()" class="block w-full pl-3 pr-10 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="">Todos los estados</option>
-              <option value="PLANIFICADO">Planificados</option>
-              <option value="ACTIVO">Activos</option>
-              <option value="PASADO">Completados</option>
-            </select>
-          </div>
-      </div>
-  
-      <!-- Tarjetas de eventos -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let evento of eventosFiltrados" class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/30 transition-all duration-300 group">
-          <div class="relative h-48 overflow-hidden">
-            <img [src]="getImagenEvento(evento)" alt="{{evento.nombre}}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-              <span class="text-xs font-semibold px-2 py-1 rounded-full" 
+        
+        <!-- Pestañas de navegación mejoradas -->
+        <div class="border-b border-gray-700 bg-gray-800/50 backdrop-blur">
+          <div class="flex">
+            <button (click)="vistaActual = 'detalles'"
+                    class="px-6 py-4 font-medium text-sm relative"
                     [ngClass]="{
-                      'bg-blue-900/50 text-blue-400': evento.estado === 'PLANIFICADO',
-                      'bg-green-900/50 text-green-400': evento.estado === 'ACTIVO',
-                      'bg-purple-900/50 text-purple-400': evento.estado === 'PASADO'
+                      'text-white': vistaActual === 'detalles',
+                      'text-gray-400 hover:text-gray-200': vistaActual !== 'detalles'
                     }">
-                {{evento.estado | lowercase | titlecase}}
-              </span>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="text-xl font-bold text-white">{{evento.nombre}}</h3>
-                <p class="text-sm text-gray-400 mt-1">{{evento.deporte.nombre}}</p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm text-gray-300">{{evento.fecha | date:'mediumDate'}}</p>
-                <p class="text-xs text-gray-500">{{evento.horaInicio}} - {{evento.horaFin}}</p>
-              </div>
-            </div>
+              <i class="fas fa-info-circle mr-2"></i> Detalles
+              <div *ngIf="vistaActual === 'detalles'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400"></div>
+            </button>
             
-            <p class="mt-3 text-gray-300 text-sm line-clamp-2">{{evento.descripcion}}</p>
+            <button (click)="vistaActual = 'equipos'"
+                    class="px-6 py-4 font-medium text-sm relative"
+                    [ngClass]="{
+                      'text-white': vistaActual === 'equipos',
+                      'text-gray-400 hover:text-gray-200': vistaActual !== 'equipos'
+                    }">
+              <i class="fas fa-users mr-2"></i> Equipos
+              <div *ngIf="vistaActual === 'equipos'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400"></div>
+            </button>
             
-            <div class="mt-4 flex items-center justify-between">
-              <div>
-                <span class="text-xs text-gray-400">
-                  <i class="fas fa-users mr-1"></i>
-                  {{evento.equiposInscritos}}/{{evento.numMaxEquipos}} equipos
-                </span>
-              </div>
-              <div class="flex space-x-2">
-                <button (click)="verDetallesEvento(evento)" class="text-blue-400 hover:text-blue-300 text-sm font-medium">
-                  <i class="fas fa-eye mr-1"></i> Detalles
-                </button>
-                <button  *ngIf="evento.estado === 'PLANIFICADO'" (click)="abrirModalAsociarEquipo(evento)" class="text-green-400 hover:text-green-300 text-sm font-medium">
-                  <i class="fas fa-link mr-1"></i> Asociar
-                </button>
-              </div>
-            </div>
+            <button (click)="vistaActual = 'fechas'"
+                    class="px-6 py-4 font-medium text-sm relative"
+                    [ngClass]="{
+                      'text-white': vistaActual === 'fechas',
+                      'text-gray-400 hover:text-gray-200': vistaActual !== 'fechas'
+                    }">
+              <i class="fas fa-calendar-alt mr-2"></i> Fechas
+              <div *ngIf="vistaActual === 'fechas'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400"></div>
+            </button>
           </div>
         </div>
-      </div>
-  
-      <!-- Mensaje cuando no hay eventos -->
-      <div *ngIf="eventos.length === 0" class="text-center py-12">
-        <i class="fas fa-calendar-times text-4xl text-gray-600 mb-4"></i>
-        <h3 class="text-xl font-medium text-gray-300">No se encontraron eventos</h3>
-        <p class="text-gray-500 mt-1">No hay eventos que coincidan con tus criterios de búsqueda</p>
-      </div>
-  
-      <!-- Modal de detalles del evento -->
-<div *ngIf="mostrarDetallesEvento" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-  <div class="bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-    <div class="relative">
-      <img [src]="getImagenEvento(eventoSeleccionado)" alt="{{eventoSeleccionado.nombre}}" class="w-full h-64 object-cover">
-      <button mat-icon-button
-  (click)="mostrarDetallesEvento = false"
-  class="absolute top-4 right-4 bg-red-700/80 hover:bg-red-800 rounded-full shadow-lg"
-  style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-  <mat-icon class="text-white">close</mat-icon>
-</button>
-
-
-    </div>
-    <!-- Pestañas de navegación -->
-    <div class="border-b border-gray-700">
-      <div class="flex">
-        <button 
-          (click)="vistaActual = 'detalles'"
-          class="px-6 py-3 font-medium text-sm"
-          [ngClass]="{
-            'text-white border-b-2 border-blue-500': vistaActual === 'detalles',
-            'text-gray-400 hover:text-white': vistaActual !== 'detalles'
-          }"
-        >
-          <i class="fas fa-info-circle mr-2"></i> Detalles
-        </button>
-        <button 
-          (click)="vistaActual = 'equipos'"
-          class="px-6 py-3 font-medium text-sm"
-          [ngClass]="{
-            'text-white border-b-2 border-blue-500': vistaActual === 'equipos',
-            'text-gray-400 hover:text-white': vistaActual !== 'equipos'
-          }"
-        >
-          <i class="fas fa-users mr-2"></i> Equipos ({{eventoSeleccionado.equipos_inscritos}})
-        </button>
-        <button 
-          (click)="vistaActual = 'fechas'"
-          class="px-6 py-3 font-medium text-sm"
-          [ngClass]="{
-            'text-white border-b-2 border-blue-500': vistaActual === 'fechas',
-            'text-gray-400 hover:text-white': vistaActual !== 'fechas'
-          }"
-        >
-          <i class="fas fa-calendar-alt mr-2"></i> Fechas
-        </button>
-      </div>
-    </div>
-    
-    <div class="p-6">
+        
+        <!-- Contenido del modal -->
+        <div class="p-6">
       <!-- Vista de Detalles -->
       <div *ngIf="vistaActual === 'detalles'">
         <div class="flex justify-between items-start">
@@ -190,7 +240,8 @@
                     [ngClass]="{
                       'bg-blue-900/50 text-blue-400': eventoSeleccionado.estado === 'PLANIFICADO',
                       'bg-green-900/50 text-green-400': eventoSeleccionado.estado === 'ACTIVO',
-                      'bg-purple-900/50 text-purple-400': eventoSeleccionado.estado === 'COMPLETADO'
+                      'bg-purple-900/50 text-purple-400': eventoSeleccionado.estado === 'COMPLETADO',
+                      'bg-red-900/50 text-red-400': eventoSeleccionado.estado === 'PASADO'
                     }">
                 {{eventoSeleccionado.estado | lowercase | titlecase}}
               </span>
@@ -209,7 +260,7 @@
           <div class="mt-4 space-y-2">
             <div class="flex items-center">
               <i class="fas fa-map-marker-alt text-gray-400 mr-2 w-5"></i>
-              <span class="text-gray-300">{{eventoSeleccionado.ubicacion}}</span>
+              <span class="text-gray-300">Ubicacion: {{eventoSeleccionado.ubicacion}}</span>
             </div>
             <div class="flex items-center">
               <i class="fas fa-users text-gray-400 mr-2 w-5"></i>
@@ -229,7 +280,7 @@
       
       <!-- Vista de Equipos -->
       <div *ngIf="vistaActual === 'equipos'">
-        <div class="flex justify-between items-center mb-4">
+        <div *ngIf=" eventoSeleccionado.estado != 'PASADO' &&  eventoSeleccionado.estado != 'ACTIVO'" class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-semibold text-white">Equipos Inscritos</h3>
           <button (click)="abrirModalAsociarEquipo(eventoSeleccionado)" 
                   class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-lg text-sm transition-colors duration-200">
@@ -254,7 +305,7 @@
         </div>
         
         <ng-template #noEquipos>
-          <div class="text-center py-8">
+          <div *ngIf="eventoSeleccionado?.estado !='PASADO'  &&  eventoSeleccionado?.estado !='ACTIVO'"  class="text-center py-8">
             <i class="fas fa-users-slash text-gray-500 text-4xl mb-3"></i>
             <p class="text-gray-500">No hay equipos inscritos aún</p>
             <button (click)="abrirModalAsociarEquipo(eventoSeleccionado)" 
@@ -302,56 +353,70 @@
           <div class="text-center py-8">
             <i class="fas fa-calendar-times text-gray-500 text-4xl mb-3"></i>
             <p class="text-gray-500">No hay fechas programadas aún</p>
-              <i class="fas fa-plus mr-2"></i> Agregar primera fecha
           </div>
         </ng-template>
       </div>
     </div>
   </div>
 </div>
-  
-      <!-- Modal para asociar equipo -->
-      <div *ngIf="mostrarModalAsociarEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-gray-800 rounded-xl shadow-2xl max-w-md w-full">
-          <div class="p-6">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-bold text-white">
-                <i class="fas fa-link mr-2 text-blue-400"></i>
-                Asociar equipo al evento
-              </h2>
-              <button (click)="mostrarModalAsociarEquipo = false" class="text-gray-400 hover:text-gray-300">
-                <i class="fas fa-times"></i>
+      </div>
+    </div>
+
+    <!-- Modal para asociar equipo (mejorado) -->
+    <div *ngIf="mostrarModalAsociarEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-lg">
+      <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-gray-700">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-5">
+            <h2 class="text-xl font-bold text-white">
+              <i class="fas fa-link mr-2 text-cyan-400"></i>
+              Asociar equipo
+            </h2>
+            <button (click)="mostrarModalAsociarEquipo = false" 
+                    class="text-gray-400 hover:text-gray-300 bg-gray-700/50 rounded-full p-2 w-8 h-8 flex items-center justify-center">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <!-- Tarjeta de evento -->
+          <div class="mb-6 p-4 rounded-xl bg-gray-700/30 backdrop-blur border border-gray-600">
+            <h3 class="text-lg font-medium text-white">{{eventoSeleccionado.nombre}}</h3>
+            <div class="flex items-center mt-2 text-sm">
+              <span class="text-cyan-400 mr-3">
+                <i class="fas fa-calendar-day mr-1"></i>
+                {{eventoSeleccionado.fecha | date:'mediumDate'}}
+              </span>
+              <span class="text-gray-400">
+                <i class="fas fa-clock mr-1"></i>
+                {{eventoSeleccionado.horaInicio}}
+              </span>
+            </div>
+          </div>
+          
+          <form (ngSubmit)="asociarEquipo()">
+            <div class="mb-5">
+              <label class="block text-sm font-medium text-gray-300 mb-3">Equipo a asociar</label>
+              <select [(ngModel)]="equipoSeleccionado" name="equipo" 
+                      class="block w-full px-4 py-3 border border-gray-700 rounded-xl bg-gray-800/50 backdrop-blur text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent shadow-lg">
+                <option value="0">Selecciona un equipo</option>
+                <option *ngFor="let equipo of equiposDisponiblesEvento" [value]="equipo.id">
+                  {{equipo.nombre}} ({{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}})
+                </option>
+              </select>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mt-6">
+              <button type="button" 
+                      (click)="mostrarModalAsociarEquipo = false" 
+                      class="bg-gray-700 hover:bg-gray-600 text-white py-3 px-4 rounded-xl transition-colors duration-300 font-medium">
+                Cancelar
+              </button>
+              <button type="submit" 
+                      class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white py-3 px-4 rounded-xl font-medium shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center justify-center">
+                <i class="fas fa-check mr-2"></i>
+                Confirmar asociación
               </button>
             </div>
-            
-            <div class="mb-6">
-              <h3 class="text-lg font-medium text-gray-200">{{eventoSeleccionado.nombre}}</h3>
-              <p class="text-sm text-gray-400">{{eventoSeleccionado.fecha | date:'mediumDate'}} • {{eventoSeleccionado.deporte.nombre}}</p>
-            </div>
-            
-            <form (ngSubmit)="asociarEquipo()">
-              <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Seleccionar equipo</label>
-                <select [(ngModel)]="equipoSeleccionado" name="equipo" class="block w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                  <option value="0">Selecciona un equipo</option>
-                  <option *ngFor="let equipo of equiposDisponiblesEvento" [value]="equipo.id">
-                    {{equipo.nombre}} ({{equipo.jugadoresAsociados}}/{{equipo.maxJugadores}})
-                  </option>
-                </select>
-              </div>
-              
-              <div class="grid grid-cols-2 gap-4 mt-6">
-                <button type="button" (click)="mostrarModalAsociarEquipo = false" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
-                  Cancelar
-                </button>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center">
-                  <i class="fas fa-check mr-2"></i>
-                  Confirmar
-                </button>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>
-  </div>

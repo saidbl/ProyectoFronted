@@ -9,23 +9,28 @@
     
     <div class="flex-1 overflow-y-auto custom-scroll">
       <div *ngFor="let chat of chats" 
-           (click)="selectChat(chat)"
-           [class.bg-gradient-to-r]="selectedChat?.id === chat.id"
-           [class.from-blue-900]="selectedChat?.id === chat.id"
-           class="p-4 border-b border-gray-700/30 hover:bg-gray-800/20 cursor-pointer transition-all duration-300 group">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div class="relative">
-              <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-700 shadow-lg">
-                <img [src]="'http://localhost:8080/' + getImagenUrl(chat)" alt="Avatar" class="w-full h-full object-cover">
-              </div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-gray-100 truncate">{{ getChatName(chat) }}</h3>
-            </div>
-          </div>
+     (click)="selectChat(chat)"
+     [class.bg-gradient-to-r]="selectedChat?.id === chat.id"
+     [class.from-blue-900]="selectedChat?.id === chat.id"
+     class="p-4 border-b border-gray-700/30 hover:bg-gray-800/20 cursor-pointer transition-all duration-300 group relative"> <!-- ← aquí va 'relative' -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="relative">
+        <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-700 shadow-lg">
+          <img [src]="'http://localhost:8080/' + getImagenUrl(chat)" alt="Avatar" class="w-full h-full object-cover">
         </div>
       </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-gray-100 truncate">{{ getChatName(chat) }}</h3>
+      </div>
+    </div>
+    <div *ngIf="getNotificationCount(chat.id) > 0" 
+         class="absolute top-2 right-4 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+      {{ getNotificationCount(chat.id) }}
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 

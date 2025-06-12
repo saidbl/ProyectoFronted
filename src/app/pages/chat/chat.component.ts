@@ -1,6 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
-import { finalize, forkJoin, Subject, Subscription, takeUntil } from 'rxjs';
+import { delay, filter, finalize, forkJoin, Subject, Subscription, switchMap, take, takeUntil } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DeportistaService } from '../../services/deportista.service';
@@ -33,6 +33,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private oservice = inject(OrganizacionService);
   private cdRef = inject(ChangeDetectorRef);
   private jeservice = inject(JugadorEquipoService)
+  notificacionesPorChat: Map<number, MensajeDTO[]> = new Map();
 
   chats: Chat[] = [];
   selectedChat: Chat | null = null;
@@ -45,12 +46,27 @@ export class ChatComponent implements OnInit, OnDestroy {
   pageSize = 20;
   totalMessages = 0;
   loadingMessages = false;
-  
+  totalNotificaciones = 0;
   esChatEquipo = false;
   nombresDeportistas: Map<number, string> = new Map<number, string>();
   fotosDeportistas: Map<number, string> = new Map<number, string>();
-
+  constructor(private wsService: WsService){}
   ngOnInit(): void {
+     this.wsService.connect();
+      this.wsService.connectionEstablished.pipe(
+        filter(connected => connected),
+        take(1),
+        delay(150), 
+        switchMap(() => this.wsService.getNotificacionesPorChat()),
+        takeUntil(this.destroy$)
+      ).subscribe(map => {
+        this.notificacionesPorChat = new Map();
+      map.forEach((mensajes, chatId) => {
+        this.notificacionesPorChat.set(chatId, mensajes);
+      });
+      console.log(this.notificacionesPorChat)
+      this.cdRef.markForCheck();
+      });
     this.initializeChats();
     this.setupWebSocket();
   }
@@ -95,8 +111,6 @@ export class ChatComponent implements OnInit, OnDestroy {
             tipo: ChatTipo.INSTRUCTOR_DEPORTISTA,
           }));
         }
-
-        // Crear chats para equipos
         for (const equipo of equipos) {
           solicitudesChats.push(this.cservice.createChat(token, {
             instructorId: idInstructor,
@@ -107,8 +121,6 @@ export class ChatComponent implements OnInit, OnDestroy {
             deporteId: deporte,
           }));
         }
-
-        // Crear chats para organizaciones
         for (const organizacion of organizaciones) {
           solicitudesChats.push(this.cservice.createChat(token, {
             instructorId: idInstructor,
@@ -120,7 +132,6 @@ export class ChatComponent implements OnInit, OnDestroy {
           }));
         }
 
-        // Ejecutar todas las solicitudes
         forkJoin(solicitudesChats).subscribe({
           next: () => this.loadUserChats(),
           error: (err) => console.error('Error al crear chats:', err)
@@ -147,7 +158,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   selectChat(chat: Chat): void {
-    // Limpiar datos previos
+     this.wsService.limpiarNotificacionesDeChat(chat.id);
     this.nombresDeportistas.clear();
     this.fotosDeportistas.clear();
 
@@ -158,6 +169,9 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.finalizeChatSelection(chat);
     }
   }
+  getNotificationCount(chatId: number): number {
+  return this.notificacionesPorChat.get(chatId)?.length || 0;
+}
 
   private loadEquipoMembers(chat: Chat): void {
     const token = this.getToken();
@@ -277,8 +291,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     
     if (this.selectedChat?.id !== newMessage.idChat) {
     }
-
-    // Mover el chat actualizado al principio
     this.chats.splice(chatIndex, 1);
     this.chats.unshift(chat);
   }

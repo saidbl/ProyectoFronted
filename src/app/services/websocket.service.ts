@@ -12,6 +12,8 @@ export class WsService {
   private connected = false;
   public connectionEstablished = new BehaviorSubject<boolean>(false);
 private notificationCount = 0;
+private notificacionesPorChat = new Map<number, MensajeDTO[]>();
+  private notificacionPorChatSubject = new BehaviorSubject<Map<number, MensajeDTO[]>>(new Map());
   private notificationSubject = new BehaviorSubject<number>(0);
   constructor() {
     this.client = new Client({
@@ -24,6 +26,7 @@ private notificationCount = 0;
     this.client.onConnect = () => {
       this.connectionEstablished.next(true);
       this.connected = true;
+      this.subscribeToNotificaciones(); 
       console.log('STOMP conectado');
 this.client.subscribe('/topic/mensajes', (msg: Message) => {
   let body;
@@ -32,14 +35,22 @@ this.client.subscribe('/topic/mensajes', (msg: Message) => {
   } catch {
     body = msg.body;
   }
-
-  const currentUserId = Number(localStorage.getItem('usuarioId'));
-  if (body && typeof body === 'object' && body.remitenteId !== currentUserId) {
-    this.incrementNotificationCount();
+  const currentUserId = Number(localStorage.getItem('id'));
+  const currentUserRol = localStorage.getItem('rol')?.toLowerCase();
+  if (body && typeof body === 'object') {
+    const remitenteId = body.remitenteId;
+    const remitenteRol = body.remitenteTipo?.toLowerCase();
+    if (remitenteId !== currentUserId) {
+      this.incrementNotificationCount();
+    } 
+    else if (remitenteId === currentUserId && remitenteRol && remitenteRol !== currentUserRol) {
+      this.incrementNotificationCount();
+    }
   } else if (typeof body === 'string' && body === 'nuevo') {
     this.incrementNotificationCount();
   }
 });
+;
 
 
       this.client.subscribe('/topic/chats/updates', (message: Message) => {
@@ -106,5 +117,42 @@ getNotificationCount(): Observable<number> {
     }
     get isConnected$(): Observable<boolean> {
     return this.connectionEstablished.asObservable();
+  }
+ subscribeToNotificaciones() {
+  const tipo = localStorage.getItem("rol")?.toLowerCase();  
+  const currentUserId = localStorage.getItem('id');
+  if (!tipo || !currentUserId) return;
+  this.client.subscribe(`/topic/notificaciones/${tipo}/${currentUserId}`, (msg: Message) => {
+    const mensaje: MensajeDTO = JSON.parse(msg.body);
+    const chatId = mensaje.idChat;
+    const mismoId = mensaje.remitenteId === Number(currentUserId);
+    const mismoRol = mensaje.remitenteTipo.toLowerCase() === tipo;
+    if (!(mismoId && mismoRol)) {
+      const notificacionesActuales = this.notificacionesPorChat.get(chatId) || [];
+      this.notificacionesPorChat.set(chatId, [...notificacionesActuales, mensaje]);
+      this.notificacionPorChatSubject.next(new Map(this.notificacionesPorChat));
+      console.log("Notificación recibida:", mensaje);
+    } else {
+      console.log("Mensaje descartado: mismo id y mismo rol");
+    }
+  });
+}
+
+
+getNotificacionesPorChat(): Observable<Map<number, MensajeDTO[]>> {
+  return this.notificacionPorChatSubject.asObservable();
+}
+
+getTotalNotificaciones(): number {
+  let total = 0;
+  this.notificacionesPorChat.forEach(lista => total += lista.length);
+  return total;
+}
+
+limpiarNotificacionesDeChat(chatId: number) {
+    if (this.notificacionesPorChat.has(chatId)) {
+      this.notificacionesPorChat.delete(chatId);
+      this.notificacionPorChatSubject.next(new Map(this.notificacionesPorChat));
+    }
   }
 }

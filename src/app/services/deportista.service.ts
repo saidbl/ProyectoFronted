@@ -6,6 +6,7 @@ import { Deportista } from "../models/deportista.model";
 import { Rutina } from "../models/rutina.model";
 import { DeportistaRendimiento } from "../models/deportistaRendimiento.model";
 import { ResumenAtletasDTO } from "../models/resumenAtletasDTO.model";
+import { controllers } from "chart.js";
 @Injectable({
     providedIn:"root"
 })
@@ -13,6 +14,15 @@ export class DeportistaService{
     deportistas:Deportista[]=[]
     private http=inject(HttpClient)
     private apiLog:string=appSettings.apiLogin
+
+    add(token:string, formData:FormData): Observable<Deportista> {
+        console.log(token)
+          const headers = new HttpHeaders({
+                        'Authorization': `Bearer ${token}`
+                    });
+        return this.http.post<Deportista>(`${appSettings.apiGeneral}/deportista/agregar`, formData,{headers});
+    
+        }
 
     login (email:string, password:string):Observable<any>{
             return this.http.post<any>(this.apiLog,{email,password})
