@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { delay, filter, finalize, forkJoin, Subject, Subscription, switchMap, take, takeUntil } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -15,16 +15,18 @@ import { OrganizacionService } from '../../services/organizacion.service';
 import { Deportista } from '../../models/deportista.model';
 import { JugadorEquipoService } from '../../services/jugadorequipo.service';
 import { JugadorEquipo } from '../../models/jugadorEquipo.model';
-
+import { RouterModule } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule,RouterModule,MatIcon],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatComponent implements OnInit, OnDestroy {
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
   private cservice = inject(ChatService);
   private wsservice = inject(WsService);
   private eservice = inject(EquipoService);
@@ -252,18 +254,22 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   sendMessage(): void {
     if (!this.newMessage.trim() || !this.selectedChat) return;
+     const now = new Date();
+
+  const offset = 6; 
+  const fechaEnvioCDMX = new Date(now.getTime() - offset * 60 * 60 * 1000);
 
     const message: MensajeDTO = {
       idChat: this.selectedChat.id,
       contenido: this.newMessage,
       remitenteTipo: RemitenteTipo.INSTRUCTOR,
       remitenteId: Number(localStorage.getItem("id")),
-      fechaEnvio: new Date(),
+      fechaEnvio: fechaEnvioCDMX,
       leido: false
     };
 
     this.wsservice.sendMessage(message);
-    this.messages = [...this.messages, message];
+    this.messages = [message,...this.messages];
     this.newMessage = '';
     this.scrollToBottom();
     this.cdRef.markForCheck();
@@ -325,6 +331,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (pagina) => {
         const nuevosMensajes = pagina.content;
+        const chatContainer = this.chatContainer?.nativeElement;
+      const previousHeight = chatContainer?.scrollHeight;
         this.messages = reset 
           ? nuevosMensajes 
           : [...nuevosMensajes, ...this.messages];
@@ -332,8 +340,15 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.totalMessages = pagina.totalElements;
         this.currentPage++;
         
-        if (reset) this.scrollToBottom();
-      },
+        setTimeout(() => {
+        if (reset) {
+          this.scrollToBottom(); 
+        } else if (chatContainer) {
+          const newHeight = chatContainer.scrollHeight;
+          chatContainer.scrollTop = newHeight - previousHeight;
+        }
+      }, 100); 
+    },
       error: (err) => console.error('Error cargando mensajes:', err)
     });
   }
@@ -348,11 +363,11 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private scrollToBottom(): void {
     setTimeout(() => {
-      const container = document.querySelector('.message-container');
-      if (container) {
-        container.scrollTop = container.scrollHeight;
-      }
-    }, 100);
+    const container = this.chatContainer?.nativeElement;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, 100);
   }
 
   getChatName(chat: Chat | null): string {
@@ -391,17 +406,18 @@ export class ChatComponent implements OnInit, OnDestroy {
            mensaje.remitenteTipo === RemitenteTipo.INSTRUCTOR;
   }
 
-  formatDate(date: Date | string | null | undefined): string {
-    if (!date) return '';
-    
-    const fecha = typeof date === 'string' ? new Date(date) : date;
-    if (isNaN(fecha.getTime())) return '';
-    
-    return fecha.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-      day: '2-digit',
-      month: '2-digit'
-    });
-  }
+  formatDate(fecha: string | Date): string {
+  const date = new Date(fecha);
+  return date.toLocaleString('es-MX', {
+    timeZone: 'America/Mexico_City',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
+
 }

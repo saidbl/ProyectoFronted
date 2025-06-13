@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client, Message } from '@stomp/stompjs';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { MensajeDTO } from '../models/mensajeDTO.model';
+import { RemitenteTipo } from '../models/remitentetipo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,33 +31,18 @@ private notificacionesPorChat = new Map<number, MensajeDTO[]>();
       console.log('STOMP conectado');
 this.client.subscribe('/topic/mensajes', (msg: Message) => {
   let body;
+  console.log(msg)
   try {
     body = JSON.parse(msg.body);
+    console.log('Mensaje recibido:', body);
   } catch {
     body = msg.body;
   }
-  const currentUserId = Number(localStorage.getItem('id'));
-  const currentUserRol = localStorage.getItem('rol')?.toLowerCase();
-  if (body && typeof body === 'object') {
-    const remitenteId = body.remitenteId;
-    const remitenteRol = body.remitenteTipo?.toLowerCase();
-    if (remitenteId !== currentUserId) {
-      this.incrementNotificationCount();
-    } 
-    else if (remitenteId === currentUserId && remitenteRol && remitenteRol !== currentUserRol) {
-      this.incrementNotificationCount();
-    }
-  } else if (typeof body === 'string' && body === 'nuevo') {
+   if (typeof body === 'string' && body === "nuevo") {
     this.incrementNotificationCount();
   }
 });
 ;
-
-
-      this.client.subscribe('/topic/chats/updates', (message: Message) => {
-    const chatUpdate = JSON.parse(message.body);
-    console.log('Nuevo mensaje en chat:', chatUpdate);
-  });
   setTimeout(() => {
         this.connectionEstablished.next(true);
         console.log('Conexión completamente establecida con suscripciones');
