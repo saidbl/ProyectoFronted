@@ -220,6 +220,13 @@
         </div>
       </div>
     </div>
+            <footer class="mt-12 pt-8 border-t border-gray-800">
+      <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+        <div class="mb-4 md:mb-0">
+          © 2025 SportAnalytics Pro - Todos los derechos reservados
+        </div>
+      </div>
+    </footer>
   </div>
   
 
@@ -360,7 +367,7 @@
         Cancelar
       </button>
       <button (click)="asignarRutina()" 
-              [disabled]="!rutinaSeleccionada || disabledbutton" 
+              [disabled]="rutinaSeleccionada==0" 
               class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl transition-all duration-200 hover:shadow-md hover:to-blue-600 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -925,5 +932,6 @@
       </div>
     </form>
   </div>
+  
 </div>
 </div>

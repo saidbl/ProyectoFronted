@@ -7,11 +7,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { InstructorDTO } from '../../../models/instructorDTO.model';
+import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 MatIcon
 @Component({
   selector: 'app-perfil-instructor',
-  imports: [ ReactiveFormsModule ,CommonModule,MatIcon],
+  imports: [ ReactiveFormsModule ,CommonModule,MatIcon,RouterModule],
   templateUrl: './perfil-instructor.component.html',
   styleUrl: './perfil-instructor.component.css'
 })

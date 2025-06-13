@@ -44,7 +44,7 @@ export class RutinaDeportistaComponent implements OnInit,AfterViewInit{
   disabledbutton : boolean = false
   rutinas: Rutina[] = []
   jugadorSeleccionado: DeportistaRendimiento|null = null;
-  rutinaSeleccionada!: number;
+  rutinaSeleccionada: number =0;
   mostrarModal = false;
   datos : EvolucionFisicaDTO[]|undefined = []
   rutinasFiltradas : Rutina[]=[]
@@ -721,7 +721,7 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
             return;
         }
 
-        if (!this.rutinaSeleccionada) {
+        if (this.rutinaSeleccionada==0) {
             Swal.fire('Advertencia', 'Debes seleccionar una rutina primero', 'warning');
             return;
         }
@@ -804,6 +804,7 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
         this.mostrarModalAsignar = true;
         this.filtrarRutinas();
         this.mostrarModalAsignar = true;
+        this.rutinaSeleccionada=0
                 this.cargando = false;
                 this.cdRef.markForCheck();
       },
@@ -852,7 +853,11 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
     this.filtrarRutinas();
   }
    seleccionarRutina(rutina: Rutina) {
-    this.rutinaSeleccionada = rutina.id;
+    if(this.rutinaSeleccionada==0){
+      this.rutinaSeleccionada = rutina.id;
+    }else {
+      this.rutinaSeleccionada= 0
+    }
   }
     obtenerIconoRutina(objetivo: string): string {
     switch(objetivo) {
@@ -865,11 +870,11 @@ getMetrica(metricas: EvolucionFisicaDTO[]|undefined, tipo: string): number{
     }
   }
   cerrarModal() {
+    this.rutinaSeleccionada = 0
     this.mostrarModalAsignar = false;
     this.mostrarModalPerfil = false;
     this.mostrarModalRutinas = false;
     this.jugadorSeleccionado = null;
-    this.rutinaSeleccionada = 0
     this.destruirGraficos();
   }
   borrarRepetidas(rutinasJugador: RutinaJugador[], rutinas: Rutina[], posicion:String): Rutina[] {

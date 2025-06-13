@@ -41,6 +41,9 @@ export class EjerciciosComponent implements OnInit{
   orden :  number = 0
   constructor(public router:Router){}
   ngOnInit(): void {
+    this.cargarDatos()
+  }
+  cargarDatos(){
     try{
       const fotoPerfil = localStorage.getItem("fotoPerfil")
       const nom=localStorage.getItem("nombre")
@@ -61,6 +64,7 @@ export class EjerciciosComponent implements OnInit{
                 this.rutinas = data.rutinas;
                 this.ejercicios = data.ejercicios
                 this.fotoPerfil = this.fotoPerfil+ fotoPerfil
+                console.log(this.fotoPerfil)
                 this.nombreInst=nom ?? ''
                 this.apellido= ap ?? ''
               },
@@ -122,7 +126,7 @@ export class EjerciciosComponent implements OnInit{
             this.eservice.add(nuevaRutina, token).subscribe({
               next: async (data) => {
                       await Swal.fire('¡Éxito!', 'Ejercicio agregado correctamente', 'success');
-                      this.ngOnInit();
+                      this.cargarDatos()
                       this.limpiarFormulario();
                     },
                     error: async (err) => {
@@ -134,7 +138,7 @@ export class EjerciciosComponent implements OnInit{
             this.eservice.edit(this.id, nuevaRutina, token).subscribe({
                   next: async (data) => {
                     await Swal.fire('¡Éxito!', 'Ejercicio actualizado correctamente', 'success');
-                    this.ngOnInit();
+                    this.cargarDatos()
                     this.limpiarFormulario();
                   },
                   error: async (err) => {

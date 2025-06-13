@@ -45,6 +45,9 @@ export class RutinaMComponent implements OnInit{
   fotoPerfil: string = "http://localhost:8080/";
   constructor(public router: Router) {}
   ngOnInit(): void {
+    this.cargarDatos()
+  }
+  cargarDatos(){
     try{
       const nom=localStorage.getItem("nombre")
       const ap = localStorage.getItem("apellido")
@@ -161,7 +164,7 @@ export class RutinaMComponent implements OnInit{
     this.rservice.add(nuevaRutina, token).subscribe({
       next: async (data) => {
         await Swal.fire('¡Éxito!', 'Rutina agregada correctamente', 'success');
-        this.ngOnInit();
+        this.cargarDatos
         this.limpiarFormulario();
       },
       error: async (err) => {
@@ -173,7 +176,7 @@ export class RutinaMComponent implements OnInit{
     this.rservice.edit(this.id, nuevaRutina, token).subscribe({
       next: async (data) => {
         await Swal.fire('¡Éxito!', 'Rutina actualizada correctamente', 'success');
-        this.ngOnInit();
+        this.cargarDatos
         this.limpiarFormulario();
       },
       error: async (err) => {

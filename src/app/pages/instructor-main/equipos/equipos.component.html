@@ -315,7 +315,7 @@
             class="flex items-center justify-between p-3 bg-gray-800 hover:bg-gray-700/50 rounded-lg
                   transition-all duration-300 cursor-pointer border border-transparent hover:border-gray-600">
           <div class="flex items-center space-x-3">
-            <img [src]="jugador || 'assets/default-avatar.png'" 
+            <img [src]="'http://localhost:8080/'+jugador.fotoPerfil ||'assets/default-avatar.png'" 
                 class="w-12 h-12 rounded-full border-2 border-gray-600 object-cover">
             <div>
               <p class="text-sm font-medium text-gray-100">{{jugador.nombre}} {{jugador.apellido}}</p>
@@ -349,7 +349,7 @@
               class="flex items-center justify-between p-3 bg-gray-800/50 hover:bg-gray-700/30 rounded-lg
                     transition-all duration-300">
             <div class="flex items-center space-x-3">
-              <img [src]="jugador.deportista || 'assets/default-avatar.png'" 
+              <img [src]="'http://localhost:8080/'+jugador.deportista.fotoPerfil || 'assets/default-avatar.png'" 
                   class="w-10 h-10 rounded-full border-2 border-gray-600 object-cover">
               <span class="text-sm text-gray-100">{{jugador.deportista.nombre}} {{jugador.deportista.apellido}}</span>
             </div>
@@ -416,8 +416,16 @@
         </button>
       </div>
     </div>
+    
   </div>
 </div>
+        <footer class="mt-12 pt-8 border-t border-gray-800">
+      <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+        <div class="mb-4 md:mb-0">
+          © 2025 SportAnalytics Pro - Todos los derechos reservados
+        </div>
+      </div>
+    </footer>
 
 
 <div *ngIf="mostrarDetallesEquipo" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-lg">

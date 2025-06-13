@@ -23,3 +23,40 @@
   .input-icon {
     @apply absolute right-3 top-1/2 -translate-y-1/2 text-gray-400;
   }
+
+  .custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #3B82F6 #1F2937;
+  }
+
+  .custom-scroll::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    @apply bg-gray-800 rounded-full;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    @apply bg-blue-500 rounded-full hover:bg-blue-600;
+  }
+
+  .animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-gradient-x {
+  background-size: 200% auto;
+  animation: gradientX 5s ease infinite;
+}
+
+@keyframes gradientX {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

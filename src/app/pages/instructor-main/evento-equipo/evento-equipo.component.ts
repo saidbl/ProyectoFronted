@@ -66,7 +66,10 @@ export class EventoEquipoComponent implements OnInit{
 ];
 constructor(public router:Router){}
   ngOnInit(): void {
-    this.isLoading = true;
+   this.cargarDatos()
+  }
+  cargarDatos(){
+     this.isLoading = true;
     try{
       const token=localStorage.getItem("token")
       const idDeporte = Number(localStorage.getItem("idDeporte"))
@@ -154,9 +157,6 @@ constructor(public router:Router){}
     console.log(this.equiposPorEvento)
       this.mostrarModalAsociarEquipo=true
     }
-    desasociarEquipo(equipo: Equipo, evento: Evento): void {
-
-  }
     borrarRepetidas():void {
       if(this.equiposPorEvento.length>0) {
       const idsB = new Set(this.equiposPorEvento.map(obj => obj.id));
@@ -194,6 +194,7 @@ constructor(public router:Router){}
         );
                         this.mostrarModalAsociarEquipo = false;
                         this.isLoading= false
+                        this.cargarDatos()
                       },
                       error:(err)=>{
                         console.error("Error al asociar equipo", err);
