@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit ,ViewChild,inject} from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit ,ViewChild,inject} from '@angular/core';
+import { AbstractControl, FormsModule, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -24,6 +24,8 @@ import { MedicionFisica } from '../../../models/medicionFisica.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MedicionFisicaDTO } from '../../../models/medicionFisicaDTO.model';
 import { Router, RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
+import { DeportistaService } from '../../../services/deportista.service';
 Chart.register(...registerables);
 @Component({
   selector: 'app-rendimiento',
@@ -31,7 +33,7 @@ Chart.register(...registerables);
   templateUrl: './rendimiento.component.html',
   styleUrl: './rendimiento.component.css'
 })
-export class RendimientoComponent implements OnInit,AfterViewInit{
+export class RendimientoComponent implements OnInit,AfterViewInit,AfterViewChecked{
   nombre: string | null = '';
   apellido: string | null = '';
   deporte: string = '';
@@ -41,6 +43,7 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   private orservice= inject (ObjetivoRendimientoService)
   private crservice= inject(CheckInRutinaService)
   private oservice = inject(ObjetivoRendimientoService)
+  private dservice = inject(DeportistaService)
   posicion: string | null = ''
   currentView : 'metrics' | 'records' | 'goals' | 'stats' | 'medicion' = 'metrics';
   showrendimientoForm= false
@@ -67,8 +70,10 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   @ViewChild('rutinasChart') private chartRef!: ElementRef;
   objetivos: ProgresoObjetivoDTO[] = [];
   ultimaMedicion: MedicionFisica|null = null
-  chart2!: Chart;
+  chart2: Chart | null = null;
   datosC: any;
+  showUserDropdown: boolean = false;
+  fotoPerfil: string = "http://localhost:8080/";
   datos: EvolucionFisicaDTO[] = [];
   isLoading = false;
   errorMessage: string | null = null;
@@ -87,8 +92,8 @@ export class RendimientoComponent implements OnInit,AfterViewInit{
   { name: 'Principal', route: '..', icon: 'home' },
   { name: 'Eventos', route: '../proximoseventos', icon: 'event' },
   { name: 'Equipos', route: '../equipos', icon: 'groups' },
-  { name: 'CheckIn', route: '../check', icon: 'event' },
-  { name: 'Rendimiento', route: '../rendimiento', icon: 'analytics' }
+  { name: 'Rutinas', route: '../rutinas', icon: 'fitness_center' },
+  { name: 'Checkin de hoy', route: '../check', icon: 'check' }
 ];
   
   constructor(
@@ -110,22 +115,59 @@ nextWeek.setDate(nextWeek.getDate() + 7);
     this.goalForm = this.fb.group({
       idmetrica: ['', Validators.required],
       valorObjetivo: ['', [Validators.required, Validators.min(0)]],
-      fechaObjetivo: [nextWeek, Validators.required],
+      fechaObjetivo: [nextWeek, this.fechaMinimaValidator()],
       prioridad: [1, [Validators.min(1), Validators.max(5)]],
     });
     this.medicionForm = this.fb.group({
-      fecha:[new Date(), Validators.required],
-      peso:[0, [Validators.required,Validators.min(10), Validators.max(200)]],
-      estatura:[0, [Validators.required,Validators.min(100), Validators.max(250)]],
-      porcentajeGrasa:[0, [Validators.required,Validators.min(0), Validators.max(100)]],
-      masaMuscular:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
-      circunferenciaBrazo:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
-      circunferenciaCintura:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
-      circunferenciaCadera:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
-      presionArterial:['', [Validators.required]],
-      frecuenciaCardiacaReposo:[0, [Validators.required,Validators.min(0), Validators.max(200)]],
-      notas:['', [Validators.required]],
-    })
+  fecha: [new Date(), Validators.required],
+  peso: [null, [
+    Validators.required,
+    Validators.min(30),   
+    Validators.max(250)   
+  ]],
+  estatura: [null, [
+    Validators.required,
+    Validators.min(120),   
+    Validators.max(230)   
+  ]],
+  porcentajeGrasa: [null, [
+    Validators.required,
+    Validators.min(1),    
+    Validators.max(75)     
+  ]],
+  masaMuscular: [null, [
+    Validators.required,
+    Validators.min(10),   
+    Validators.max(150)
+  ]],
+  circunferenciaBrazo: [null, [
+    Validators.required,
+    Validators.min(15),
+    Validators.max(60)
+  ]],
+  circunferenciaCintura: [null, [
+    Validators.required,
+    Validators.min(40),
+    Validators.max(160)
+  ]],
+  circunferenciaCadera: [null, [
+    Validators.required,
+    Validators.min(40),
+    Validators.max(160)
+  ]],
+  presionArterial: ['', [
+    Validators.required,
+    Validators.pattern(/^\d{2,3}\/\d{2,3}$/)  
+  ]],
+  frecuenciaCardiacaReposo: [null, [
+    Validators.required,
+    Validators.min(30),    
+    Validators.max(130)   
+  ]],
+  notas: ['', [
+    Validators.maxLength(500)  
+  ]]
+});
   }
 
   private destroy$ = new Subject<void>();
@@ -134,25 +176,92 @@ ngOnDestroy() {
   this.destroy$.next();
   this.destroy$.complete();
 }
+fechaMinimaValidator(): (control: AbstractControl) => ValidationErrors | null {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const inputDate = new Date(control.value);
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+
+    if (inputDate < nextWeek) {
+      return { fechaMinima: true };
+    }
+
+    return null;
+  };
+}
   ngOnInit(): void {
     this.loadInitialData();
     this.cargarDatos();
     const today = new Date();
   const pastDate = new Date();
   pastDate.setDate(today.getDate() - 28);
-
+  
   this.dateRange = {
     start: pastDate,
     end: today
   };
 
   this.filterRecords();
+  this.loadUserData();
   }
   ngAfterViewChecked() {
   if (this.currentView === 'stats' && !this.graficoRenderizado && this.evolucionChart) {
     this.graficoRenderizado = true;
     this.renderizarGrafico();
     this.renderizarGrafico2()
+  }
+}
+loadUserData(): void {
+    const nombre = localStorage.getItem('nombre');
+    const apellido = localStorage.getItem('apellido');
+    const fotoPerfil = localStorage.getItem('fotoPerfil');
+    
+    this.nombre = nombre || '';
+    this.apellido = apellido || '';
+    this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
+  }
+cerrarSesion(): void {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Quieres cerrar sesión?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.dservice.logOut();
+          this.router.navigate(['/login']);
+          Swal.fire('Sesión cerrada', '', 'success');
+        }
+      });
+    }
+cambiarVista(tipo:string){
+  if (this.chart) {
+    this.chart.destroy();
+    this.chart = null;
+  }
+  if (this.chart2) {
+    this.chart2.destroy();
+    this.chart2 = null;
+  }
+  if(tipo === "metrics"){
+    this.currentView = "metrics"
+  }else if(tipo === "records"){
+    this.currentView = "records"
+  }else if(tipo === "goals"){
+    this.currentView = "goals"
+  }else if(tipo === "stats"){
+    this.currentView = "stats"
+    setTimeout(() => {
+      this.renderizarGrafico();
+      this.renderizarGrafico2();
+    }, 50);
+  }else if(tipo === "medicion"){
+    this.currentView = "medicion"
   }
 }
    cargarDatos(): Promise<void> {
@@ -310,6 +419,10 @@ ngOnDestroy() {
     return ordenDias.filter(dia => this.datosC?.rutinasPorDia[dia]);
   }
   ngAfterViewInit() {
+     if (this.currentView === 'stats') {
+    this.renderizarGrafico();
+    this.renderizarGrafico2();
+  }
     this.cargarDatos();
   }
   renderizarGrafico() {
@@ -568,6 +681,7 @@ ngOnDestroy() {
                 metrics: this.tmservice.list(Number(id), token),
                 records: this.rrservice.list(Number(id), token),
                 goals : this.orservice.list(Number(id),token),
+                objetivos : this.orservice.getProgresoObjetivos(Number(id), token),
                 mediciones: this.mfservice.list(Number(id),token),
                 medicion: this.mfservice.obtenerUltimaMedicion(Number(id),token)
               }).pipe(takeUntil(this.destroy$)).subscribe({
@@ -576,6 +690,7 @@ ngOnDestroy() {
                   this.records = data.records;
                   this.mediciones=data.mediciones
                   this.ultimaMedicion = data.medicion
+                  this.objetivos = data.objetivos
                   console.log(this.records)
                   this.nombre = localStorage.getItem('nombre') || '';
                   this.apellido = localStorage.getItem('apellido') || '';
@@ -611,31 +726,7 @@ ngOnDestroy() {
     });
   }
 }
-deleteObj(obj:ProgresoObjetivoDTO) {
-  const token =localStorage.getItem("token")
-    if(!token) {
-      throw new Error("Not Token Found")
-    }
-    this.orservice.eliminar(obj.id,token).pipe(takeUntil(this.destroy$)).subscribe({
-      next:(data)=>{
-        if(data.success){
-          alert("Eliminado")
-          this.loadInitialData(); // Para recargar datos principales
-        if (this.currentView === 'stats') {
-          this.cargarDatos().then(() => {
-            this.renderizarGrafico();
-            this.renderizarGrafico2();
-          });
-        }
-        }else{
-          alert("No elimiando")
-        }
-      },
-      error:(err)=>{
-        console.log(err)
-      }
-    })
-}
+
 
 
   async addMetric(){
@@ -651,13 +742,7 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     this.tmservice.add(newMetric,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         console.log(data)
-        this.loadInitialData(); // Para recargar datos principales
-        if (this.currentView === 'stats') {
-          this.cargarDatos().then(() => {
-            this.renderizarGrafico();
-            this.renderizarGrafico2();
-          });
-        }
+        this.loadInitialData(); 
 
       },
       error:(err)=>{
@@ -681,13 +766,7 @@ deleteObj(obj:ProgresoObjetivoDTO) {
     this.rrservice.add(newRecord,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
         console.log(data)
-        this.loadInitialData(); // Para recargar datos principales
-if (this.currentView === 'stats') {
-  this.cargarDatos().then(() => {
-    this.renderizarGrafico();
-    this.renderizarGrafico2();
-  });
-}
+        this.loadInitialData(); 
 
       },
       error:(err)=>{
@@ -707,14 +786,8 @@ if (this.currentView === 'stats') {
     newGoal.iddeportista = Number(localStorage.getItem("id"))
     this.orservice.add(newGoal,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
-        alert("Exito")
-        this.loadInitialData(); // Para recargar datos principales
-if (this.currentView === 'stats') {
-  this.cargarDatos().then(() => {
-    this.renderizarGrafico();
-    this.renderizarGrafico2();
-  });
-}
+        this.loadInitialData(); 
+
       },
       error:(err)=>{
         console.error(err)
@@ -735,17 +808,14 @@ if (this.currentView === 'stats') {
         console.log(data)
         alert("agregado"+data)
         this.loadInitialData(); // Para recargar datos principales
-if (this.currentView === 'stats') {
-  this.cargarDatos().then(() => {
-    this.renderizarGrafico();
-    this.renderizarGrafico2();
-  });
-}
       },
       error:(err)=>{
         console.error(err)
       }
     })
+  }
+  toggleUserDropdown(): void {
+    this.showUserDropdown = !this.showUserDropdown;
   }
 
   toggleGoalCompletion(goal: any): void {
@@ -757,12 +827,6 @@ if (this.currentView === 'stats') {
       next:(data)=>{
         alert("Completado"+data)
         this.loadInitialData(); // Para recargar datos principales
-if (this.currentView === 'stats') {
-  this.cargarDatos().then(() => {
-    this.renderizarGrafico();
-    this.renderizarGrafico2();
-  });
-}
       },
       error:(err)=>{
         console.error(err)
@@ -770,50 +834,62 @@ if (this.currentView === 'stats') {
     })
   }
 
-  deleteItem(type: 'metric' | 'record' | 'goal', id: number): void {
-    const token = localStorage.getItem("token")
-    if(!token) {
-      throw new Error("Not Token Found")
-    }
-    if (type == "metric"){
-      this.tmservice.delete(id,token).pipe(takeUntil(this.destroy$)).subscribe({
-        next:(data)=>{
-          if(data.success){
-            alert("Exito al eliminar")
-            this.loadInitialData(); // Para recargar datos principales
-if (this.currentView === 'stats') {
-  this.cargarDatos().then(() => {
-    this.renderizarGrafico();
-    this.renderizarGrafico2();
-  });
-}
-          }else{
-            alert("error")
-          }
-        },
-        error:(err)=>{
-          console.log(err)
-        }
-      })
-    }else if(type === "record"){
-      this.rrservice.delete(id,token).pipe(takeUntil(this.destroy$)).subscribe({
-        next:(data)=>{
-          if(data.success){
-            alert("Exito")
-            this.loadInitialData(); // Para recargar datos principales
-if (this.currentView === 'stats') {
-  this.cargarDatos().then(() => {
-    this.renderizarGrafico();
-    this.renderizarGrafico2();
-  });
-}
-          }
-        },
-        error:(err)=>{
-          console.log(err)
-        }
-      })
-
-    }
+ deleteItem(type: 'metric' | 'record' | 'goal'| 'medicion', id: number): void {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Not Token Found");
   }
+
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará el elemento permanentemente.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let deleteObservable;
+
+      if (type === 'metric') {
+        deleteObservable = this.tmservice.delete(id, token);
+      } else if (type === 'record') {
+        deleteObservable = this.rrservice.delete(id, token);
+      } else if (type === 'goal'){
+        deleteObservable = this.oservice.eliminar(id,token)
+      }else if (type === 'medicion'){
+        deleteObservable = this.mfservice.eliminar(id,token)
+      }else{
+        Swal.fire('Error', 'Tipo de elemento no soportado.', 'error');
+        return;
+      }
+
+      deleteObservable.pipe(takeUntil(this.destroy$)).subscribe({
+        next: (data) => {
+          if (data.success) {
+            Swal.fire({
+              title: '¡Eliminado!',
+              text: 'El elemento fue eliminado exitosamente.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            this.loadInitialData();
+
+
+          } else {
+            Swal.fire('Error', 'No se pudo eliminar el elemento.', 'error');
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error del servidor', 'Ocurrió un problema inesperado.', 'error');
+        }
+      });
+    }
+  });
+}
 }

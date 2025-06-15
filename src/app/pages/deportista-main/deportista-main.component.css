@@ -25,3 +25,59 @@
 .table-hover tbody tr:hover {
   transform: translateX(4px);
 }
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-gradient-x {
+  background-size: 200% auto;
+  animation: gradientX 5s ease infinite;
+}
+
+@keyframes gradientX {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.table-hover tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+  transform: translateX(4px);
+}
+@keyframes ping-fast {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-ping-fast {
+  animation: ping-fast 0.6s ease-in-out;
+}
+
+@keyframes reflection {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 4px 2px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.animate-reflection {
+  animation: reflection 1.8s infinite ease-in-out;
+}

@@ -14,7 +14,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { DeportistaService } from '../../services/deportista.service';
-import { Subscription, forkJoin } from 'rxjs';
+import { Subject, Subscription, delay, filter, forkJoin, switchMap, take, takeUntil } from 'rxjs';
+import { WsService } from '../../services/websocket.service';
 @Component({
     selector: 'app-deportista-main',
     imports: [CommonModule, RouterModule,FormsModule,MatIcon,MatIconModule],
@@ -44,6 +45,7 @@ export class DeportistaMainComponent implements OnInit{
   equiposActivosArray:Equipo[]=[]
   equiposActivos: number = 0;
   proximosEventos: any[] = [];
+  nuevosMensajes = 0;
   misEquipos: any[] = [];
   rutinasPendientesHoy: any[] = [];
   medicionesRecientes: any[] = [];
@@ -55,7 +57,7 @@ export class DeportistaMainComponent implements OnInit{
   { name: 'Rutinas', route: 'rutinas', icon: 'fitness_center' },
   { name: 'Rendimiento', route: 'rendimiento', icon: 'analytics' }
 ];
-constructor(public router: Router) {}
+constructor(public router: Router,private wsService: WsService) {}
   notificationMessage: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 10;
@@ -65,8 +67,29 @@ constructor(public router: Router) {}
   pages:any[]=[]
   showUserDropdown: boolean = false;
   showNotification: boolean = false;
+  private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+        const savedCount = localStorage.getItem('unreadMessages');
+        const initialCount = savedCount ? parseInt(savedCount, 10) : 0;
+        this.nuevosMensajes = initialCount;
+        this.wsService.connect();
+      this.wsService.connectionEstablished.pipe(
+        filter(connected => connected),
+        take(1),
+        delay(150), 
+        switchMap(() => this.wsService.getNotificationCount()),
+        takeUntil(this.destroy$)
+      ).subscribe(count => {
+         this.nuevosMensajes = count;
+          console.log('Notificaciones:', count);
+        
+          if (Number(localStorage.getItem("unreadMessages")) == 0) {
+            localStorage.setItem('unreadMessages', count.toString());
+          }
+        
+          this.nuevosMensajes = Number(localStorage.getItem("unreadMessages"));
+      });
     this.validateSession();
     this.cargarDatosDeportista();
   }
@@ -154,6 +177,11 @@ constructor(public router: Router) {}
     
     setTimeout(() => this.showNotification = false, 5000);
   }
+  verNotificaciones() {
+  localStorage.setItem('unreadMessages', "0");
+  this.nuevosMensajes = 0;
+  this.wsService.resetNotificationCount();
+}
 
   cargarProximosEventos(): void {
     const id = Number(localStorage.getItem('id'));

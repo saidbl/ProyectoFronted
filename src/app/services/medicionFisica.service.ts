@@ -5,6 +5,7 @@ import { appSettings } from "../settings/appSettings";
 import { EvolucionFisicaDTO } from "../models/evolucionFisicaDTO.model";
 import { MedicionFisica } from "../models/medicionFisica.model";
 import { MedicionFisicaDTO } from "../models/medicionFisicaDTO.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 
 @Injectable({
     providedIn:"root"
@@ -26,6 +27,12 @@ export class MedicionFisicaService{
                   return this.http.get<MedicionFisica[]>(`${appSettings.apiGeneral}/listMedicion/${id}`,{ headers })
     }
 
+    eliminar(id:number,token:string):Observable<ResponseAPI>{
+      const headers = new HttpHeaders({
+                      'Authorization': `Bearer ${token}`
+                  });
+                  return this.http.delete<ResponseAPI>(`${appSettings.apiGeneral}/deleteMedicion/${id}`,{ headers })
+    }
     obtenerUltimaMedicion(deportistaId: number, token:string): Observable<MedicionFisica> {
       const headers = new HttpHeaders({
                       'Authorization': `Bearer ${token}`

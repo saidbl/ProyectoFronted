@@ -57,7 +57,7 @@ export class InstructorMainComponent implements OnInit {
 ];
 
 constructor(public router: Router,private unreadMessagesService: UnreadMessagesService,
-    private ngZone: NgZone,private wsService: WsService) {}
+    private wsService: WsService) {}
   rutinas : Rutina[] = []
   nombre: string = '';
   apellido: string = '';
@@ -82,24 +82,25 @@ constructor(public router: Router,private unreadMessagesService: UnreadMessagesS
   
  ngOnInit() {
     try{
-      const savedCount = localStorage.getItem('unreadMessages');
+    const savedCount = localStorage.getItem('unreadMessages');
     const initialCount = savedCount ? parseInt(savedCount, 10) : 0;
     this.nuevosMensajes = initialCount;
     this.wsService.connect();
-  
   this.wsService.connectionEstablished.pipe(
     filter(connected => connected),
     take(1),
-    delay(150), // Pequeño delay adicional
+    delay(150), 
     switchMap(() => this.wsService.getNotificationCount()),
     takeUntil(this.destroy$)
   ).subscribe(count => {
-    this.nuevosMensajes = count;
-    console.log('Notificaciones:', count);
-    if(Number(localStorage.getItem("unreadMessages"))==0){
-      localStorage.setItem('unreadMessages', count.toString());
-    }
-    this.nuevosMensajes= Number(localStorage.getItem("unreadMessages"))
+     this.nuevosMensajes = count;
+          console.log('Notificaciones:', count);
+        
+          if (Number(localStorage.getItem("unreadMessages")) == 0) {
+            localStorage.setItem('unreadMessages', count.toString());
+          }
+        
+          this.nuevosMensajes = Number(localStorage.getItem("unreadMessages"));
   });
       const fotoPerfil = localStorage.getItem("fotoPerfil")
       const nom=localStorage.getItem("nombre")

@@ -16,7 +16,7 @@ import { DeportistaService } from '../../../services/deportista.service';
 export class RutinasDepComponent implements OnInit{
   private rservice = inject(RutinaService)
   private dservice = inject(DeportistaService)
-  diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+  diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
   nombre: string | null = '';
   apellido: string | null = '';
   fotoPerfil: string = "";
@@ -39,6 +39,8 @@ export class RutinasDepComponent implements OnInit{
 
 
   ngOnInit(): void {
+    const nombre = localStorage.getItem('nombre');
+    const apellido = localStorage.getItem('apellido');
     const foto = localStorage.getItem("fotoPerfil")
     console.log("hola")
     const id =Number(localStorage.getItem("id"))
@@ -52,6 +54,8 @@ export class RutinasDepComponent implements OnInit{
         console.log(data)
         console.log("hola")
         this.rutinas = data 
+        this.nombre = nombre || '';
+    this.apellido = apellido || '';
         this.fotoPerfil = "http://localhost:8080/"+foto
         console.log(this.fotoPerfil)
         this.filtrarPorDia("TODOS")
@@ -87,20 +91,29 @@ export class RutinasDepComponent implements OnInit{
     }
 
   filtrarPorDia(dia: string) {
+    this.diaFiltrado=dia
     if(dia == "TODOS"){
       this.rutinasFiltradas = this.rutinas
     }else{
     this.rutinasFiltradas = this.rutinas.filter(r=> r.dia == dia)
     }
   }
-
-  getSafeUrl(url: string) {
+  getIconoObjetivo(objetivo: string): string {
+  switch (objetivo?.toUpperCase()) {
+    case 'FUERZA':
+      return 'fitness_center';
+    case 'RESISTENCIA':
+      return 'directions_run';
+    case 'VELOCIDAD':
+      return 'speed';
+    case 'FLEXIBILIDAD':
+      return 'self_improvement';
+    case 'TECNICA':
+      return 'psychology';
+    default:
+      return 'sports';
   }
-
-  registrarCheckin(rutinaId: number) {
-
-  }
-  // Para alternar la visualización de ejercicios
+}
 toggleEjercicios(rutinaId: number|undefined) {
   const rutina = this.rutinasFiltradas.find(r => r.id === rutinaId);
   if (rutina) {

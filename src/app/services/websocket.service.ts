@@ -46,7 +46,7 @@ this.client.subscribe('/topic/mensajes', (msg: Message) => {
   setTimeout(() => {
         this.connectionEstablished.next(true);
         console.log('Conexión completamente establecida con suscripciones');
-      }, 100); // 100ms es suficiente para que las suscripciones se procesen
+      }, 100); 
     };
     
     this.client.onStompError = (frame) => {

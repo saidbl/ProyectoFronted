@@ -1,18 +1,17 @@
 import { Component , inject} from '@angular/core';
 import Swal from 'sweetalert2';
-import { InstructorDTO } from '../../../models/instructorDTO.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Deporte } from '../../../models/deporte.model';
-import { InstructorService } from '../../../services/instructor.service';
 import { MatIcon } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DeportistaService } from '../../../services/deportista.service';
 import { DeportistaDTO } from '../../../models/deportistaDTO.model';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-perfil',
-  imports: [MatIcon,ReactiveFormsModule,CommonModule],
+  imports: [MatIcon,ReactiveFormsModule,CommonModule,RouterModule],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css'
 })

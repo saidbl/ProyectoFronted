@@ -12,7 +12,6 @@ import { WsService } from '../../services/websocket.service';
 import { RemitenteTipo } from '../../models/remitentetipo.model';
 import { MensajeService } from '../../services/mensaje.service';
 import { OrganizacionService } from '../../services/organizacion.service';
-import { Deportista } from '../../models/deportista.model';
 import { JugadorEquipoService } from '../../services/jugadorequipo.service';
 import { JugadorEquipo } from '../../models/jugadorEquipo.model';
 import { RouterModule } from '@angular/router';
