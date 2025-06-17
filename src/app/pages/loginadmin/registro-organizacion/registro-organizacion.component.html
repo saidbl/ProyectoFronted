@@ -1,0 +1,157 @@
+<div class="min-h-screen min-w-screen bg-gray-900 flex justify-center items-center p-8">
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="bg-gray-800 border border-gray-700 rounded-xl shadow-lg w-full max-w-[1300px] h-[90vh] flex gap-8 p-8">
+
+    <!-- Columna 1 -->
+    <div class="flex flex-col gap-6 w-1/3">
+      <h3 class="text-green-400 font-bold text-xl mb-4 uppercase">Datos Básicos</h3>
+      
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <div *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('email')?.hasError('required')">El correo es obligatorio</div>
+          <div *ngIf="registroForm.get('email')?.hasError('email')">Ingresa un correo válido</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Contraseña</label>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo 8 caracteres"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('password')?.hasError('required')">La contraseña es obligatoria</div>
+          <div *ngIf="registroForm.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres</div>
+          <div *ngIf="registroForm.get('password')?.hasError('pattern')">Debe tener al menos 1 mayuscula, 1 minuscula y un caracter especial</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Nombre</label>
+        <input
+          type="text"
+          formControlName="nombre"
+          placeholder="Ejemplo: Juan Pérez"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <div *ngIf="registroForm.get('nombre')?.touched && registroForm.get('nombre')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('nombre')?.hasError('required')">El nombre es obligatorio</div>
+        </div>
+      </div>
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Telefono</label>
+        <input
+          type="text"
+          formControlName="telefono"
+          placeholder="Ejemplo: 55555555"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <div *ngIf="registroForm.get('telefono')?.touched && registroForm.get('telefono')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('telefono')?.hasError('required')">El nombre es obligatorio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna 2 -->
+    <div class="flex flex-col gap-6 w-1/3">
+      <h3 class="text-green-400 font-bold text-xl mb-4 uppercase">Detalles Organización</h3>
+
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Nombre Organización</label>
+        <input
+          type="text"
+          formControlName="nombre_organizacion"
+          placeholder="Nombre de tu organización"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <div *ngIf="registroForm.get('nombre_organizacion')?.touched && registroForm.get('nombre_organizacion')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('nombre_organizacion')?.hasError('required')">El nombre de la organización es obligatorio</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Dirección</label>
+        <input
+          type="text"
+          formControlName="direccion"
+          placeholder="Calle, número, ciudad"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+      </div>
+
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Tipo de Organización</label>
+        <select
+          formControlName="tipo"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          <option value="" class="text-gray-400">Seleccione un tipo</option>
+          <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo">{{ tipo }}</option>
+        </select>
+        <div *ngIf="registroForm.get('tipo')?.touched && registroForm.get('tipo')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('tipo')?.hasError('required')">El tipo de organización es obligatorio</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Deporte Principal</label>
+        <select
+          formControlName="id_deporte"
+          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          <option value="" class="text-gray-400">Seleccione un deporte</option>
+          <option *ngFor="let deporte of deportes" [value]="deporte.id">{{ deporte.nombre }}</option>
+        </select>
+        <div *ngIf="registroForm.get('id_deporte')?.touched && registroForm.get('id_deporte')?.invalid" class="text-red-400 text-sm mt-1">
+          <div *ngIf="registroForm.get('id_deporte')?.hasError('required')">El deporte es obligatorio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna 3 -->
+    <div class="flex flex-col justify-between items-center w-1/3">
+      <div class="w-full flex flex-col items-center gap-4">
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Logo de la Organización</label>
+        <input
+          type="file"
+          (change)="onFileChange($event)"
+          accept="image/*"
+          class="w-full text-gray-300 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <small class="block text-gray-400 mt-1 text-center">Sube el logo (imagen)</small>
+
+        <div *ngIf="imagenPreview" class="mt-4 w-full flex justify-center">
+          <img
+            [src]="imagenPreview"
+            alt="Logo preview"
+            class="rounded-md border border-gray-600 max-h-48 object-contain"
+          />
+        </div>
+         <button
+        type="submit"
+        (click)="cerrarSesion()"
+        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+      >
+        Cerrar Sesion
+      </button>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+        [disabled]="registroForm.invalid"
+      >
+        Registrar Organización
+      </button>
+    </div>
+
+  </form>
+</div>

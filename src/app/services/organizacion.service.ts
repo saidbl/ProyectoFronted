@@ -12,6 +12,14 @@ export class OrganizacionService{
     private http=inject(HttpClient)
     private apiLog:string=appSettings.apiLoginOrg
 
+    crearOrg(token:string, formData:FormData): Observable<Organizacion> {
+          const headers = new HttpHeaders({
+                        'Authorization': `Bearer ${token}`
+                    });
+        return this.http.post<Organizacion>(`${appSettings.apiGeneral}/org/agregar`, formData,{headers});
+    
+        }
+
     login (email:string, password:string):Observable<any>{
             return this.http.post<any>(this.apiLog,{email,password})
     }

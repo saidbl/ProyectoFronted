@@ -58,6 +58,7 @@ export class OrganizacionMainComponent implements OnInit {
   constructor(public router:Router, private wsService: WsService){}
   ngOnInit(): void {
     const token = localStorage.getItem("token")
+    console.log(localStorage.getItem("fotoPerfil"))
       const id = Number(localStorage.getItem("id"))
       if(!token) {
         throw new Error("Not Token Found")

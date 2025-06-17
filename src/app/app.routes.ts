@@ -28,6 +28,8 @@ import { PerfilComponent } from './pages/deportista-main/perfil/perfil.component
 import { ChatDeportistaComponent } from './pages/deportista-main/chat-deportista/chat-deportista.component';
 import { InstructoresControlComponent } from './pages/organizacion-main/instructores-control/instructores-control.component';
 import { ChatOrganizacionComponent } from './pages/organizacion-main/chat-organizacion/chat-organizacion.component';
+import { LoginadminComponent } from './pages/loginadmin/loginadmin.component';
+import { RegistroOrganizacionComponent } from './pages/loginadmin/registro-organizacion/registro-organizacion.component';
 
 
 export const routes: Routes = [
@@ -60,6 +62,8 @@ export const routes: Routes = [
     { path: 'organizacion/estadistica-org', component: EstadisticasOrgComponent},
     { path: 'organizacion/configuracionOrg', component: ConfiguracionOrganizacionComponent},
     { path: 'organizacion/instructor', component: InstructoresControlComponent},
+    { path: 'admin', component:LoginadminComponent},
+    { path: "registro",component:RegistroOrganizacionComponent},
     { path: 'organizacion/chat', component: ChatOrganizacionComponent},
     { path: '', redirectTo: '/rutinas', pathMatch: 'full' },
     { path: '**', component:LoginComponent },

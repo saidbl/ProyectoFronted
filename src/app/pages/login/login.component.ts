@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { InstructorService } from '../../services/instructor.service';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-login',
@@ -30,12 +31,24 @@ export class LoginComponent {
   private iService=inject(InstructorService)
   constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
-      email: [''],
-      password: [''],
-      tipoUsuario: ['']
+      email: ['',[Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      tipoUsuario: ['DEPORTISTA',[Validators.required]]
     });
   }
   login() {
+    console.log(this.loginForm.invalid)
+    if (this.loginForm.invalid) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campos incompletos',
+      text: 'Por favor, completa todos los campos correctamente.',
+      confirmButtonColor: '#f6c23e',
+      background: '#1f2937',
+      color: '#fff'
+    });
+    return;
+  }
     const { email, password, tipoUsuario } = this.loginForm.value;
     switch (tipoUsuario) {
       case 'DEPORTISTA':
@@ -56,14 +69,42 @@ export class LoginComponent {
               localStorage.setItem("apellido",data.apellido)
               console.log(data)
               console.log(data.idDeporte)
-              this.router.navigate(['/deportista']);
+              Swal.fire({
+  icon: 'success',
+  title: '¡Bienvenido!',
+  text: 'Inicio de sesión exitoso',
+  confirmButtonColor: '#10b981',
+  background: '#1f2937',
+  color: '#fff',
+  timer: 2000,
+  timerProgressBar: true,
+  showConfirmButton: false
+}).then(() => {
+  this.router.navigate(['/deportista']);
+});
               console.log("Exito en conexion")
             } else {
-              console.log("Eliminar")
+               Swal.fire({
+  icon: 'error',
+  title: 'Credenciales incorrectas',
+  text: data.message,
+  confirmButtonText: 'Intentar de nuevo',
+  confirmButtonColor: '#ef4444',
+  background: '#1f2937',
+  color: '#fff'
+});
             }
           },
           error: (error) => {
-            console.log("adios")
+            Swal.fire({
+  icon: 'error',
+  title: 'Credenciales incorrectas',
+  text: 'El correo o la contraseña son incorrectos.',
+  confirmButtonText: 'Intentar de nuevo',
+  confirmButtonColor: '#ef4444',
+  background: '#1f2937',
+  color: '#fff'
+});
           }
         });
       break;
@@ -79,15 +120,44 @@ export class LoginComponent {
             localStorage.setItem("id",data.id);
             localStorage.setItem("idDeporte",data.idDeporte)
             localStorage.setItem("nombre",data.nombre)
+            localStorage.setItem("fotoPerfil",data.fotoPerfil)
             console.log(data.id);
-            this.router.navigate(['/organizacion']);
+            Swal.fire({
+  icon: 'success',
+  title: '¡Bienvenido!',
+  text: 'Inicio de sesión exitoso',
+  confirmButtonColor: '#10b981',
+  background: '#1f2937',
+  color: '#fff',
+  timer: 2000,
+  timerProgressBar: true,
+  showConfirmButton: false
+}).then(() => {
+  this.router.navigate(['/organizacion']);
+});
             console.log("Exito en conexion")
           } else {
-            console.log("Eliminar")
+             Swal.fire({
+  icon: 'error',
+  title: 'Credenciales incorrectas',
+  text: data.message,
+  confirmButtonText: 'Intentar de nuevo',
+  confirmButtonColor: '#ef4444',
+  background: '#1f2937',
+  color: '#fff'
+});
           }
         },
         error: (error) => {
-          console.log("adios")
+          Swal.fire({
+  icon: 'error',
+  title: 'Credenciales incorrectas',
+  text: 'El correo o la contraseña son incorrectos.',
+  confirmButtonText: 'Intentar de nuevo',
+  confirmButtonColor: '#ef4444',
+  background: '#1f2937',
+  color: '#fff'
+});
         }
       });
         break;
@@ -106,14 +176,42 @@ export class LoginComponent {
             localStorage.setItem("nombre",data.nombre)
             localStorage.setItem("apellido",data.apellido)
             console.log(localStorage);
-            this.router.navigate(['/instructor']);
+            Swal.fire({
+  icon: 'success',
+  title: '¡Bienvenido!',
+  text: 'Inicio de sesión exitoso',
+  confirmButtonColor: '#10b981',
+  background: '#1f2937',
+  color: '#fff',
+  timer: 2000,
+  timerProgressBar: true,
+  showConfirmButton: false
+}).then(() => {
+  this.router.navigate(['/instructor']);
+});
             console.log("Exito en conexion")
           } else {
-            console.log("Eliminar")
+             Swal.fire({
+  icon: 'error',
+  title: 'Credenciales incorrectas',
+  text: data.message,
+  confirmButtonText: 'Intentar de nuevo',
+  confirmButtonColor: '#ef4444',
+  background: '#1f2937',
+  color: '#fff'
+});
           }
         },
         error: (error) => {
-          console.log("adios")
+         Swal.fire({
+  icon: 'error',
+  title: 'Credenciales incorrectas',
+  text: 'El correo o la contraseña son incorrectos.',
+  confirmButtonText: 'Intentar de nuevo',
+  confirmButtonColor: '#ef4444',
+  background: '#1f2937',
+  color: '#fff'
+});
         }
       });
     }

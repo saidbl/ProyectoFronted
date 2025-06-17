@@ -3,6 +3,7 @@ export const appSettings={
     apiLogin:"http://localhost:8080/auth/login/deportista",
     apiLoginOrg:"http://localhost:8080/auth/login/organizacion",
     apiLoginInst:"http://localhost:8080/auth/login/instructor",
+    apiLoginAdmin:"http://localhost:8080/auth/login/admin",
     apiRutinas:"http://localhost:8080/rutinas",
     apiPosiciones:"http://localhost:8080/posiciones",
     apiEliminarRutinas:"http://localhost:8080/rutinas/eliminar",
@@ -49,6 +50,7 @@ export const appSettings={
     apiProgresoObjetivos :"http://localhost:8080/progresoObjetivos",
     apiDesasociar:"http://localhost:8080/desasociar",
     apiEquiposEvento:"http://localhost:8080/eventosEquipo/listar",
-    apiActualizarEquipo:"http://localhost:8080/equipos/editar"
+    apiActualizarEquipo:"http://localhost:8080/equipos/editar",
+    apiDeportes: "http://localhost:8080/deportes/list"
 
 }
