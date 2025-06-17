@@ -9,8 +9,10 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
-import { saveAs } from 'file-saver';
-
+import Swal from 'sweetalert2';
+import { OrganizacionService } from '../../../services/organizacion.service';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 @Component({
   standalone: true,
   selector: 'app-estadisticas-org',
@@ -22,30 +24,48 @@ import { saveAs } from 'file-saver';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    NgxEchartsModule
+    NgxEchartsModule,
+    RouterModule
   ],
   templateUrl: './estadisticas-org.component.html',
   styleUrls: ['./estadisticas-org.component.css']
 })
 export class EstadisticasOrgComponent implements OnInit {
   private eservice = inject(EventoService);
-  
-  // Datos
+  private oservice = inject(OrganizacionService)
   eventosPorMes: any[] = [];
   participacionEventos: any[] = [];
-  
-  // Configuración de gráficos
   eventsByMonthChartOptions: any;
   participationChartOptions: any;
-  
-  // Estados
+  showUserDropdown: boolean = false;
+  fotoPerfil: string = "http://localhost:8080/";
+  nombre: string = ''
+  showNotification: boolean = false;
   loading = true;
   error = false;
+  navigation = [
+  { name: 'Crear Eventos', route: '../crear-eventos', icon: 'add' },
+  { name: 'Eventos', route: '../eventos', icon: 'event' },
+  { name: 'Equipos', route: '../equipos-org', icon: 'groups' },
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Instructores', route: '../instructor', icon: 'fitness_center' }
+];
 
+  constructor(public router: Router){}
   ngOnInit(): void {
     this.loadStats();
+    this.loadUserData();
   }
+  toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
 
+loadUserData(): void {
+    const nombre = localStorage.getItem('nombre');
+    const fotoPerfil = localStorage.getItem('fotoPerfil');
+    this.nombre = nombre || '';
+    this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
+  }
   loadStats(): void {
     this.loading = true;
     this.error = false;
@@ -72,20 +92,16 @@ export class EstadisticasOrgComponent implements OnInit {
   }
 
   prepareCharts(): void {
-    // Ordenar eventos por mes cronológicamente
     const sortedEventsByMonth = [...this.eventosPorMes].sort((a, b) => {
       const dateA = new Date(a[0] + '-01');
       const dateB = new Date(b[0] + '-01');
       return dateA.getTime() - dateB.getTime();
     });
-
-    // Formatear nombres de meses
     const monthNames = sortedEventsByMonth.map(item => {
       const [year, month] = item[0].split('-');
       return new Date(parseInt(year), parseInt(month) - 1, 1).toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
     });
 
-    // Gráfico de eventos por mes - Versión Premium
     this.eventsByMonthChartOptions = {
       backgroundColor: 'transparent',
       animation: true, // Habilitar animaciones
@@ -181,15 +197,12 @@ export class EstadisticasOrgComponent implements OnInit {
         }
       }]
     };
-
-    // Gráfico de participación - Versión Premium
     const uniqueEvents = this.participacionEventos.filter((event, index, self) =>
       index === self.findIndex(e => e[0] === event[0])
     );
-
     this.participationChartOptions = {
       backgroundColor: 'transparent',
-      animation: true, // Habilitar animaciones
+      animation: true, 
       animationDuration: 1000,
       animationEasing: 'elasticOut',
       animationDelay: function (idx: number) {
@@ -327,8 +340,6 @@ export class EstadisticasOrgComponent implements OnInit {
       ]
     };
   }
-
-  // Métodos auxiliares
   calculatePercentage(inscritos: number, capacidad: number): number {
     return capacidad > 0 ? (inscritos / capacidad) * 100 : 0;
   }
@@ -351,93 +362,20 @@ export class EstadisticasOrgComponent implements OnInit {
   refreshStats(): void {
     this.loadStats();
   }
-
-  viewEventDetails(row: any): void {
-    // Implementar navegación a detalles del evento
-    console.log('View event details:', row);
-  }
-  downloadChart(chartType: 'events' | 'participation'): void {
-    try {
-      const chartInstance = chartType === 'events' 
-        ? this.getChartInstance('eventsByMonthChart')
-        : this.getChartInstance('participationChart');
-      
-      if (!chartInstance) {
-        console.error('Chart instance not found');
-        return;
+    cerrarSesion() {
+     Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Quieres cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.oservice.logOut();
+        this.router.navigate(['/login']);
+        Swal.fire('Sesión cerrada', '', 'success');
       }
-
-      const imageUrl = chartInstance.getDataURL({
-        type: 'png',
-        pixelRatio: 2,
-        backgroundColor: '#111827'
-      });
-
-      this.downloadImage(imageUrl, `${chartType}-chart-${new Date().toISOString().slice(0,10)}.png`);
-    } catch (error) {
-      console.error('Error downloading chart:', error);
+    });
     }
-  }
-
-  downloadData(chartType: 'events' | 'participation'): void {
-    try {
-      let csvContent = '';
-      const filename = `${chartType}-data-${new Date().toISOString().slice(0,10)}.csv`;
-      
-      if (chartType === 'events') {
-        csvContent = this.convertToCSV(
-          this.eventosPorMes.map(item => ({ Mes: item[0], Eventos: item[1] })),
-          ['Mes', 'Eventos']
-        );
-      } else {
-        csvContent = this.convertToCSV(
-          this.participacionEventos.map(item => ({
-            Evento: item[0],
-            Inscritos: item[1],
-            Capacidad: item[2],
-            Ocupación: `${this.calculatePercentage(item[1], item[2])}%`
-          })),
-          ['Evento', 'Inscritos', 'Capacidad', 'Ocupación']
-        );
-      }
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, filename);
-    } catch (error) {
-      console.error('Error downloading data:', error);
-    }
-  }
-
-  private getChartInstance(chartId: string): any {
-    // Necesitarás agregar un ID a tus elementos chart en el HTML
-    const chartElement = document.getElementById(chartId);
-    return chartElement ? echarts.getInstanceByDom(chartElement) : null;
-  }
-
-  private downloadImage(imageUrl: string, filename: string): void {
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  private convertToCSV(data: any[], headers: string[]): string {
-    const csvRows = [];
-    
-    // Headers
-    csvRows.push(headers.join(','));
-    
-    // Data
-    for (const row of data) {
-      const values = headers.map(header => {
-        const escaped = (''+row[header]).replace(/"/g, '\\"');
-        return `"${escaped}"`;
-      });
-      csvRows.push(values.join(','));
-    }
-    
-    return csvRows.join('\n');
-  }
 }

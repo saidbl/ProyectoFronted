@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { MatNativeDateModule } from '@angular/material/core';
 import { EventoDTO } from '../../../../models/eventoDTO.model';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 interface EventoForm {
   nombre: FormControl<string | null>;
@@ -31,7 +32,6 @@ interface EventoForm {
   frecuencia: FormControl<string | null>;
   diasSemana: FormControl<string[] | null>;
   excluirFines: FormControl<boolean | null>;
-  imagen: FormControl<string | null>;
 
 }
 
@@ -44,6 +44,8 @@ interface EventoForm {
 export class EventoEditarComponent implements OnInit {
   cargando = false;
   eventoForm: FormGroup<EventoForm>;
+ imagenFile: File | null = null; 
+  imagenPreview: string | ArrayBuffer | null = null;
   diasDisponibles: any[] = [
     { value: 'L', label: 'Lunes' },
     { value: 'M', label: 'Martes' },
@@ -116,7 +118,6 @@ export class EventoEditarComponent implements OnInit {
       frecuencia: new FormControl(''),
       diasSemana: new FormControl([]),
       excluirFines: new FormControl(false),
-      imagen: new FormControl('')
     });
     this.eventoForm.get('fecha')?.valueChanges.subscribe(() => {
       this.eventoForm.get('fechaFin')?.updateValueAndValidity();
@@ -136,32 +137,39 @@ export class EventoEditarComponent implements OnInit {
   validarFechaValida(): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} | null => {
       const fecha = control.value;
-      if (!fecha) return null; // Permitir campo vacío si no es requerido
+      if (!fecha) return null;
       
       const esFechaValida = !isNaN(new Date(fecha).getTime());
       return esFechaValida ? null : { fechaInvalida: true };
     };
   }
   
-  validarFechaFin(control: AbstractControl): {[key: string]: any} | null {
-    if (!control.value) return null; 
-    
-    const fechaFin = new Date(control.value);
-    const fechaInicio = this.eventoForm?.get('fecha')?.value;
-    if (isNaN(fechaFin.getTime())) {
-      return { fechaInvalida: true };
-    }
-    if (fechaInicio) {
-      const fechaInicioDate = new Date(fechaInicio);
-      fechaFin.setHours(0, 0, 0, 0);
-      fechaInicioDate.setHours(0, 0, 0, 0);
-      if (fechaFin < fechaInicioDate) {
-        return { fechaFinAnterior: true };
-      }
-    }
-    
-    return null;
+  validarFechaFin(control: AbstractControl): { [key: string]: any } | null {
+  if (!control.value) return null;
+
+  const fechaFin = new Date(control.value);
+  const fechaInicio = this.eventoForm?.get('fecha')?.value;
+
+  if (isNaN(fechaFin.getTime())) {
+    return { fechaInvalida: true };
   }
+
+  if (fechaInicio) {
+    const fechaInicioDate = new Date(fechaInicio);
+    fechaFin.setHours(0, 0, 0, 0);
+    fechaInicioDate.setHours(0, 0, 0, 0);
+
+    const diferenciaEnMs = fechaFin.getTime() - fechaInicioDate.getTime();
+    const diasDiferencia = diferenciaEnMs / (1000 * 60 * 60 * 24);
+
+    if (diasDiferencia < 7) {
+      return { fechaFinMenorASieteDias: true };
+    }
+  }
+
+  return null;
+}
+
   
 
   noSqlInjectionValidator(control: FormControl): { [key: string]: any } | null {
@@ -199,11 +207,69 @@ export class EventoEditarComponent implements OnInit {
         frecuencia: evento.frecuencia || '',
         diasSemana: diasSemana,
         excluirFines: evento.excluirFines  || false,
+
       }); 
       this.diasSemana = [...diasSemana];
+      console.log(diasSemana)
+      console.log(evento.imagen)
+      if (evento.imagen) {
+      const url = 'http://localhost:8080/' + evento.imagen;
+      const nombre = evento.imagen.split('/').pop() || 'imagen.jpg';
+      this.cargarImagenExistente(url, nombre);
+    }
+      this.imagenPreview = 'http://localhost:8080/'+evento.imagen
     }
   }
+  async cargarImagenExistente(imagenUrl: string, nombre: string) {
+  const response = await fetch(imagenUrl);
+  const blob = await response.blob();
 
+  const file = new File([blob], nombre, { type: blob.type });
+  this.imagenFile = file;
+}
+   seleccionarArchivo(event: any): void {
+  const fileInput = event.target as HTMLInputElement;
+  this.imagenFile = fileInput.files?.[0] || null;
+
+  if (!this.imagenFile) return;
+
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+  const maxSizeMB = 2;
+
+  // ✅ Validar tipo usando this.imagenFile.type, no fileInput.type
+  if (!allowedTypes.includes(this.imagenFile.type)) {
+    this.showWarningAlert('Archivo inválido', 'Solo se permiten imágenes JPEG o PNG');
+    fileInput.value = '';
+    return;
+  }
+
+  if (this.imagenFile.size > maxSizeMB * 1024 * 1024) {
+    this.showWarningAlert('Archivo demasiado grande', 'La imagen debe pesar menos de 2MB');
+    fileInput.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    this.imagenPreview = reader.result;
+  };
+  reader.readAsDataURL(this.imagenFile);
+}
+
+
+
+  private showWarningAlert(title: string, message: string): void {
+        Swal.fire({
+          title: title,
+          text: message,
+          icon: 'warning',
+          confirmButtonColor: '#f59e0b',
+          background: '#1f2937',
+          color: '#fff',
+          iconColor: '#f59e0b'
+        });
+      }
   toggleDiaSeleccionado(dia: string): void {
     try {
       let currentDias = this.eventoForm.get('diasSemana')?.value;
@@ -278,6 +344,9 @@ export class EventoEditarComponent implements OnInit {
       if(!token) {
         throw new Error("Not Token Found")
       }
+      if(!this.imagenFile){
+        return
+      }
       this.cargando = true;
       const formValue = this.eventoForm.value;
       console.log(formValue.diasSemana)
@@ -297,15 +366,15 @@ export class EventoEditarComponent implements OnInit {
         contactoOrganizador: formValue.contactoOrganizador || '',
         recurrente: formValue.recurrente || false,
         frecuencia: formValue.frecuencia || '',
-        diasSemana: formValue.diasSemana || [],
+        diasSemana: this.diasSemana|| [],
         excluirFines: formValue.excluirFines ? true : false,
         fechas : [],
         equiposInscritos : 0,
-        imagen : "",
+       imagen: this.data.evento.imagen,
         esFuturo:true
       };
       console.log(eventoActualizado)
-      this.eservice.actualizarEvento(this.data.evento.id,eventoActualizado,token).subscribe({
+      this.eservice.actualizarEvento(this.data.evento.id,eventoActualizado,token,this.imagenFile).subscribe({
         next: () => {
           this.dialogRef.close('actualizado');
         },

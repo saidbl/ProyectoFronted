@@ -28,11 +28,11 @@ export class OrganizacionService{
       return this.http.get<Organizacion[]>(`${appSettings.apiGeneral}/listarOrganizacion/${id}`,{headers})
     }
 
-    update(idOrg: number, org: OrganizacionDTO,token:string): Observable<Organizacion> {
+    update(idOrg: number,token:string,formData: FormData): Observable<any> {
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${token}`
             });
-            return this.http.put<Organizacion>(`${appSettings.apiActualizarOrg}/${idOrg}`, org,{ headers });
+            return this.http.put<Organizacion>(`${appSettings.apiActualizarOrg}/${idOrg}`, formData,{ headers });
         }
 
     logOut():void{

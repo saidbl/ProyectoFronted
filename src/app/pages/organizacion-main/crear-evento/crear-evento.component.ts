@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { EventoService } from '../../../services/evento.service';
 import { MatIcon } from '@angular/material/icon';
 import Swal from 'sweetalert2';
+import { OrganizacionService } from '../../../services/organizacion.service';
 @Component({
     selector: 'app-crear-evento',
     standalone:true,
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
 })
 export class CrearEventoComponent implements OnInit {
   private eservice = inject (EventoService)
+  private oservice = inject(OrganizacionService)
   submitted: boolean = false;
   nombre: string = '';
   ubicacion: string = '';
@@ -28,9 +30,16 @@ export class CrearEventoComponent implements OnInit {
   horaFin: string = '18:00';
   frecuencia: string = 'SEMANAL';
   diasSemana: string[] = ['L', 'M', 'X', 'J', 'V'];
-  archivo?: File;
   nombre_organizacion: string = ""
   showUserDropdown: boolean = false;
+  fotoPerfil: string = "http://localhost:8080/";
+  navigation = [
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Eventos', route: '../eventos', icon: 'event' },
+  { name: 'Equipos', route: '../equipos-org', icon: 'groups' },
+  { name: 'Estadisticas', route: '../estadistica-org', icon: 'analytics' },
+  { name: 'Instructores', route: '../instructor', icon: 'fitness_center' }
+];
   diasDisponibles: any[] = [
     { value: 'L', label: 'Lunes' },
     { value: 'M', label: 'Martes' },
@@ -41,6 +50,10 @@ export class CrearEventoComponent implements OnInit {
     { value: 'D', label: 'Domingo' }
   ];
   excluirFines: boolean = true;
+  archivo?: File | null = null;
+imagenPreview: string | null = null;
+
+
 
 
   constructor(public router :Router) { }
@@ -50,6 +63,14 @@ export class CrearEventoComponent implements OnInit {
     if (!this.isAuthenticated()) {
       this.showAuthError();
     }
+    this.loadUserData()
+  }
+  loadUserData(): void {
+    const nombre = localStorage.getItem('nombre');
+    const fotoPerfil = localStorage.getItem('fotoPerfil');
+    
+    this.nombre = nombre || '';
+    this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
   }
   private isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
@@ -73,6 +94,23 @@ export class CrearEventoComponent implements OnInit {
       this.diasSemana.push(dia);
     }
   }
+
+  cerrarSesion() {
+     Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Quieres cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.oservice.logOut();
+        this.router.navigate(['/login']);
+        Swal.fire('Sesión cerrada', '', 'success');
+      }
+    });
+    }
 
 validarFormulario(): boolean {
   this.submitted = true;
@@ -206,9 +244,27 @@ validarFormulario(): boolean {
     
   }
   seleccionarArchivo(event: any): void {
-    if (event.target.files.length > 0) {
-      this.archivo = event.target.files[0];
-    }
+    const input = event.target as HTMLInputElement;
+  if (!input.files || input.files.length === 0) {
+    return;
+  }
+  const file = input.files[0];
+  if (!file.type.startsWith('image/')) {
+    alert('Solo se permiten archivos de imagen.');
+    return;
+  }
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) {
+    alert('El archivo excede el tamaño máximo permitido de 5MB.');
+    return;
+  }
+
+  this.archivo = file;
+  const reader = new FileReader();
+  reader.onload = () => {
+    this.imagenPreview = reader.result as string;
+  };
+  reader.readAsDataURL(file);
   }
 
   resetForm(): void {
@@ -230,7 +286,7 @@ validarFormulario(): boolean {
   logout(){
 
   }
-  toggleUserDropdown(){
-
-  }
+   toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
 }

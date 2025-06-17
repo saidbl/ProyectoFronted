@@ -1,154 +1,175 @@
-<div class="min-h-screen bg-gray-950 font-sans flex items-center justify-center p-6">
-  <!-- Contenedor principal con mejor contraste -->
-  <div class="w-full max-w-4xl bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
-    <!-- Encabezado con borde definido -->
-    <div class="bg-gray-800 border-b border-gray-700 p-6">
-      <div class="flex items-center space-x-3">
-        <button mat-icon-button routerLink=".."
-                class="text-gray-300 hover:text-white transition-colors">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <div>
-          <h1 class="text-2xl font-bold text-white">Editar Organización</h1>
-          <p class="text-gray-300 text-sm">Actualiza los datos de tu organización deportiva</p>
+<!-- perfil.component.html -->
+<div class="min-h-screen bg-gray-950 font-sans">
+  <!-- Barra de navegación mejorada -->
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-50 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center">
+          <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
+            AllSports - Instructor
+          </span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-center space-x-4">
+            <a routerLink="../equipoEvento" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-calendar-alt mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Eventos</span>
+            </a>
+            <a routerLink="../rutinaDeportista" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-users mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Deportistas</span>
+            </a>
+            <a routerLink="../crearEquipos" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-users-cog mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Equipos</span>
+            </a>
+            <a routerLink="../rutinas" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-dumbbell mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Rutinas</span>
+            </a>
+            <a routerLink="../reportes" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-chart-bar mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Reportes</span>
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="relative ml-3">
+            <div class="flex items-center space-x-2 cursor-pointer group" >
+              <a routerLink="perfil" class="block px-4 py-2 text-sm">
+                <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500"></div>
+              </a>
+              <i class="fas fa-chevron-down text-gray-400 text-xs group-hover:text-blue-400 transition-colors"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- Formulario con correcciones definitivas -->
-    <form [formGroup]="organizacionForm" (ngSubmit)="onSubmit()" class="p-6 md:p-8 bg-gray-900">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Columna izquierda -->
-        <div class="space-y-6">
-          <!-- Nombre Organización - Versión final corregida -->
-          <div class="mat-form-field-wrapper">
-            <mat-label class="text-gray-300 block mb-1">Nombre organización*</mat-label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">groups</mat-icon>
-              <input matInput formControlName="nombreOrganizacion" required 
-                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-            </div>
-            <mat-error *ngIf="nombreOrganizacion?.invalid && nombreOrganizacion?.touched" 
-                      class="text-red-400 text-sm mt-1 block">
-              Nombre requerido
-            </mat-error>
-          </div>
-
-          <!-- Email - Versión final corregida -->
-          <div class="mat-form-field-wrapper">
-            <mat-label class="text-gray-300 block mb-1">Email*</mat-label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">email</mat-icon>
-              <input matInput type="email" formControlName="email" required 
-                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-            </div>
-            <mat-error *ngIf="email?.invalid && email?.touched" 
-                      class="text-red-400 text-sm mt-1 block">
-              {{ email?.errors?.['required'] ? 'Email requerido' : 'Email inválido' }}
-            </mat-error>
-          </div>
-
-          <!-- Tipo de organización - Versión final corregida -->
-          <div class="mat-form-field-wrapper">
-            <mat-label class="text-gray-300 block mb-1">Tipo de organización*</mat-label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">category</mat-icon>
-              <mat-select formControlName="tipo" required 
-                        class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500">
-                <mat-option *ngFor="let tipo of tiposOrganizacion" [value]="tipo" class="text-gray-800">
-                  {{ tipo }}
-                </mat-option>
-              </mat-select>
-            </div>
-            <mat-error *ngIf="tipo?.invalid && tipo?.touched" 
-                      class="text-red-400 text-sm mt-1 block">
-              Selección requerida
-            </mat-error>
+  </nav>
+  
+  <!-- Contenido principal con animación -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto animate-fade-in">
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-gray-700 shadow-xl p-8">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 mb-2">
+          Actualizar Perfil
+        </h2>
+        <p class="text-gray-400">Completa tu información personal para mejorar la experiencia</p>
+      </div>
+      
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-8">
+        <!-- Sección de imagen de perfil -->
+        <div class="flex flex-col items-center">
+          <div class="relative group w-40 h-40">
+            <img [src]="previewImage" 
+                 class="w-full h-full rounded-full border-4 border-blue-400/30 object-cover hover:border-blue-400 transition-all duration-300 shadow-lg"/>
+            
+            <label class="absolute bottom-2 right-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:opacity-90 transition-all shadow-md">
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden"/>
+              <mat-icon class="!text-white !text-xl leading-none">photo_camera</mat-icon>
+            </label>
           </div>
         </div>
 
-        <!-- Columna derecha -->
-        <div class="space-y-6">
-          <!-- Representante - Versión final corregida -->
-          <div class="mat-form-field-wrapper">
-            <mat-label class="text-gray-300 block mb-1">Representante*</mat-label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">person</mat-icon>
-              <input matInput formControlName="nombre" required 
-                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+        <!-- Campos del formulario -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Nombre -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-user mr-2 text-blue-400"></i> Nombre
+            </label>
+            <input type="text" formControlName="nombre"
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
+            <div *ngIf="profileForm.get('nombre')?.invalid && (profileForm.get('nombre')?.dirty || profileForm.get('nombre')?.touched)"
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Nombre requerido (max 50 caracteres)
             </div>
-            <mat-error *ngIf="nombre?.invalid && nombre?.touched" 
-                      class="text-red-400 text-sm mt-1 block">
-              Nombre requerido
-            </mat-error>
           </div>
 
-          <!-- Teléfono - Versión final corregida -->
-          <div class="mat-form-field-wrapper">
-            <mat-label class="text-gray-300 block mb-1">Teléfono*</mat-label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">phone</mat-icon>
-              <input matInput formControlName="telefono" required 
-                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+          <!-- Apellido -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-user-tag mr-2 text-purple-400"></i> Nombre Organizacion
+            </label>
+            <input type="text" formControlName="nombreOrganizacion"
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
+            <div *ngIf="profileForm.get('nombreOrganizacion')?.invalid && (profileForm.get('nombreOrganizacion')?.dirty || profileForm.get('nombreOrganizacion')?.touched)"
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Apellido requerido (max 50 caracteres)
             </div>
-            <mat-error *ngIf="telefono?.invalid && telefono?.touched" 
-                      class="text-red-400 text-sm mt-1 block">
-              Teléfono requerido
-            </mat-error>
           </div>
 
-          <!-- Dirección - Versión final corregida -->
-          <div class="mat-form-field-wrapper">
-            <mat-label class="text-gray-300 block mb-1">Dirección*</mat-label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">location_on</mat-icon>
-              <input matInput formControlName="direccion" required 
-                    class="w-full bg-gray-800 text-white rounded-lg pl-10 pr-4 py-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+          <!-- Email -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-envelope mr-2 text-blue-400"></i> Email
+            </label>
+            <input type="email" formControlName="email"
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
+            <div *ngIf="profileForm.get('email')?.invalid && (profileForm.get('email')?.dirty || profileForm.get('email')?.touched)"
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Email inválido
             </div>
-            <mat-error *ngIf="direccion?.invalid && direccion?.touched" 
-                      class="text-red-400 text-sm mt-1 block">
-              Dirección requerida
-            </mat-error>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-phone mr-2 text-purple-400"></i> Teléfono
+            </label>
+            <input type="tel" formControlName="telefono"
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
+            <div *ngIf="profileForm.get('telefono')?.invalid && (profileForm.get('telefono')?.dirty || profileForm.get('telefono')?.touched)"
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Formato inválido (9-12 dígitos)
+            </div>
+          </div>
+
+          <!-- Especialidad -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-graduation-cap mr-2 text-blue-400"></i> Direccion
+            </label>
+            <input type="text" formControlName="direccion"
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
+            <div *ngIf="profileForm.get('direccion')?.invalid && (profileForm.get('direccion')?.dirty || profileForm.get('direccion')?.touched)"
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Especialidad requerida
+            </div>
+          </div>
+
+          <!-- Experiencia -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1 flex items-center">
+              <i class="fas fa-medal mr-2 text-purple-400"></i> Tipo
+            </label>
+            <input type="text" formControlName="tipo"
+                   class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
+            <div *ngIf="profileForm.get('tipo')?.invalid && (profileForm.get('tipo')?.dirty || profileForm.get('tipo')?.touched)"
+                 class="text-red-400 text-sm mt-1 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Experiencia requerida (0-50 años)
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Botones con mejor espaciado -->
-      <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-700">
-        <button 
-          mat-stroked-button 
-          type="button" 
-          (click)="router.navigate(['/organizacion', organizacion.id])"
-          class="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors px-5 py-2.5"
-        >
-          Cancelar
-        </button>
-        
-        <button 
-          mat-raised-button 
-          color="primary" 
-          type="submit" 
-          [disabled]="organizacionForm.invalid || isSaving"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 transition-colors shadow-md"
-        >
-          <span *ngIf="!isSaving" class="flex items-center">
-            <mat-icon class="mr-1">save</mat-icon>
-            Guardar cambios
-          </span>
-          <span *ngIf="isSaving" class="flex items-center">
-            <mat-spinner diameter="20" strokeWidth="3" class="mr-2"></mat-spinner>
-            Guardando...
-          </span>
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Notificación flotante mejorada -->
-  <div *ngIf="showNotification" class="fixed bottom-6 right-6 z-50 animate-fade-in">
-    <div class="bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center border border-green-400">
-      <mat-icon class="mr-2 text-white">check_circle</mat-icon>
-      <span>{{notificationMessage}}</span>
+        <!-- Botón de guardar -->
+        <div class="pt-4">
+          <button type="submit" [disabled]="profileForm.invalid "
+                  class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3.5 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="flex items-center justify-center">
+              <i class="fas fa-save mr-3"></i>
+              {{'Guardar Cambios' }}
+            </div>
+          </button>
+        </div>
+      </form>
     </div>
+            <footer class="mt-12 pt-8 border-t border-gray-800">
+      <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+        <div class="mb-4 md:mb-0">
+          © 2025 SportAnalytics Pro - Todos los derechos reservados
+        </div>
+      </div>
+    </footer>
   </div>
 </div>

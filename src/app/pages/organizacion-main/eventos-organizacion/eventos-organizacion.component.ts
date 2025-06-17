@@ -10,7 +10,9 @@ import { EventoEditarComponent } from './evento-editar/evento-editar.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { OrganizacionService } from '../../../services/organizacion.service';
 @Component({
     selector: 'app-eventos-organizacion',
     imports: [CommonModule, RouterModule, MatNativeDateModule,MatIcon ],
@@ -20,6 +22,7 @@ import Swal from 'sweetalert2';
 export class EventosOrganizacionComponent {
   private eservice = inject(EventoService)
     private efservice = inject(EventoFechaService)
+    private oservice = inject(OrganizacionService)
     private dialog = inject(MatDialog)
     eventos: Evento[] = [];
     cargando = true;
@@ -29,6 +32,15 @@ export class EventosOrganizacionComponent {
     fechasEvento: EventoFecha[] = [];
     eventoIdActual: number | null = null;
     showUserDropdown: boolean = false;
+    fotoPerfil: string = "http://localhost:8080/";
+    nombre: string = ''
+    navigation = [
+  { name: 'Crear Eventos', route: '../crear-eventos', icon: 'add' },
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Equipos', route: '../equipos-org', icon: 'groups' },
+  { name: 'Estadisticas', route: '../estadistica-org', icon: 'analytics' },
+  { name: 'Instructores', route: '../instructor', icon: 'fitness_center' }
+];
     tabs = [
     { id: 'planificados', label: 'Planificados', icon: 'event_note' },
     { id: 'activos', label: 'Activos', icon:'event_available' },
@@ -39,10 +51,18 @@ export class EventosOrganizacionComponent {
   eventosPasados: Evento[] = [];
   currentTab: string = 'planificados';
    private subscriptions: Subscription = new Subscription();
-  
+  constructor(public router: Router){}
     ngOnInit(): void {
       this.cargarEventos();
+      this.loadUserData()
     }
+    loadUserData(): void {
+    const nombre = localStorage.getItem('nombre');
+    const fotoPerfil = localStorage.getItem('fotoPerfil');
+    
+    this.nombre = nombre || '';
+    this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
+  }
     cargarEventos() {
       const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
@@ -93,6 +113,25 @@ export class EventosOrganizacionComponent {
         default: return 0;
       }
     }
+      cerrarSesion() {
+       Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Quieres cerrar sesión?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.oservice.logOut();
+          this.router.navigate(['/login']);
+          Swal.fire('Sesión cerrada', '', 'success');
+        }
+      });
+      }
+      toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
     abrirModalFechas(eventoId: number): void {
       const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
@@ -191,12 +230,6 @@ export class EventosOrganizacionComponent {
       this.subscriptions.add(sub);
     }
   }
-    toggleUserDropdown(){
-
-    }
-    logout(){
-
-    }
     private mostrarError(titulo: string, mensaje: string): void {
     Swal.fire({
       title: titulo,
@@ -218,6 +251,6 @@ export class EventosOrganizacionComponent {
 
   private mostrarErrorSesion(): void {
     this.mostrarError('Sesión expirada', 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
-    this.logout();
+    this.cerrarSesion();
   }
 }

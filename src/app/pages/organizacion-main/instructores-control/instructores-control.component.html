@@ -1,28 +1,94 @@
-<div class="min-h-screen bg-gray-950 font-sans py-12 px-4 sm:px-6 lg:px-8">
-  <!-- Encabezado -->
-  <div class="max-w-7xl mx-auto mb-10">
-    <div class="flex justify-between items-center">
-      <div>
-        <h1 class="text-3xl font-bold text-white">Gestión de Instructores</h1>
-        <p class="mt-2 text-gray-400">Administra los instructores de tu organización</p>
+<div class="min-h-screen bg-gray-950 font-sans">
+  <nav class="bg-gray-900/90 backdrop-blur-lg border-b border-gray-700 fixed w-full z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <mat-icon class="text-blue-400">sports</mat-icon>
+          <span class="text-xl font-bold text-blue-400 tracking-tighter">ALLSPORTS</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Instructor</span>
+        </div>
+        <!-- Menú central mejorado -->
+        <div class="hidden md:block">
+          <div class="ml-4 flex items-center space-x-6">
+            <a *ngFor="let nav of navigation" 
+               [routerLink]="nav.route"
+               class="group flex items-center px-3 py-2 rounded-lg transition-all duration-300"
+               [ngClass]="{'bg-blue-900/20 text-blue-400': router.isActive(nav.route, false), 'text-gray-400 hover:bg-gray-800/30 hover:text-blue-300': !router.isActive(nav.route, false)}">
+              <mat-icon class="mr-2 text-lg">{{nav.icon}}</mat-icon>
+              <span class="text-sm font-medium">{{nav.name}}</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Perfil con efecto neumórfico -->
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <button (click)="toggleUserDropdown()" 
+                    class="flex items-center space-x-2 group focus:outline-none">
+              <div class="relative">
+                <img class="h-9 w-9 rounded-full border-2 border-blue-400/30 shadow-lg 
+                            group-hover:border-blue-400 transition-all duration-300" 
+                     [src]="fotoPerfil" alt="Foto perfil">
+                <div class="absolute -right-1 -bottom-1 bg-green-400 w-3 h-3 rounded-full 
+                            border-2 border-gray-900"></div>
+              </div>
+              <div class="text-left hidden lg:block">
+                <p class="text-sm font-medium text-gray-100">{{nombreO}}</p>
+                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+              </div>
+              <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
+                {{showUserDropdown ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
+            </button>
+            <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-2 bg-gray-800 border border-gray-700 z-20">
+              <a routerLink="../configuracionOrg" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                <mat-icon class="mr-2">person</mat-icon> Perfil
+              </a>
+              <a (click)="cerrarSesion()" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 cursor-pointer">
+                <mat-icon class="mr-2">logout</mat-icon> Cerrar sesión
+              </a>
+            </div>
+          </div>
+          
+        </div>
       </div>
-      <button 
-        (click)="abrirModal()"
-        class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-all duration-300"
-      >
-        <mat-icon>person_add</mat-icon>
-        <span>Agregar Instructor</span>
-      </button>
     </div>
-  </div>
+  </nav>
+  <div class="pt-24 pb-12 max-w-6xl mx-auto">
+  <!-- Encabezado -->
+  <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center mb-6">
+        <div class="h-1 w-24 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full"></div>
+        <div class="mx-4 text-sky-400 font-medium tracking-wider">COMUNIDAD DE INSTRUCTORES</div>
+        <div class="h-1 w-24 bg-gradient-to-r from-cyan-500 to-sky-500 rounded-full"></div>
+      </div>
+      
+      <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text 
+                bg-gradient-to-r from-sky-400 via-cyan-400 to-sky-500 
+                tracking-tight mb-3">
+        Mis Instructores
+      </h1>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">Instructores deportivos que son pretenecientes a tu comunidad deportiva</p>
+    </div>
 
   <!-- Listado de Instructores -->
   <div class="max-w-7xl mx-auto bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
-    <div class="p-6 border-b border-gray-800">
-      <h2 class="text-xl font-semibold text-gray-200 flex items-center">
-        <mat-icon class="text-green-400 mr-2">people</mat-icon>
-        Lista de Instructores
-      </h2>
+    <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+    <!-- Título -->
+    <h2 class="text-xl font-semibold text-gray-200 flex items-center space-x-2">
+      <mat-icon class="text-green-400">people</mat-icon>
+      <span>Lista de Instructores</span>
+    </h2>
+
+    <!-- Botón agregar -->
+    <button
+      (click)="abrirModal()"
+      class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-all duration-300"
+    >
+      <mat-icon>person_add</mat-icon>
+      <span>Agregar Instructor</span>
+    </button>
+      
     </div>
 
     <!-- Tabla de instructores -->
@@ -92,8 +158,16 @@
         </tbody>
       </table>
     </div>
+    
   </div>
-
+  <footer class="mt-12 pt-8 border-t border-gray-800">
+      <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+        <div class="mb-4 md:mb-0">
+          © 2025 SportAnalytics Pro - Todos los derechos reservados
+        </div>
+      </div>
+    </footer>
+</div>
   <div 
   *ngIf="mostrarModal" 
   class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
@@ -142,6 +216,15 @@
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
+          <p *ngIf="nombre?.invalid && nombre?.touched" class="text-red-500 text-sm mt-1">
+  {{
+    nombre?.errors?.['required']
+      ? 'Nombre requerido.'
+      : nombre?.errors?.['pattern']
+        ? 'Solo letras.'
+        : ''
+  }}
+</p>
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-1">Apellido</label>
           <input
@@ -150,6 +233,16 @@
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
+        <p *ngIf="apellido?.invalid && apellido?.touched" class="text-red-500 text-sm mt-1">
+  {{
+    apellido?.errors?.['required']
+      ? 'Apellido requerido.'
+      : apellido?.errors?.['pattern']
+        ? 'Solo letras (mínimo 2 caracteres).'
+        : ''
+  }}
+</p>
+
       </div>
 
       <!-- Email y Password -->
@@ -162,6 +255,16 @@
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
+        <p *ngIf="email?.invalid && email?.touched" class="text-red-500 text-sm mt-1">
+  {{
+    email?.errors?.['required']
+      ? 'Email requerido.'
+      : email?.errors?.['email']
+        ? 'Formato de email inválido.'
+        : ''
+  }}
+</p>
+
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-1">Password</label>
           <input
@@ -170,6 +273,16 @@
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
+        <p *ngIf="password?.invalid && password?.touched" class="text-red-500 text-sm mt-1">
+  {{
+    password?.errors?.['required']
+      ? 'Contraseña requerida.'
+      : password?.errors?.['pattern']
+        ? 'Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.'
+        : ''
+  }}
+</p>
+
       </div>
 
       <!-- Teléfono y Especialidad -->
@@ -182,6 +295,14 @@
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
+        <p *ngIf="telefono?.invalid && telefono?.touched" class="text-red-500 text-sm mt-1">
+  {{
+    telefono?.errors?.['pattern']
+      ? 'Número no válido (solo dígitos, puede iniciar con +).'
+      : ''
+  }}
+</p>
+
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-1">Especialidad</label>
           <input
@@ -190,6 +311,10 @@
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
+        <p *ngIf="especialidad?.invalid && especialidad?.touched" class="text-red-500 text-sm mt-1">
+  Especialidad requerida.
+</p>
+
       </div>
 
       <!-- Experiencia -->
@@ -202,6 +327,18 @@
           class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
       </div>
+      <p *ngIf="experiencia?.invalid && experiencia?.touched" class="text-red-500 text-sm mt-1">
+  {{
+    experiencia?.errors?.['required']
+      ? 'Campo requerido.'
+      : experiencia?.errors?.['min']
+        ? 'No puede ser negativo.'
+        : experiencia?.errors?.['max']
+          ? 'Máximo 100 años.'
+          : ''
+  }}
+</p>
+
 
       <!-- Botones -->
       <div class="flex justify-end space-x-3 pt-4">

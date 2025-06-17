@@ -1,5 +1,5 @@
 import { Component, OnInit ,importProvidersFrom,inject} from '@angular/core';
-import { RouterModule } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { Deporte } from '../../models/deporte.model';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,9 @@ import { EventoService } from '../../services/evento.service';
 import { EventoConEquipos } from '../../models/eventoconEquipos.model';
 import { Equipo } from '../../models/equipo.model';
 import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
+import { OrganizacionService } from '../../services/organizacion.service';
+import { WsService } from '../../services/websocket.service';
 @Component({
     selector: 'app-organizacion-main',
     standalone:true,
@@ -17,9 +20,12 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class OrganizacionMainComponent implements OnInit {
   private eservice = inject(EventoService)
+  private oservice = inject(OrganizacionService)
   nombre_organizacion:string|null= ""
   proximoEvento:any 
   totalEventos:number =0
+  fotoPerfil: string = "http://localhost:8080/";
+   nuevosMensajes = 0;
   eventosActivos : number = 0
   totalEquipos:number =0
   eventosRecientes:any
@@ -42,6 +48,14 @@ export class OrganizacionMainComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 10;
   nombre: string = ''
+  navigation = [
+  { name: 'Crear Eventos', route: 'crear-eventos', icon: 'add' },
+  { name: 'Eventos', route: 'eventos', icon: 'event' },
+  { name: 'Equipos', route: 'equipos-org', icon: 'groups' },
+  { name: 'Estadisticas', route: 'estadistica-org', icon: 'analytics' },
+  { name: 'Instructores', route: 'instructor', icon: 'fitness_center' }
+];
+  constructor(public router:Router, private wsService: WsService){}
   ngOnInit(): void {
     const token = localStorage.getItem("token")
       const id = Number(localStorage.getItem("id"))
@@ -49,10 +63,22 @@ export class OrganizacionMainComponent implements OnInit {
         throw new Error("Not Token Found")
       }
     this.loadInitialData(token,id)
+    this.loadUserData()
+  }
+loadUserData(): void {
+    const nombre = localStorage.getItem('nombre');
+    const fotoPerfil = localStorage.getItem('fotoPerfil');
+    
+    this.nombre = nombre || '';
+    this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
   }
 
 
-
+  verNotificaciones() {
+  localStorage.setItem('unreadMessages', "0");
+  this.nuevosMensajes = 0;
+  this.wsService.resetNotificationCount();
+}
   private loadInitialData(token:string, id : number): void {
     this.loadAllEvents(token,id);
   }
@@ -97,6 +123,22 @@ export class OrganizacionMainComponent implements OnInit {
       console.log(ev.equiposInscritos)
     })
     return suma
+  }
+  cerrarSesion() {
+   Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Quieres cerrar sesión?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.oservice.logOut();
+      this.router.navigate(['/login']);
+      Swal.fire('Sesión cerrada', '', 'success');
+    }
+  });
   }
   private getTotalEquiposActivos(data: Evento[]): number{
     const ahora = new Date();
@@ -205,14 +247,6 @@ export class OrganizacionMainComponent implements OnInit {
   this.calculatePages();
   }
 
-  updateParticipationChart(): void {
-    // Implementar actualización de gráfico según deporte seleccionado
-  }
-
-  // Métodos de paginación
-  goToPage(page: number): void {
-    // Implementar cambio de página
-  }
 
   calculatePages(): void {
     const totalPages = Math.ceil(this.filteredEvents.length / this.itemsPerPage);
@@ -222,39 +256,9 @@ export class OrganizacionMainComponent implements OnInit {
   }
   }
 
-  // Métodos de UI
-  toggleUserDropdown(): void {
-    // Implementar toggle del dropdown de usuario
-  }
-
-  showNotificationMessage(message: string, duration: number = 3000): void {
-    // Implementar notificación temporal
-  }
-
-  // Métodos de acciones
-  deleteEvent(eventId: number): void {
-    // Implementar eliminación de evento con confirmación
-  }
-
-  logout(): void {
-    // Implementar cierre de sesión
-  }
-
-  // Métodos auxiliares
-  private initCharts(): void {
-    // Implementar inicialización de gráficos
-  }
-
-  private processEventData(events: Evento[]): Evento[] {
-    // Implementar procesamiento adicional de datos de eventos si es necesario
-    return events;
-  }
-
-  // Métodos para el template (getters)
-  get userInitials(): string {
-    // Implementar generación de iniciales para avatar
-    return '';
-  }
+  toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
 
   get displayedEvents(): Evento[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;

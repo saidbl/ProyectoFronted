@@ -1,42 +1,43 @@
 <div class="flex h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
   <!-- Lista de chats mejorada -->
   <div class="w-1/3 border-r border-gray-700/50 flex flex-col bg-gray-900/30 backdrop-blur-lg">
-    <div class="p-4 bg-gray-900/80 border-b border-gray-700/50">
-      <h2 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-        Mensajes
-      </h2>
-    </div>
+    <div class="p-4 bg-gray-900/80 border-b border-gray-700/50 flex items-center gap-3">
+  <!-- Botón de flecha para regresar -->
+  <button  [routerLink]="['../']"class="text-white hover:text-blue-400 focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <h2 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+    Mensajes
+  </h2>
+</div>
     
     <div class="flex-1 overflow-y-auto custom-scroll">
       <div *ngFor="let chat of chats" 
-           (click)="selectChat(chat)"
-           [class.bg-gradient-to-r]="selectedChat?.id === chat.id"
-           [class.from-blue-900]="selectedChat?.id === chat.id"
-           class="p-4 border-b border-gray-700/30 hover:bg-gray-800/20 cursor-pointer transition-all duration-300 group">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div class="relative">
-              <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
-                <i class="fas fa-user text-gray-400 text-lg"></i>
-              </div>
-              <div class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-gray-900"
-                   [class.bg-green-400]="chat.isOnline"
-                   [class.bg-gray-600]="!chat.isOnline"></div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-gray-100 truncate">{{ getChatName(chat) }}</h3>
-              <p class="text-sm text-gray-400 truncate">{{ chat.lastMessage }}</p>
-              <p class="text-xs text-gray-500/80 mt-1">
-                {{ formatDate(chat.lastMessageDate) }}
-              </p>
-            </div>
-          </div>
-          <div *ngIf="chat.unread > 0" 
-               class="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full px-2.5 py-1 text-xs shadow-lg">
-            {{ chat.unread }}
-          </div>
+     (click)="selectChat(chat)"
+     [class.bg-gradient-to-r]="selectedChat?.id === chat.id"
+     [class.from-blue-900]="selectedChat?.id === chat.id"
+     class="p-4 border-b border-gray-700/30 hover:bg-gray-800/20 cursor-pointer transition-all duration-300 group relative"> <!-- ← aquí va 'relative' -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="relative">
+        <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-700 shadow-lg">
+          <img [src]="'http://localhost:8080/' + getImagenUrl(chat)" alt="Avatar" class="w-full h-full object-cover">
         </div>
       </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-gray-100 truncate">{{ getChatName(chat) }}</h3>
+      </div>
+    </div>
+    <div *ngIf="getNotificationCount(chat.id) > 0" 
+         class="absolute top-2 right-4 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+      {{ getNotificationCount(chat.id) }}
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 
@@ -46,42 +47,46 @@
     <div *ngIf="selectedChat" class="p-4 bg-gray-900/50 border-b border-gray-700/30 backdrop-blur-sm">
       <div class="flex items-center space-x-3">
         <div class="relative">
-          <div class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
-            <i class="fas fa-user text-gray-400 text-xl"></i>
-          </div>
-          <div class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 bg-green-400"></div>
+          <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-700 shadow-lg">
+                <img [src]="'http://localhost:8080/' + getImagenUrl(selectedChat)" alt="Avatar" class="w-full h-full object-cover">
+              </div>
         </div>
         <div>
           <h3 class="text-lg font-semibold text-gray-100">{{ getChatName(selectedChat) }}</h3>
-          <p class="text-sm text-gray-400">En línea</p>
         </div>
       </div>
     </div>
 
     <!-- Mensajes -->
-    <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scroll" (scroll)="onScroll($event)">
+    <div class="flex-1 overflow-y-auto relative p-4 space-y-4 scroll-smooth custom-scroll shadow-inner rounded-lg border border-gray-700/30 bg-gray-900/50" (scroll)="onScroll($event)">
       <!-- Indicador de carga estilizado -->
       <div *ngIf="loadingMessages" class="flex justify-center p-4">
         <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-400"></div>
       </div>
-
+      <div #chatContainer class="overflow-y-auto h-full flex flex-col-reverse scroll-smooth custom-scroll shadow-inner">
       <!-- Mensajes -->
       <div *ngFor="let message of messages" 
            [class.justify-end]="isCurrentUser(message)"
            class="flex gap-3 mb-4 animate-fade-in">
         
         <!-- Avatar -->
-        <div *ngIf="!isCurrentUser(message.remitenteId)" 
+        <div *ngIf="!isCurrentUser(message)" 
              class="flex-shrink-0 transform transition hover:-translate-y-1">
           <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
-            <i class="fas fa-user text-gray-400 text-lg"></i>
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-700 shadow-lg">
+              <img [src]="'http://localhost:8080/' + getImagenMensaje(message)" alt="Avatar" class="w-full h-full object-cover">
+              <p>{{getImagenMensaje(message)}}</p>
+            </div>
           </div>
         </div>
 
         <!-- Burbuja de mensaje -->
-        <div [class.bg-gradient-to-r]="isCurrentUser(message.remitenteId)"
-             [class.from-blue-600.to-purple-500]="isCurrentUser(message.remitenteId)"
-             [class.bg-gray-800]="!isCurrentUser(message.remitenteId)"
+         <div *ngIf="esChatEquipo && !isCurrentUser(message)" class="text-sm text-gray-300 font-semibold mb-1">
+            {{ getNombreRemitente(message) }}
+          </div>
+        <div [class.bg-gradient-to-r]="isCurrentUser(message)"
+             [class.from-blue-600.to-purple-500]="isCurrentUser(message)"
+             [class.bg-gray-800]="!isCurrentUser(message)"
              class="max-w-[75%] p-4 rounded-2xl shadow-lg relative
                     transition-all duration-300 hover:shadow-xl
                     ">
@@ -92,14 +97,15 @@
             </p>
             <i *ngIf="message.leido" 
                class="fas fa-check-double text-xs"
-               [class.text-blue-300]="isCurrentUser(message.remitenteId)"
-               [class.text-gray-500]="!isCurrentUser(message.remitenteId)"></i>
+               [class.text-blue-300]="isCurrentUser(message)"
+               [class.text-gray-500]="!isCurrentUser(message)"></i>
           </div>
           
           <!-- Triángulo decorativo -->
-          <div *ngIf="!isCurrentUser(message.remitenteId)"
+          <div *ngIf="!isCurrentUser(message)"
                class="absolute -left-1.5 top-4 w-3 h-3 rotate-45 bg-gray-800"></div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -114,11 +120,13 @@
                       placeholder-gray-500 transition-all">
         
         <button (click)="sendMessage()"
-                class="p-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 
-                       hover:from-blue-600 hover:to-purple-600 transition-all
-                       shadow-lg hover:shadow-blue-500/20">
-          <i class="fas fa-paper-plane text-white"></i>
-        </button>
+        class="p-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 
+               hover:from-blue-600 hover:to-purple-600 transition duration-300
+               shadow-lg hover:shadow-blue-500/40 active:scale-95 active:shadow-blue-700/60
+               focus:outline-none focus:ring-4 focus:ring-blue-300
+               flex items-center justify-center">
+  <mat-icon class="text-white text-lg drop-shadow-md">send</mat-icon>
+</button>
       </div>
     </div>
 

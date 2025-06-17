@@ -173,7 +173,9 @@ constructor(public router: Router,private unreadMessagesService: UnreadMessagesS
       alert(error.message)
     }
     
+    
   }
+  
   verNotificaciones() {
   localStorage.setItem('unreadMessages', "0");
   this.nuevosMensajes = 0;

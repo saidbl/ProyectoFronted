@@ -4,6 +4,7 @@ import { appSettings } from "../settings/appSettings";
 import { Observable } from "rxjs";
 import { Instructor } from "../models/instructor.model";
 import { InstructorDTO } from "../models/instructorDTO.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 @Injectable({
     providedIn:"root"
 })
@@ -28,6 +29,12 @@ export class InstructorService{
                 });
       return this.http.get<Instructor[]>(`${appSettings.apiGeneral}/instructorOrg/${id}`,{headers})
     }
+    delete(id: number, token: string): Observable<ResponseAPI>{
+                const headers = new HttpHeaders({
+                    'Authorization': `Bearer ${token}`
+                });
+                return this.http.delete<ResponseAPI>(`${appSettings.apiGeneral}/instructorOrg/eliminar/${id}`,{ headers })
+            }
 
     getInstructorById(id:number, token:string): Observable<Instructor>{
       const headers = new HttpHeaders({

@@ -3,14 +3,17 @@ import { EventoService } from '../../../services/evento.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EventoConEquipos } from '../../../models/eventoconEquipos.model';
-import { Evento } from '../../../models/evento.model';
 import { Equipo } from '../../../models/equipo.model';
 import { JugadorEquipoService } from '../../../services/jugadorequipo.service';
 import { JugadorEquipo } from '../../../models/jugadorEquipo.model';
 import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
+import { OrganizacionService } from '../../../services/organizacion.service';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 @Component({
     selector: 'app-equipo-org',
-    imports: [FormsModule, CommonModule,MatIcon],
+    imports: [FormsModule, CommonModule,MatIcon,RouterModule],
     templateUrl: './equipo-org.component.html',
     styleUrl: './equipo-org.component.css',
     standalone : true
@@ -18,7 +21,11 @@ import { MatIcon } from '@angular/material/icon';
 export class EquipoOrgComponent implements OnInit {
   private eeservice= inject(EventoService)
   private deservice = inject(JugadorEquipoService)
+  private oservice = inject (OrganizacionService)
   eventosEquipos: EventoConEquipos[] = [];
+  fotoPerfil: string = "http://localhost:8080/";
+  nombre: string = ''
+  nuevosMensajes = 0;
   filteredEventos: EventoConEquipos[] = [];
   showPlayers: JugadorEquipo[] = [];
   isLoading = true;
@@ -35,9 +42,25 @@ export class EquipoOrgComponent implements OnInit {
   nombre_organizacion = ""
   showUserDropdown : boolean = false
   modalshowPlayers : boolean = false
+  navigation = [
+  { name: 'Crear Eventos', route: '../crear-eventos', icon: 'add' },
+  { name: 'Eventos', route: '../eventos', icon: 'event' },
+  { name: 'Principal', route: '..', icon: 'home' },
+  { name: 'Estadisticas', route: '../estadistica-org', icon: 'analytics' },
+  { name: 'Instructores', route: '../instructor', icon: 'fitness_center' }
+];
+  constructor(public router: Router) {}
 
   ngOnInit(): void {
     this.loadEventosEquipos();
+    this.loadUserData();
+  }
+  loadUserData(): void {
+    const nombre = localStorage.getItem('nombre');
+    const fotoPerfil = localStorage.getItem('fotoPerfil');
+    
+    this.nombre = nombre || '';
+    this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
   }
   openTeamsModal(evento: EventoConEquipos): void {
     this.selectedEvent = evento;
@@ -88,6 +111,22 @@ export class EquipoOrgComponent implements OnInit {
       }
     })
   }
+  cerrarSesion() {
+     Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Quieres cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.oservice.logOut();
+        this.router.navigate(['/login']);
+        Swal.fire('Sesión cerrada', '', 'success');
+      }
+    });
+    }
 
   filterEvents(): void {
     this.filteredEventos = this.eventosEquipos.filter(eventoEquipo => {
@@ -126,9 +165,9 @@ export class EquipoOrgComponent implements OnInit {
     return this.filteredEventos.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
-  toggleUserDropdown(){
-
-  }
+  toggleUserDropdown() {
+  this.showUserDropdown = !this.showUserDropdown;
+}
 
   getUniqueSports(): any[] {
     const sportsMap = new Map();
@@ -157,9 +196,9 @@ export class EquipoOrgComponent implements OnInit {
     };
   }
   
-  getParticipationPercentage(evento: Evento): number {
-    if (!evento.numMaxEquipos || evento.numMaxEquipos === 0) return 0;
-    return (evento.equiposInscritos / evento.numMaxEquipos) * 100;
+  getParticipationPercentage(e: EventoConEquipos): number {
+    if (!e.evento.numMaxEquipos || e.evento.numMaxEquipos === 0) return 0;
+    return (e.equipos.length / e.evento.numMaxEquipos) * 100;
   }
   logout(){
 

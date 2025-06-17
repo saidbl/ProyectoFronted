@@ -23,7 +23,7 @@ export class EventoService{
             });
             return this.http.delete<ResponseAPI>(`${appSettings.apiEliminarEventos}/${id}`,{ headers })
         }
-    actualizarEvento(idEvento: number, evento: EventoDTO,token:string): Observable<Evento> {
+    actualizarEvento(idEvento: number, evento: EventoDTO,token:string,foto:File): Observable<Evento> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
@@ -36,6 +36,9 @@ export class EventoService{
           }
         
         const formData = new FormData();
+     if (foto instanceof File) {
+         formData.append('foto', foto);
+       }
         const eventoBlob = new Blob([JSON.stringify(evento)], { type: 'application/json' });
         formData.append('evento', eventoBlob);
         console.log(formData.get("evento"))

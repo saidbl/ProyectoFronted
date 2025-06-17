@@ -216,6 +216,7 @@ cerrarSesion() {
       categoria: equipo.categoria,
       max_jugadores: equipo.maxJugadores,
       estado: equipo.estado,
+      jugadoresAsociados : equipo.jugadoresAsociados
     };
     console.log(equipo.id)
     console.log(equipo.img)
@@ -228,7 +229,6 @@ cerrarSesion() {
   }
 
   guardarEquipo(): void {
-
     if (!this.validarFormularioEquipo()) return;
     const token=localStorage.getItem("token")
     if(!token) {
@@ -243,7 +243,7 @@ cerrarSesion() {
       fechaCreacion: new Date(),
       estado : "Activo",
       categoria : this.formEquipo.categoria,
-      jugadoresAsociados: 0
+      jugadoresAsociados: this.formEquipo.jugadoresAsociados
     };
     this.cargando = true;
     if (this.equipoEditando) {
@@ -284,6 +284,7 @@ private calcularEstadisticas(): void {
 }
 
   crearEquipo(equipoDTO: EquipoDTO, token: string): void {
+    equipoDTO.jugadoresAsociados=0
     this.eservice.add(equipoDTO, token, this.formEquipo.imagen).subscribe({
       next: (data) => {
         this.mostrarExitoSweetAlert('Equipo creado', 'El equipo se ha creado correctamente');
@@ -297,6 +298,13 @@ private calcularEstadisticas(): void {
     });
   }
   editarEquipo(equipoDTO: EquipoDTO, token: string){
+
+    console.log(equipoDTO.jugadoresAsociados)
+    console.log(this.formEquipo.max_jugadores)
+    if(equipoDTO.jugadoresAsociados>this.formEquipo.max_jugadores){
+      this.mostrarErrorSweetAlert('Error', 'El equipo ya tiene jugadores y el maximo no puede ser menor a ese numero');
+      return ;
+    }
      this.eservice.update(
       equipoDTO, 
       token, 

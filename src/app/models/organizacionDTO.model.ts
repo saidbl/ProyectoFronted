@@ -1,14 +1,15 @@
 import { Deporte } from "./deporte.model"
 
 export interface OrganizacionDTO{
-    id:number
+    id?:number
     email:string
-    password:string
+    password?:string
     nombre:string
     telefono:string
     direccion:string
     nombreOrganizacion:string
     tipo:string
-    rol:string
+    rol?:string
     idDeporte:number
+    imagen:string
 }
