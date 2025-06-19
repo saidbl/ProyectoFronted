@@ -38,8 +38,24 @@ export class VideosComponent implements OnInit{
     ejercicios : EjercicioRutina[] = []
     constructor(public router:Router){}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
      this.cargarDatos();
   }
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
   ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();

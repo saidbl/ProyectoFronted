@@ -12,11 +12,12 @@ import { delay, filter, finalize, forkJoin, Subject, Subscription, switchMap, ta
 import { MensajeDTO } from '../../../models/mensajeDTO.model';
 import { ChatTipo } from '../../../models/chatTipo.model';
 import { RemitenteTipo } from '../../../models/remitentetipo.model';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { JugadorEquipo } from '../../../models/jugadorEquipo.model';
 import { JugadorEquipoService } from '../../../services/jugadorequipo.service';
 import { InstructorService } from '../../../services/instructor.service';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-chat-deportista',
   imports: [FormsModule,CommonModule,MatIcon,RouterModule],
@@ -50,8 +51,11 @@ export class ChatDeportistaComponent {
   esChatEquipo = false;
   nombresDeportistas: Map<number, string> = new Map<number, string>();
   fotosDeportistas: Map<number, string> = new Map<number, string>();
-  constructor(private wsService: WsService){}
+  constructor(private wsService: WsService, public router:Router){}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
      this.wsService.connect();
       this.wsService.connectionEstablished.pipe(
         filter(connected => connected),
@@ -78,6 +82,19 @@ export class ChatDeportistaComponent {
       this.wsSubscription.unsubscribe();
     }
   }
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
 
   private getToken(): string {
     const token = localStorage.getItem("token");

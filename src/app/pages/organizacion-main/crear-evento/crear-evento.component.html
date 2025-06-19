@@ -6,7 +6,7 @@
         <div class="flex items-center space-x-2">
           <mat-icon class="text-blue-400">sports</mat-icon>
           <span class="text-xl font-bold text-blue-400 tracking-tighter">ALLSPORTS</span>
-          <span class="text-sm text-gray-400 font-medium mt-1">Instructor</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Organizacion</span>
         </div>
         <!-- Menú central mejorado -->
         <div class="hidden md:block">
@@ -34,8 +34,8 @@
                             border-2 border-gray-900"></div>
               </div>
               <div class="text-left hidden lg:block">
-                <p class="text-sm font-medium text-gray-100">{{nombre}}</p>
-                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+                <p class="text-sm font-medium text-gray-100">{{nombre_organizacion}}</p>
+                <p class="text-xs text-gray-400 font-light">Organizacion Deportiva</p>
               </div>
               <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
                 {{showUserDropdown ? 'expand_less' : 'expand_more'}}
@@ -99,14 +99,14 @@
           </div>
           
           <!-- Campo Número Máximo de Equipos -->
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-300">Número Máximo de Equipos *</label>
-            <div class="relative">
-              <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">group</mat-icon>
-              <input type="number" [(ngModel)]="numMaxEquipos" name="numMaxEquipos" min="1" required
-                     class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-300">Número Máximo de Equipos *</label>
+              <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">group</mat-icon>
+                <input type="number" [(ngModel)]="numMaxEquipos" (ngModelChange)="verificarEntero($event)" name="numMaxEquipos" min="1" required step="1"
+                      class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-200">
+              </div>
             </div>
-          </div>
           
           <!-- Campo Correo -->
           <div class="space-y-2">
@@ -141,7 +141,7 @@
     <!-- Zona de carga -->
     <label for="fileUpload" class="cursor-pointer text-center">
       <i class="fas fa-cloud-upload-alt text-4xl text-blue-400 mb-2"></i>
-      <p class="text-gray-300 mb-1">Arrastra o selecciona una imagen</p>
+      <p class="text-gray-300 mb-1">Selecciona una imagen</p>
       <p class="text-sm text-gray-500">Formatos: JPG, PNG (Máx. 5MB)</p>
 
       <span *ngIf="archivo" class="block mt-2 text-green-400 text-sm">

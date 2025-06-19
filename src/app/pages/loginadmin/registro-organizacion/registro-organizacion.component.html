@@ -1,17 +1,23 @@
-<div class="min-h-screen min-w-screen bg-gray-900 flex justify-center items-center p-8">
-  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="bg-gray-800 border border-gray-700 rounded-xl shadow-lg w-full max-w-[1300px] h-[90vh] flex gap-8 p-8">
+<div class="min-h-screen w-full bg-gray-900 flex flex-col items-center justify-center px-6 py-4 gap-4">
 
+  <!-- Formulario principal -->
+  <form
+    [formGroup]="registroForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-gray-800 border border-gray-700 rounded-xl shadow-lg w-full max-w-[1200px] h-[75vh] flex gap-4 p-6"
+  >
     <!-- Columna 1 -->
-    <div class="flex flex-col gap-6 w-1/3">
-      <h3 class="text-green-400 font-bold text-xl mb-4 uppercase">Datos Básicos</h3>
-      
+    <div class="flex flex-col gap-4 w-1/3">
+      <h3 class="text-green-400 font-bold text-lg uppercase">Datos Básicos</h3>
+
+      <!-- Email -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Email</label>
         <input
           type="email"
           formControlName="email"
           placeholder="correo@ejemplo.com"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         />
         <div *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.invalid" class="text-red-400 text-sm mt-1">
           <div *ngIf="registroForm.get('email')?.hasError('required')">El correo es obligatorio</div>
@@ -19,81 +25,88 @@
         </div>
       </div>
 
+      <!-- Contraseña -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Contraseña</label>
         <input
           type="password"
           formControlName="password"
           placeholder="Mínimo 8 caracteres"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         />
         <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.invalid" class="text-red-400 text-sm mt-1">
           <div *ngIf="registroForm.get('password')?.hasError('required')">La contraseña es obligatoria</div>
           <div *ngIf="registroForm.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres</div>
-          <div *ngIf="registroForm.get('password')?.hasError('pattern')">Debe tener al menos 1 mayuscula, 1 minuscula y un caracter especial</div>
+          <div *ngIf="registroForm.get('password')?.hasError('pattern')">Debe tener al menos 1 mayúscula, 1 minúscula y un carácter especial</div>
         </div>
       </div>
 
+      <!-- Nombre -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Nombre</label>
         <input
           type="text"
           formControlName="nombre"
-          placeholder="Ejemplo: Juan Pérez"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         />
         <div *ngIf="registroForm.get('nombre')?.touched && registroForm.get('nombre')?.invalid" class="text-red-400 text-sm mt-1">
           <div *ngIf="registroForm.get('nombre')?.hasError('required')">El nombre es obligatorio</div>
         </div>
       </div>
+
+      <!-- Teléfono -->
       <div>
-        <label class="block text-gray-300 text-sm font-semibold mb-1">Telefono</label>
+        <label class="block text-gray-300 text-sm font-semibold mb-1">Teléfono</label>
         <input
           type="text"
           formControlName="telefono"
           placeholder="Ejemplo: 55555555"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         />
         <div *ngIf="registroForm.get('telefono')?.touched && registroForm.get('telefono')?.invalid" class="text-red-400 text-sm mt-1">
-          <div *ngIf="registroForm.get('telefono')?.hasError('required')">El nombre es obligatorio</div>
+          <div *ngIf="registroForm.get('telefono')?.hasError('required')">El teléfono es obligatorio</div>
+          <div *ngIf="registroForm.get('telefono')?.hasError('pattern')">El formato no es correcto</div>
         </div>
       </div>
     </div>
 
     <!-- Columna 2 -->
-    <div class="flex flex-col gap-6 w-1/3">
-      <h3 class="text-green-400 font-bold text-xl mb-4 uppercase">Detalles Organización</h3>
+    <div class="flex flex-col gap-4 w-1/3">
+      <h3 class="text-green-400 font-bold text-lg uppercase">Organización</h3>
 
+      <!-- Nombre Organización -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Nombre Organización</label>
         <input
           type="text"
           formControlName="nombre_organizacion"
           placeholder="Nombre de tu organización"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         />
         <div *ngIf="registroForm.get('nombre_organizacion')?.touched && registroForm.get('nombre_organizacion')?.invalid" class="text-red-400 text-sm mt-1">
           <div *ngIf="registroForm.get('nombre_organizacion')?.hasError('required')">El nombre de la organización es obligatorio</div>
         </div>
       </div>
 
+      <!-- Dirección -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Dirección</label>
         <input
           type="text"
           formControlName="direccion"
           placeholder="Calle, número, ciudad"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         />
       </div>
 
+      <!-- Tipo de Organización -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Tipo de Organización</label>
         <select
           formControlName="tipo"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         >
-          <option value="" class="text-gray-400">Seleccione un tipo</option>
+          <option value="">Seleccione un tipo</option>
           <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo">{{ tipo }}</option>
         </select>
         <div *ngIf="registroForm.get('tipo')?.touched && registroForm.get('tipo')?.invalid" class="text-red-400 text-sm mt-1">
@@ -101,13 +114,14 @@
         </div>
       </div>
 
+      <!-- Deporte Principal -->
       <div>
         <label class="block text-gray-300 text-sm font-semibold mb-1">Deporte Principal</label>
         <select
           formControlName="id_deporte"
-          class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-green-500"
         >
-          <option value="" class="text-gray-400">Seleccione un deporte</option>
+          <option value="">Seleccione un deporte</option>
           <option *ngFor="let deporte of deportes" [value]="deporte.id">{{ deporte.nombre }}</option>
         </select>
         <div *ngIf="registroForm.get('id_deporte')?.touched && registroForm.get('id_deporte')?.invalid" class="text-red-400 text-sm mt-1">
@@ -117,41 +131,43 @@
     </div>
 
     <!-- Columna 3 -->
-    <div class="flex flex-col justify-between items-center w-1/3">
-      <div class="w-full flex flex-col items-center gap-4">
-        <label class="block text-gray-300 text-sm font-semibold mb-1">Logo de la Organización</label>
+    <div class="flex flex-col justify-between w-1/3">
+      <div class="w-full flex flex-col items-center gap-2">
+        <label class="text-gray-300 text-sm font-semibold mb-1">Logo de la Organización</label>
         <input
           type="file"
           (change)="onFileChange($event)"
           accept="image/*"
-          class="w-full text-gray-300 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full text-gray-300 bg-gray-700 border border-gray-600 rounded-md p-2 cursor-pointer focus:ring-2 focus:ring-green-500"
         />
-        <small class="block text-gray-400 mt-1 text-center">Sube el logo (imagen)</small>
+        <small class="text-gray-400 text-center">Sube el logo (imagen)</small>
 
-        <div *ngIf="imagenPreview" class="mt-4 w-full flex justify-center">
+        <div *ngIf="imagenPreview" class="w-full flex justify-center mt-2">
           <img
             [src]="imagenPreview"
             alt="Logo preview"
-            class="rounded-md border border-gray-600 max-h-48 object-contain"
+            class="rounded border border-gray-600 max-h-32 object-contain"
           />
         </div>
-         <button
-        type="submit"
-        (click)="cerrarSesion()"
-        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-      >
-        Cerrar Sesion
-      </button>
       </div>
 
+      <!-- Botón principal -->
       <button
         type="submit"
-        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
         [disabled]="registroForm.invalid"
+        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-md mt-4 transition-all disabled:opacity-50"
       >
         Registrar Organización
       </button>
     </div>
-
   </form>
+
+  <!-- Botón cerrar sesión discreto -->
+  <button
+    type="button"
+    (click)="cerrarSesion()"
+    class="text-sm text-gray-400 hover:text-gray-200 transition"
+  >
+    Cerrar sesión
+  </button>
 </div>

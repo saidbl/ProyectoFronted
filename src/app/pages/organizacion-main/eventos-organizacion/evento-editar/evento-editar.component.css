@@ -1,0 +1,25 @@
+/* estilos globales, o en styles.scss */
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gris Tailwind 600 */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #6b7280; /* gris Tailwind 500 al hacer hover */
+}
+
+/* Firefox */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 transparent;
+}

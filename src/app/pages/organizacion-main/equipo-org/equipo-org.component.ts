@@ -52,9 +52,25 @@ export class EquipoOrgComponent implements OnInit {
   constructor(public router: Router) {}
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.loadEventosEquipos();
     this.loadUserData();
   }
+  private isAuthenticated(): boolean {
+      return !!localStorage.getItem('token');
+    }
+    private showAuthError(): void {
+      Swal.fire({
+        title: 'Sesión expirada',
+        text: 'Por favor inicie sesión nuevamente',
+        icon: 'error',
+        confirmButtonText: 'Ir a login'
+      }).then(() => {
+        this.router.navigate(['/login']);
+      });
+    }
   loadUserData(): void {
     const nombre = localStorage.getItem('nombre');
     const fotoPerfil = localStorage.getItem('fotoPerfil');

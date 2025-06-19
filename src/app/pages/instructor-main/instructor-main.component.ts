@@ -81,6 +81,10 @@ constructor(public router: Router,private unreadMessagesService: UnreadMessagesS
   private destroy$ = new Subject<void>();
   
  ngOnInit() {
+  if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
+    
     try{
     const savedCount = localStorage.getItem('unreadMessages');
     const initialCount = savedCount ? parseInt(savedCount, 10) : 0;
@@ -175,6 +179,19 @@ constructor(public router: Router,private unreadMessagesService: UnreadMessagesS
     
     
   }
+  private isAuthenticated(): boolean {
+                  return !!localStorage.getItem('token');
+                }
+                private showAuthError(): void {
+                  Swal.fire({
+                    title: 'Sesión expirada',
+                    text: 'Por favor inicie sesión nuevamente',
+                    icon: 'error',
+                    confirmButtonText: 'Ir a login'
+                  }).then(() => {
+                    this.router.navigate(['/login']);
+                  });
+                }
   
   verNotificaciones() {
   localStorage.setItem('unreadMessages', "0");

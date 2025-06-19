@@ -1,4 +1,5 @@
 import { Deporte } from "./deporte.model"
+import { Organizacion } from "./organizacion.model"
 
 export interface Instructor{
     id:number
@@ -12,4 +13,5 @@ export interface Instructor{
     rol:string
     deporte:Deporte
     fotoPerfil:string
+    organizacion:Organizacion
 }

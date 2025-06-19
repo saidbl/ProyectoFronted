@@ -41,8 +41,24 @@ export class EjerciciosComponent implements OnInit{
   orden :  number = 0
   constructor(public router:Router){}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.cargarDatos()
   }
+  private isAuthenticated(): boolean {
+                        return !!localStorage.getItem('token');
+                      }
+                      private showAuthError(): void {
+                        Swal.fire({
+                          title: 'Sesión expirada',
+                          text: 'Por favor inicie sesión nuevamente',
+                          icon: 'error',
+                          confirmButtonText: 'Ir a login'
+                        }).then(() => {
+                          this.router.navigate(['/login']);
+                        });
+                      }
   cargarDatos(){
     try{
       const fotoPerfil = localStorage.getItem("fotoPerfil")

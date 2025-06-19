@@ -221,7 +221,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-medium text-gray-400 mb-1">Categoría</label>
-            <select [(ngModel)]="formEquipo.categoria" name="categoria" 
+            <select [disabled]="this.equipoEditando" [(ngModel)]="formEquipo.categoria" name="categoria" 
                    class="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg
                          text-gray-100 focus:ring-1 focus:ring-blue-500 appearance-none">
               <option value="" disabled selected class="text-gray-500">Seleccionar</option>

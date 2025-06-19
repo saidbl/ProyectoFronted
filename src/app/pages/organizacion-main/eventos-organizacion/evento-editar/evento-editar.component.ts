@@ -69,6 +69,7 @@ export class EventoEditarComponent implements OnInit {
     this.minDate = new Date(today.setDate(today.getDate() + 7));
     this.dateAdapter.setLocale('es-ES');
     this.eventoForm = this.fb.group<EventoForm>({
+      
       nombre: new FormControl('', {
         validators:[
         Validators.required,
@@ -119,6 +120,7 @@ export class EventoEditarComponent implements OnInit {
       diasSemana: new FormControl([]),
       excluirFines: new FormControl(false),
     });
+    this.eventoForm.setValidators(this.validarCondicionalesEvento());
     this.eventoForm.get('fecha')?.valueChanges.subscribe(() => {
       this.eventoForm.get('fechaFin')?.updateValueAndValidity();
     });
@@ -127,6 +129,43 @@ export class EventoEditarComponent implements OnInit {
   ngOnInit(): void {
     this.cargarDatosIniciales();
   }
+  validarCondicionalesEvento(): ValidatorFn {
+  return (form: AbstractControl): { [key: string]: any } | null => {
+    const recurrente = form.get('recurrente')?.value;
+    const fechaFin = form.get('fechaFin')?.value;
+    const horaInicio = form.get('horaInicio')?.value;
+    const horaFin = form.get('horaFin')?.value;
+
+    const errores: { [key: string]: any } = {};
+
+    // Si es recurrente, fechaFin es obligatoria
+    if (recurrente && !fechaFin) {
+      errores['fechaFinRequerida'] = true;
+    }
+
+    // Si NO es recurrente, validar que la horaFin sea al menos 2 horas después de horaInicio
+    if (!recurrente && horaInicio && horaFin) {
+      const [hInicio, mInicio] = horaInicio.split(':').map(Number);
+      const [hFin, mFin] = horaFin.split(':').map(Number);
+
+      const inicio = new Date();
+      inicio.setHours(hInicio, mInicio, 0);
+
+      const fin = new Date();
+      fin.setHours(hFin, mFin, 0);
+
+      const diffHoras = (fin.getTime() - inicio.getTime()) / (1000 * 60 * 60);
+
+      if (diffHoras < 2) {
+        errores['horaFinMenorDosHoras'] = true;
+
+      }
+    }
+
+    return Object.keys(errores).length > 0 ? errores : null;
+  };
+}
+
   futureDateValidator(control: FormControl): { [key: string]: any } | null {
     const selectedDate = new Date(control.value);
     const minDate = new Date();
@@ -335,6 +374,13 @@ export class EventoEditarComponent implements OnInit {
     if (control?.hasError('horaFinAnterior')) {
       return 'La hora final debe ser posterior a la hora de inicio';
     }
+    if (controlName === 'fechaFin' && this.eventoForm.errors?.['fechaFinRequerida']) {
+  return 'La fecha de fin es obligatoria para eventos recurrentes';
+}
+
+if (controlName === 'horaFin' && this.eventoForm.errors?.['horaFinMenorDosHoras']) {
+  return 'La hora de fin debe ser al menos 2 horas después de la hora de inicio';
+}
     
     return '';
   }
@@ -366,7 +412,7 @@ export class EventoEditarComponent implements OnInit {
         contactoOrganizador: formValue.contactoOrganizador || '',
         recurrente: formValue.recurrente || false,
         frecuencia: formValue.frecuencia || '',
-        diasSemana: this.diasSemana|| [],
+        diasSemana: [...this.diasSemana],
         excluirFines: formValue.excluirFines ? true : false,
         fechas : [],
         equiposInscritos : 0,

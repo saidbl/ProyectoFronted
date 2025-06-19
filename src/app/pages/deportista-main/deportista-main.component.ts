@@ -70,6 +70,9 @@ constructor(public router: Router,private wsService: WsService) {}
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
         const savedCount = localStorage.getItem('unreadMessages');
         const initialCount = savedCount ? parseInt(savedCount, 10) : 0;
         this.nuevosMensajes = initialCount;
@@ -94,6 +97,19 @@ constructor(public router: Router,private wsService: WsService) {}
     this.cargarDatosDeportista();
   }
 
+  private isAuthenticated(): boolean {
+                    return !!localStorage.getItem('token');
+                  }
+                  private showAuthError(): void {
+                    Swal.fire({
+                      title: 'Sesión expirada',
+                      text: 'Por favor inicie sesión nuevamente',
+                      icon: 'error',
+                      confirmButtonText: 'Ir a login'
+                    }).then(() => {
+                      this.router.navigate(['/login']);
+                    });
+                  }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }

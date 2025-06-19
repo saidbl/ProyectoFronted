@@ -6,7 +6,7 @@
         <div class="flex items-center space-x-2">
           <mat-icon class="text-blue-400">sports</mat-icon>
           <span class="text-xl font-bold text-blue-400 tracking-tighter">ALLSPORTS</span>
-          <span class="text-sm text-gray-400 font-medium mt-1">Instructor</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Organizacion</span>
         </div>
         <!-- Menú central mejorado -->
         <div class="hidden md:block">
@@ -35,14 +35,14 @@
               </div>
               <div class="text-left hidden lg:block">
                 <p class="text-sm font-medium text-gray-100">{{nombre}}</p>
-                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+                <p class="text-xs text-gray-400 font-light">Organizacion Deportiva</p>
               </div>
               <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
                 {{showUserDropdown ? 'expand_less' : 'expand_more'}}
               </mat-icon>
             </button>
             <div *ngIf="showUserDropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-2 bg-gray-800 border border-gray-700 z-20">
-              <a routerLink="configuracionOrg" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+              <a routerLink="../configuracionOrg" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
                 <mat-icon class="mr-2">person</mat-icon> Perfil
               </a>
               <a (click)="cerrarSesion()" class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 cursor-pointer">

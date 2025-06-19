@@ -142,6 +142,7 @@ registroForm: FormGroup;
           this.oservice.crearOrg(token,formData).subscribe({
             next: () => {
               this.showSuccessAlert("Exito al agregar","Instructor Agregado correctamente")
+              this.limpiarFormulario()
               this.cargarDeportes()
             },
             error: (err) => {
@@ -175,6 +176,10 @@ registroForm: FormGroup;
         });
       }
 
+      limpiarFormulario(): void {
+  this.registroForm.reset();
+  this.imagenPreview = null 
+}
     cerrarSesion() {
          Swal.fire({
           title: '¿Estás seguro?',

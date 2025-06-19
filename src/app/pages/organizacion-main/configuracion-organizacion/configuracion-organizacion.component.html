@@ -6,41 +6,35 @@
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center">
           <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
-            AllSports - Instructor
+            AllSports - Organizacion
           </span>
         </div>
         <div class="hidden md:block">
           <div class="ml-10 flex items-center space-x-4">
-            <a routerLink="../equipoEvento" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+            <a routerLink="../crear-eventos" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
               <i class="fas fa-calendar-alt mr-2 text-lg"></i>
+              <span class="text-sm font-medium">Crear Eventos</span>
+            </a>
+            <a routerLink="../eventos" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+              <i class="fas fa-users mr-2 text-lg"></i>
               <span class="text-sm font-medium">Eventos</span>
             </a>
-            <a routerLink="../rutinaDeportista" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
-              <i class="fas fa-users mr-2 text-lg"></i>
-              <span class="text-sm font-medium">Deportistas</span>
-            </a>
-            <a routerLink="../crearEquipos" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+            <a routerLink="../equipos-org" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
               <i class="fas fa-users-cog mr-2 text-lg"></i>
               <span class="text-sm font-medium">Equipos</span>
             </a>
-            <a routerLink="../rutinas" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+            <a routerLink="../estadistica-org" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
               <i class="fas fa-dumbbell mr-2 text-lg"></i>
-              <span class="text-sm font-medium">Rutinas</span>
+              <span class="text-sm font-medium">Estadisticas</span>
             </a>
-            <a routerLink="../reportes" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
+            <a routerLink="../instructor" class="group flex items-center px-4 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:bg-gray-800/30 hover:text-blue-400">
               <i class="fas fa-chart-bar mr-2 text-lg"></i>
-              <span class="text-sm font-medium">Reportes</span>
+              <span class="text-sm font-medium">Instructor</span>
             </a>
           </div>
         </div>
         <div class="flex items-center">
           <div class="relative ml-3">
-            <div class="flex items-center space-x-2 cursor-pointer group" >
-              <a routerLink="perfil" class="block px-4 py-2 text-sm">
-                <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500"></div>
-              </a>
-              <i class="fas fa-chevron-down text-gray-400 text-xs group-hover:text-blue-400 transition-colors"></i>
-            </div>
           </div>
         </div>
       </div>
@@ -95,7 +89,7 @@
                    class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('nombreOrganizacion')?.invalid && (profileForm.get('nombreOrganizacion')?.dirty || profileForm.get('nombreOrganizacion')?.touched)"
                  class="text-red-400 text-sm mt-1 flex items-center">
-              <i class="fas fa-exclamation-circle mr-1"></i> Apellido requerido (max 50 caracteres)
+              <i class="fas fa-exclamation-circle mr-1"></i> Nombre requerido (max 50 caracteres)
             </div>
           </div>
 
@@ -134,7 +128,7 @@
                    class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('direccion')?.invalid && (profileForm.get('direccion')?.dirty || profileForm.get('direccion')?.touched)"
                  class="text-red-400 text-sm mt-1 flex items-center">
-              <i class="fas fa-exclamation-circle mr-1"></i> Especialidad requerida
+              <i class="fas fa-exclamation-circle mr-1"></i> Direccion requerida
             </div>
           </div>
 
@@ -147,7 +141,7 @@
                    class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 hover:border-gray-600">
             <div *ngIf="profileForm.get('tipo')?.invalid && (profileForm.get('tipo')?.dirty || profileForm.get('tipo')?.touched)"
                  class="text-red-400 text-sm mt-1 flex items-center">
-              <i class="fas fa-exclamation-circle mr-1"></i> Experiencia requerida (0-50 años)
+              <i class="fas fa-exclamation-circle mr-1"></i> Tipo de Organizacion requerido
             </div>
           </div>
         </div>

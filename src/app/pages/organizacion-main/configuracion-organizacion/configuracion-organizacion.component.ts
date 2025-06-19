@@ -87,6 +87,9 @@ export class ConfiguracionOrganizacionComponent {
   ngOnInit(): void {
     const token =localStorage.getItem("token")
     const id = Number(localStorage.getItem("id"))
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     if(!token) {
       throw new Error("Not Token Found")
     }
@@ -105,6 +108,19 @@ export class ConfiguracionOrganizacionComponent {
       }
     });
   }
+  private isAuthenticated(): boolean {
+                return !!localStorage.getItem('token');
+              }
+              private showAuthError(): void {
+                Swal.fire({
+                  title: 'Sesión expirada',
+                  text: 'Por favor inicie sesión nuevamente',
+                  icon: 'error',
+                  confirmButtonText: 'Ir a login'
+                }).then(() => {
+                  this.router.navigate(['/login']);
+                });
+              }
   onFileSelected(event: any): void {
     const fileInput = event.target as HTMLInputElement;
     const file: File | null = fileInput.files?.[0] || null;

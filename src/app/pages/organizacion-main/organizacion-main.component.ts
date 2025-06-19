@@ -57,15 +57,28 @@ export class OrganizacionMainComponent implements OnInit {
 ];
   constructor(public router:Router, private wsService: WsService){}
   ngOnInit(): void {
+    const id = Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
-    console.log(localStorage.getItem("fotoPerfil"))
-      const id = Number(localStorage.getItem("id"))
-      if(!token) {
-        throw new Error("Not Token Found")
-      }
+    if (!this.isAuthenticated()|| !token || !id) {
+      this.showAuthError();
+      return
+    }
     this.loadInitialData(token,id)
     this.loadUserData()
   }
+  private isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
+  }
+  private showAuthError(): void {
+      Swal.fire({
+        title: 'Sesión expirada',
+        text: 'Por favor inicie sesión nuevamente',
+        icon: 'error',
+        confirmButtonText: 'Ir a login'
+      }).then(() => {
+        this.router.navigate(['/login']);
+      });
+    }
 loadUserData(): void {
     const nombre = localStorage.getItem('nombre');
     const fotoPerfil = localStorage.getItem('fotoPerfil');

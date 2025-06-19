@@ -45,8 +45,24 @@ export class RutinaMComponent implements OnInit{
   fotoPerfil: string = "http://localhost:8080/";
   constructor(public router: Router) {}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.cargarDatos()
   }
+  private isAuthenticated(): boolean {
+                        return !!localStorage.getItem('token');
+                      }
+                      private showAuthError(): void {
+                        Swal.fire({
+                          title: 'Sesión expirada',
+                          text: 'Por favor inicie sesión nuevamente',
+                          icon: 'error',
+                          confirmButtonText: 'Ir a login'
+                        }).then(() => {
+                          this.router.navigate(['/login']);
+                        });
+                      }
   cargarDatos(){
     try{
       const nom=localStorage.getItem("nombre")
@@ -164,7 +180,7 @@ export class RutinaMComponent implements OnInit{
     this.rservice.add(nuevaRutina, token).subscribe({
       next: async (data) => {
         await Swal.fire('¡Éxito!', 'Rutina agregada correctamente', 'success');
-        this.cargarDatos
+        this.cargarDatos()
         this.limpiarFormulario();
       },
       error: async (err) => {
@@ -176,7 +192,7 @@ export class RutinaMComponent implements OnInit{
     this.rservice.edit(this.id, nuevaRutina, token).subscribe({
       next: async (data) => {
         await Swal.fire('¡Éxito!', 'Rutina actualizada correctamente', 'success');
-        this.cargarDatos
+        this.cargarDatos()
         this.limpiarFormulario();
       },
       error: async (err) => {
@@ -208,10 +224,11 @@ export class RutinaMComponent implements OnInit{
   this.rservice.delete(rutina.id, token).subscribe({
     next: async (data) => {
       if (data.success) {
-        this.rutinas = this.rutinas.filter(r => r.id !== rutina.id);
         await Swal.fire('Eliminado', 'La rutina fue eliminada correctamente', 'success');
+        this.cargarDatos()
       } else {
         await Swal.fire('Error', 'No se pudo eliminar la rutina', 'error');
+        this.cargarDatos()
       }
     },
     error: async (err) => {

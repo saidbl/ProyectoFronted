@@ -47,6 +47,9 @@ export class EquiposDeportistaComponent implements OnInit{
 ];
   constructor(public router: Router) {}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     const id = Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
     if(!token) {
@@ -75,6 +78,19 @@ export class EquiposDeportistaComponent implements OnInit{
     toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
   }
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
   cerrarSesion(): void {
       Swal.fire({
         title: '¿Estás seguro?',

@@ -6,7 +6,7 @@
         <div class="flex items-center space-x-2">
           <mat-icon class="text-blue-400">sports</mat-icon>
           <span class="text-xl font-bold text-blue-400 tracking-tighter">ALLSPORTS</span>
-          <span class="text-sm text-gray-400 font-medium mt-1">Instructor</span>
+          <span class="text-sm text-gray-400 font-medium mt-1">Organizacion</span>
         </div>
         <!-- Menú central mejorado -->
         <div class="hidden md:block">
@@ -42,7 +42,7 @@
               </div>
               <div class="text-left hidden lg:block">
                 <p class="text-sm font-medium text-gray-100">{{nombre}}</p>
-                <p class="text-xs text-gray-400 font-light">Instructor deportivo</p>
+                <p class="text-xs text-gray-400 font-light">Organizacion Deportiva</p>
               </div>
               <mat-icon class="text-gray-400 group-hover:text-blue-400 transition-all duration-300">
                 {{showUserDropdown ? 'expand_less' : 'expand_more'}}
@@ -114,12 +114,17 @@
 
       <!-- Tarjeta Próximo Evento -->
       <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 shadow-xl border border-gray-700 hover:border-purple-400/30 transition-all duration-300">
-        <div class="flex justify-between items-start">
-          <div>
+        <div class="flex justify-between items-start max-w-[200px]">
+          <div class="max-w-[200px]">
             <mat-icon class="text-purple-400 mb-2">emoji_events</mat-icon>
             <p class="text-sm font-medium text-gray-400">Próximo Evento</p>
-            <h3 *ngIf="proximoEvento" class="mt-1 text-xl font-bold text-white truncate">{{proximoEvento.nombre}}</h3>
-            <h3 *ngIf="!proximoEvento" class="mt-1 text-xl font-bold text-gray-400">No hay eventos</h3>
+            <h3
+    *ngIf="proximoEvento"
+    class="mt-1 text-xl font-bold text-white truncate overflow-hidden whitespace-nowrap"
+  >
+    {{ proximoEvento.nombre }}
+  </h3>
+            <h3 *ngIf="!proximoEvento" class="mt-1 text-xl font-bold text-gray-400 ">No hay eventos</h3>
           </div>
         </div>
         <div *ngIf="proximoEvento" class="mt-4">
@@ -156,7 +161,7 @@
           </h3>
         </div>
         <div class="divide-y divide-gray-800">
-          <div *ngFor="let event of proximosEventos" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/eventos', event.id]">
+          <div *ngFor="let event of proximosEventos" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer">
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
                 <div class="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -178,9 +183,6 @@
                     {{event.equiposInscritos}}/{{event.numMaxEquipos}} equipos
                   </span>
                 </div>
-              </div>
-              <div>
-                <mat-icon class="text-gray-500">chevron_right</mat-icon>
               </div>
             </div>
           </div>
@@ -278,7 +280,6 @@
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-white">{{event.nombre}}</div>
-                    <div class="text-sm text-gray-400">{{event.ubicacion}}</div>
                   </div>
                 </div>
               </td>

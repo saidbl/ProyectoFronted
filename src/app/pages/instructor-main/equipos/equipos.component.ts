@@ -93,6 +93,9 @@ export class EquiposComponent implements OnInit{
   }
   private destroy$ = new Subject<void>(); 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.cargarDatosIniciales();
   }
   ngOnDestroy(): void {
@@ -135,6 +138,19 @@ export class EquiposComponent implements OnInit{
         }
   }
 
+  private isAuthenticated(): boolean {
+                      return !!localStorage.getItem('token');
+                    }
+                    private showAuthError(): void {
+                      Swal.fire({
+                        title: 'Sesión expirada',
+                        text: 'Por favor inicie sesión nuevamente',
+                        icon: 'error',
+                        confirmButtonText: 'Ir a login'
+                      }).then(() => {
+                        this.router.navigate(['/login']);
+                      });
+                    }
   onImageSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
   if (!file?.type.startsWith('image/')) {

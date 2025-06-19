@@ -69,7 +69,7 @@ imagenPreview: string | null = null;
     const nombre = localStorage.getItem('nombre');
     const fotoPerfil = localStorage.getItem('fotoPerfil');
     
-    this.nombre = nombre || '';
+    this.nombre_organizacion = nombre || '';
     this.fotoPerfil = fotoPerfil ? `http://localhost:8080/${fotoPerfil}` : this.fotoPerfil;
   }
   private isAuthenticated(): boolean {
@@ -112,6 +112,11 @@ imagenPreview: string | null = null;
     });
     }
 
+    verificarEntero(valor:any){
+      const entero = Math.floor(valor)
+      this.numMaxEquipos= entero
+    }
+
 validarFormulario(): boolean {
   this.submitted = true;
   const fechaActual = new Date();
@@ -136,6 +141,10 @@ validarFormulario(): boolean {
     Swal.fire('Error', 'El número máximo de equipos debe ser mayor que 0.', 'error');
     return false;
   }
+  if (!Number.isInteger(this.numMaxEquipos) || this.numMaxEquipos <= 1) {
+  Swal.fire('Error', 'El número máximo de equipos debe ser un número entero mayor a 1 (sin decimales ni comas).', 'error');
+  return false;
+}
 
   if (!this.fechaInicio) {
     Swal.fire('Error', 'La fecha de inicio es obligatoria.', 'error');
@@ -157,16 +166,41 @@ validarFormulario(): boolean {
       Swal.fire('Error', 'La fecha de fin es obligatoria para eventos recurrentes.', 'error');
       return false;
     }
-    const fechaFin = new Date(this.fechaFin);
-    if (fechaInicio > fechaFin) {
-      Swal.fire('Error', 'La fecha de inicio no puede ser posterior a la fecha de fin.', 'error');
-      return false;
-    }
+let fechaFin = new Date(this.fechaFin);
+
+if (fechaInicio > fechaFin) {
+  Swal.fire('Error', 'La fecha de inicio no puede ser posterior a la fecha de fin.', 'error');
+  return false;
+}
+
+const diferenciaMs = fechaFin.getTime() - fechaInicio.getTime();
+
+const diferenciaDias = diferenciaMs / (1000 * 60 * 60 * 24);
+
+if (diferenciaDias < 8) {
+  Swal.fire('Error', 'La fecha de fin debe ser al menos 8 días después de la fecha de inicio.', 'error');
+  return false;
+}
     if (this.diasSemana.length === 0) {
       Swal.fire('Error', 'Debes seleccionar al menos un día de la semana para eventos recurrentes.', 'error');
       return false;
     }
   }
+  const [horaI, minutoI] = this.horaInicio.split(':').map(Number);
+    const [horaF, minutoF] = this.horaFin.split(':').map(Number);
+
+    const inicio = new Date();
+    inicio.setHours(horaI, minutoI, 0, 0);
+
+    const fin = new Date();
+    fin.setHours(horaF, minutoF, 0, 0);
+
+    const diferenciaHoras = (fin.getTime() - inicio.getTime()) / (1000 * 60 * 60);
+
+    if (diferenciaHoras < 2) {
+      Swal.fire('Error', 'La hora de término debe ser al menos 2 horas después de la hora de inicio.', 'error');
+      return false;
+    }
 
   return true;
 }
@@ -281,6 +315,7 @@ validarFormulario(): boolean {
     this.frecuencia = 'SEMANAL';
     this.diasSemana = ['L', 'M', 'X', 'J', 'V'];
     this.archivo = undefined;
+    this.imagenPreview = null
     this.submitted = false;
   }
   logout(){

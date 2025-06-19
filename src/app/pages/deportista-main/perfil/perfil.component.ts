@@ -59,9 +59,25 @@ export class PerfilComponent {
   }
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.loadDeportistaData();
   }
 
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
   private loadDeportistaData(): void {
     const token=localStorage.getItem("token")
       if(!token) {

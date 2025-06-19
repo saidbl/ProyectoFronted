@@ -1,4 +1,4 @@
-import { Deporte } from "./deporte.model"
+
 
 export interface InstructorDTO{
     email:String
@@ -11,4 +11,5 @@ export interface InstructorDTO{
     fotoPerfil:string
     password?:string
     rol?:string
+    idOrganizacion?:number
 }

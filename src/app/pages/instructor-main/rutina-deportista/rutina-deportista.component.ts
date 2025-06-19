@@ -111,7 +111,7 @@ constructor(public router: Router,private fb: FormBuilder,private cd: ChangeDete
       nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
   apellido: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
   email: ['', [Validators.required, Validators.email]],
-  password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(30)]],
+  password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(30), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)]],
   id_instructor:['', [Validators.required]],
   id_deporte: [Number(localStorage.getItem("idDeporte")), [Validators.required]],
   id_posicion: ['', [Validators.required]],
@@ -120,18 +120,18 @@ constructor(public router: Router,private fb: FormBuilder,private cd: ChangeDete
   telefono: ['', [Validators.pattern(/^\d{7,15}$/)]], 
   direccion: ['', [Validators.maxLength(200)]],
   fotoPerfil: [null, Validators.required],
-  peso: ['', [Validators.required, Validators.min(20), Validators.max(300)]], 
-  estatura: ['', [Validators.required, Validators.min(100), Validators.max(250)]], // en cm
+  peso: ['', [Validators.required, Validators.min(40), Validators.max(120)]], 
+  estatura: ['', [Validators.required, Validators.min(150), Validators.max(200)]], // en cm
 
-  porcentaje_grasa: ['', [Validators.min(0), Validators.max(100)]], // % corporal
-  masa_muscular: ['', [Validators.min(0), Validators.max(100)]], // % corporal (o puedes ajustar el límite superior si se usa en kg)
+  porcentaje_grasa: ['', [Validators.min(5), Validators.max(25)]], // % corporal
+  masa_muscular: ['', [Validators.min(30), Validators.max(50)]], // % corporal (o puedes ajustar el límite superior si se usa en kg)
 
-  circunferencia_brazo: ['', [Validators.min(10), Validators.max(80)]],
-  circunferencia_cintura: ['', [Validators.min(30), Validators.max(200)]], 
-  circunferencia_cadera: ['', [Validators.min(30), Validators.max(200)]],
+  circunferencia_brazo: ['', [Validators.min(25), Validators.max(45)]],
+  circunferencia_cintura: ['', [Validators.min(60), Validators.max(110)]], 
+  circunferencia_cadera: ['', [Validators.min(80), Validators.max(120)]],
 
   presion_arterial: ['', [Validators.pattern(/^\d{2,3}\/\d{2,3}$/)]], 
-  frecuencia_cardiaca_reposo: ['', [Validators.min(30), Validators.max(200)]], 
+  frecuencia_cardiaca_reposo: ['', [Validators.min(50), Validators.max(90)]], 
 
   notas: ['', [Validators.maxLength(500)]]
     });
@@ -139,6 +139,9 @@ constructor(public router: Router,private fb: FormBuilder,private cd: ChangeDete
 
 
   ngOnInit() {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.cargarDatosIniciales()
   }
   private cargarDatosIniciales(){
@@ -192,6 +195,9 @@ constructor(public router: Router,private fb: FormBuilder,private cd: ChangeDete
             this.cdRef.markForCheck();
     }
   }
+  private isAuthenticated(): boolean {
+                    return !!localStorage.getItem('token');
+                  }
   noFuturoValidator(control: AbstractControl): ValidationErrors | null {
   const fecha = new Date(control.value);
   const hoy = new Date();
@@ -206,8 +212,8 @@ constructor(public router: Router,private fb: FormBuilder,private cd: ChangeDete
   const dia = hoy.getDate() - fechaNacimiento.getDate();
 
   const esMayorDeEdad =
-    edad > 14 ||
-    (edad === 14 && (mes > 0 || (mes === 0 && dia >= 0)));
+    edad > 10 ||
+    (edad === 10 && (mes > 0 || (mes === 0 && dia >= 0)));
 
   return esMayorDeEdad ? null : { menorDeEdad: true };
 }

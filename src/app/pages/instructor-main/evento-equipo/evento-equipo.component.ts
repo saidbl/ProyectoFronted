@@ -66,6 +66,9 @@ export class EventoEquipoComponent implements OnInit{
 ];
 constructor(public router:Router){}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
    this.cargarDatos()
   }
   cargarDatos(){
@@ -106,6 +109,19 @@ constructor(public router:Router){}
       alert(error.message)
     }
   }
+  private isAuthenticated(): boolean {
+                    return !!localStorage.getItem('token');
+                  }
+                  private showAuthError(): void {
+                    Swal.fire({
+                      title: 'Sesión expirada',
+                      text: 'Por favor inicie sesión nuevamente',
+                      icon: 'error',
+                      confirmButtonText: 'Ir a login'
+                    }).then(() => {
+                      this.router.navigate(['/login']);
+                    });
+                  }
   filtrarEquipos():void{
     this.equiposDisponibles=this.equipos.filter(equipo =>equipo.jugadoresAsociados==equipo.maxJugadores)
     console.log(this.equipos)

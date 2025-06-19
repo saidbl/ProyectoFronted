@@ -28,13 +28,6 @@ export class EventoService{
             'Authorization': `Bearer ${token}`
         });
         console.log(evento)
-        if (evento.diasSemana && typeof evento.diasSemana === 'string') {
-            evento.diasSemana = (evento.diasSemana as string)
-              .split(',');
-          } else if (!evento.diasSemana) {
-            evento.diasSemana = [];
-          }
-        
         const formData = new FormData();
      if (foto instanceof File) {
          formData.append('foto', foto);

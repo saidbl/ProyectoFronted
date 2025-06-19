@@ -14,8 +14,9 @@ import { MensajeService } from '../../services/mensaje.service';
 import { OrganizacionService } from '../../services/organizacion.service';
 import { JugadorEquipoService } from '../../services/jugadorequipo.service';
 import { JugadorEquipo } from '../../models/jugadorEquipo.model';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -51,8 +52,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   esChatEquipo = false;
   nombresDeportistas: Map<number, string> = new Map<number, string>();
   fotosDeportistas: Map<number, string> = new Map<number, string>();
-  constructor(private wsService: WsService){}
+  constructor(private wsService: WsService, public router:Router){}
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
      this.wsService.connect();
       this.wsService.connectionEstablished.pipe(
         filter(connected => connected),
@@ -87,6 +91,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
     return token;
   }
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
 
   private initializeChats(): void {
     const idInstructor = Number(localStorage.getItem("id"));

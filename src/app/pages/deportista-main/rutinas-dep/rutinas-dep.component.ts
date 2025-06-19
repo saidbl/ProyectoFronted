@@ -39,6 +39,9 @@ export class RutinasDepComponent implements OnInit{
 
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     const nombre = localStorage.getItem('nombre');
     const apellido = localStorage.getItem('apellido');
     const foto = localStorage.getItem("fotoPerfil")
@@ -66,6 +69,19 @@ export class RutinasDepComponent implements OnInit{
     })
 
   }
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
 
   toggleUserDropdown(): void {
       this.showUserDropdown = !this.showUserDropdown;

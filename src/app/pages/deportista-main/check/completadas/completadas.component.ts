@@ -37,6 +37,9 @@ export class CompletadasComponent implements OnInit{
   constructor(public router: Router) {}
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     const id = Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
     if(!token){
@@ -54,6 +57,19 @@ export class CompletadasComponent implements OnInit{
     this.loadUserData()
   }
 
+    private isAuthenticated(): boolean {
+                          return !!localStorage.getItem('token');
+                        }
+                        private showAuthError(): void {
+                          Swal.fire({
+                            title: 'Sesión expirada',
+                            text: 'Por favor inicie sesión nuevamente',
+                            icon: 'error',
+                            confirmButtonText: 'Ir a login'
+                          }).then(() => {
+                            this.router.navigate(['/login']);
+                          });
+                        }
  loadUserData(): void {
     const nombre = localStorage.getItem('nombre');
     const apellido = localStorage.getItem('apellido');

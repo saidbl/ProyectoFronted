@@ -775,7 +775,7 @@
               <input type="password" formControlName="password" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
             </div>
             <div *ngIf="jugadorForm.get('password')?.invalid && jugadorForm.get('password')?.touched" class="text-red-500 text-sm mt-1">
-              El password es obligatorio y debe de tener de 6 a 30 digitos
+              El password es obligatorio.Debe de tener de 8 a 30 digitos,minimo una minucula, una mayuscula y un caracter especial
             </div>
             
             <div>
@@ -783,7 +783,7 @@
               <input type="date" formControlName="fecha_nacimiento" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
             </div>
             <div *ngIf="jugadorForm.get('fecha_nacimiento')?.invalid && jugadorForm.get('fecha_nacimiento')?.touched" class="text-red-500 text-sm mt-1">
-              El fecha de nacimiento es obligatorio. Mayor a 18 años y no fecha futura
+              El fecha de nacimiento es obligatorio. Mayor a 10 años y no fecha futura
             </div>
           </div>
         </div>
@@ -805,6 +805,9 @@
                   <option *ngFor="let posicion of posiciones" [value]="posicion.id">{{posicion.nombre}}</option>
                 </select>
               </div>
+              <div *ngIf="jugadorForm.get('id_posicion')?.invalid && jugadorForm.get('id_posicion')?.touched" class="text-red-500 text-sm mt-1">
+              La posicion es obligatoria.
+            </div>
               
               <div>
                 <label class="block text-gray-300 mb-2">Género *</label>
@@ -848,28 +851,28 @@
                 <input type="number" step="0.01" formControlName="peso" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('peso')?.invalid && jugadorForm.get('peso')?.touched" class="text-red-500 text-sm mt-1">
-              El peso es obligatorio. El minimo es de 20 a 300
+              El peso es obligatorio. El minimo es de 40 a 120
             </div>
               <div>
                 <label class="block text-gray-300 mb-2">Estatura (cm) *</label>
                 <input type="number" formControlName="estatura" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('estatura')?.invalid && jugadorForm.get('estatura')?.touched" class="text-red-500 text-sm mt-1">
-              El estatura es obligatorio. De 100 a 250 cm
+              El estatura es obligatorio. De 150 a 200 cm
             </div>
               <div>
                 <label class="block text-gray-300 mb-2">% Grasa Corporal</label>
                 <input type="number" step="0.01" formControlName="porcentaje_grasa" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('porcentaje_grasa')?.invalid && jugadorForm.get('porcentaje_grasa')?.touched" class="text-red-500 text-sm mt-1">
-              El porcentaje de grasa es obligatorio.De 0 a 100
+              El porcentaje de grasa es obligatorio. De 25 a 100
             </div>
               <div>
                 <label class="block text-gray-300 mb-2">Masa Muscular (kg)</label>
                 <input type="number" step="0.01" formControlName="masa_muscular" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('masa_muscular')?.invalid && jugadorForm.get('masa_muscular')?.touched" class="text-red-500 text-sm mt-1">
-              La masa muscular es obligatorio. De 0 a 100
+              La masa muscular es obligatorio. De 30 a 150
             </div>
               <div class="col-span-2">
                 <label class="block text-gray-300 mb-2">Circunferencias (cm)</label>
@@ -878,19 +881,19 @@
                     <input type="number" step="0.01" formControlName="circunferencia_brazo" placeholder="Brazo" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
                   </div>
                   <div *ngIf="jugadorForm.get('circunferencia_brazo')?.invalid && jugadorForm.get('circunferencia_brazo')?.touched" class="text-red-500 text-sm mt-1">
-              Obligatorio.De 10 a 80
+              Obligatorio.De 25 a 45
             </div>
                   <div>
                     <input type="number" step="0.01" formControlName="circunferencia_cintura" placeholder="Cintura" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
                   </div>
                   <div *ngIf="jugadorForm.get('circunferencia_cintura')?.invalid && jugadorForm.get('circunferencia_cintura')?.touched" class="text-red-500 text-sm mt-1">
-              Obligatorio. De 30 a 200
+              Obligatorio. De 60 a 110
             </div>
                   <div>
                     <input type="number" step="0.01" formControlName="circunferencia_cadera" placeholder="Cadera" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
                   </div>
                   <div *ngIf="jugadorForm.get('circunferencia_cadera')?.invalid && jugadorForm.get('circunferencia_cadera')?.touched" class="text-red-500 text-sm mt-1">
-              Obligatorio. De 30 a 200
+              Obligatorio. De 80 a 120
             </div>
                 </div>
               </div>
@@ -900,14 +903,14 @@
                 <input type="text" formControlName="presion_arterial" placeholder="Ej: 120/80" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
                <div *ngIf="jugadorForm.get('presion_arterial')?.invalid && jugadorForm.get('presion_arterial')?.touched" class="text-red-500 text-sm mt-1">
-              Obligatorio.
+              Obligatorio. Con formato "120/80"
             </div>
               <div>
                 <label class="block text-gray-300 mb-2">Frec. Cardíaca</label>
                 <input type="number" formControlName="frecuencia_cardiaca_reposo" placeholder="En reposo" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('frecuencia_cardiaca_reposo')?.invalid && jugadorForm.get('frecuencia_cardiaca_reposo')?.touched" class="text-red-500 text-sm mt-1">
-              Obligatorio. De 30 a 200
+              Obligatorio. De 50 a 90
             </div>
               <div class="col-span-2">
                 <label class="block text-gray-300 mb-2">Notas</label>

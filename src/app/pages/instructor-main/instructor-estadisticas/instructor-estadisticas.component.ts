@@ -110,6 +110,9 @@ export class InstructorEstadisticasComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     const fotoPerfil = localStorage.getItem("fotoPerfil")
       const nom=localStorage.getItem("nombre")
       const ap = localStorage.getItem("apellido")
@@ -138,6 +141,19 @@ export class InstructorEstadisticasComponent implements OnInit {
   toggleUserDropdown() {
   this.showUserDropdown = !this.showUserDropdown;
 }
+  private isAuthenticated(): boolean {
+                        return !!localStorage.getItem('token');
+                      }
+                      private showAuthError(): void {
+                        Swal.fire({
+                          title: 'Sesión expirada',
+                          text: 'Por favor inicie sesión nuevamente',
+                          icon: 'error',
+                          confirmButtonText: 'Ir a login'
+                        }).then(() => {
+                          this.router.navigate(['/login']);
+                        });
+                      }
 
   get chartDataDias() {
     return {

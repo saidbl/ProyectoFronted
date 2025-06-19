@@ -55,9 +55,25 @@ export class InstructoresControlComponent {
   }
 
   ngOnInit(): void {
+    if (!this.isAuthenticated()) {
+      this.showAuthError();
+    }
     this.cargarInstructores();
     this.loadUserData()
   }
+  private isAuthenticated(): boolean {
+            return !!localStorage.getItem('token');
+          }
+          private showAuthError(): void {
+            Swal.fire({
+              title: 'Sesión expirada',
+              text: 'Por favor inicie sesión nuevamente',
+              icon: 'error',
+              confirmButtonText: 'Ir a login'
+            }).then(() => {
+              this.router.navigate(['/login']);
+            });
+          }
 
   loadUserData(): void {
     const nombre = localStorage.getItem('nombre');
@@ -135,6 +151,8 @@ export class InstructoresControlComponent {
     if(!token) {
       throw new Error("Not Token Found")
     }
+    console.log("ID ORG:", localStorage.getItem("id"));
+console.log("ID DEPORTE:", localStorage.getItem("idDeporte"));
     const formData = new FormData();
 
     const foto = this.instructorForm.get('fotoPerfil')?.value;
@@ -156,8 +174,10 @@ export class InstructoresControlComponent {
             experiencia:this.instructorForm.value.experiencia,
             rol: "instructor",
             idDeporte: Number(localStorage.getItem("idDeporte")),
-            fotoPerfil: foto instanceof File ? foto.name : this.instructorForm.value.fotoPerfil
+            fotoPerfil: foto instanceof File ? foto.name : this.instructorForm.value.fotoPerfil,
+            idOrganizacion: Number(localStorage.getItem("id")),
           };
+          console.log(instructorDTO)
         formData.append('instructor', new Blob([JSON.stringify(instructorDTO)], { type: 'application/json' }));
       this.iservice.crearInstructor(token,formData).subscribe({
         next: () => {
