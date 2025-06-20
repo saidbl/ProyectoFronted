@@ -187,8 +187,10 @@ export class EjerciciosComponent implements OnInit{
         next: async (data) => {
               if (data.success) {
                 this.ejercicios = this.ejercicios.filter(r => r.id !== ejercicio.id);
+                this.limpiarFormulario()
                 await Swal.fire('Eliminado', 'El ejercicio fue eliminado correctamente', 'success');
               } else {
+                this.limpiarFormulario()
                 await Swal.fire('Error', 'No se pudo eliminar el ejercicio', 'error');
               }
             },

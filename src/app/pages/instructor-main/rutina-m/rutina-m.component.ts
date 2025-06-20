@@ -225,6 +225,7 @@ export class RutinaMComponent implements OnInit{
     next: async (data) => {
       if (data.success) {
         await Swal.fire('Eliminado', 'La rutina fue eliminada correctamente', 'success');
+        this.limpiarFormulario()
         this.cargarDatos()
       } else {
         await Swal.fire('Error', 'No se pudo eliminar la rutina', 'error');

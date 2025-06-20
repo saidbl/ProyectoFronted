@@ -865,14 +865,14 @@
                 <input type="number" step="0.01" formControlName="porcentaje_grasa" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('porcentaje_grasa')?.invalid && jugadorForm.get('porcentaje_grasa')?.touched" class="text-red-500 text-sm mt-1">
-              El porcentaje de grasa es obligatorio. De 25 a 100
+              El porcentaje de grasa es obligatorio. Menos de 25
             </div>
               <div>
                 <label class="block text-gray-300 mb-2">Masa Muscular (kg)</label>
                 <input type="number" step="0.01" formControlName="masa_muscular" class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur">
               </div>
               <div *ngIf="jugadorForm.get('masa_muscular')?.invalid && jugadorForm.get('masa_muscular')?.touched" class="text-red-500 text-sm mt-1">
-              La masa muscular es obligatorio. De 30 a 150
+              La masa muscular es obligatorio. De 30 a 50
             </div>
               <div class="col-span-2">
                 <label class="block text-gray-300 mb-2">Circunferencias (cm)</label>
