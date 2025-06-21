@@ -57,6 +57,7 @@ export class EventoEquipoComponent implements OnInit{
   equipoSeleccionadoId: string | null = null;
   isLoading = false;
   equipos : Equipo[]=[]
+  idInstructorActual:number=0
   navigation = [
   { name: 'Principal', route: '..', icon: 'home' },
   { name: 'Deportistas', route: '../rutinaDeportista', icon: 'people' },
@@ -77,6 +78,7 @@ constructor(public router:Router){}
       const token=localStorage.getItem("token")
       const idDeporte = Number(localStorage.getItem("idDeporte"))
       const idInstructor= Number(localStorage.getItem("id"))
+      this.idInstructorActual = idInstructor
       const fotoPerfil = localStorage.getItem("fotoPerfil")
       const nom=localStorage.getItem("nombre")
       const ap = localStorage.getItem("apellido")
@@ -122,6 +124,44 @@ constructor(public router:Router){}
                       this.router.navigate(['/login']);
                     });
                   }
+  desasociarEquipoDelEvento(idequipo:number,idevento:number){
+    const token = localStorage.getItem("token")
+        if(!token) {
+          throw new Error("Not Token Found")
+        }
+        this.eeservice.delete(idequipo,idevento,token).subscribe({
+          next:(data)=>{
+            if(data.success){
+              Swal.fire({
+            title: 'Equipo Desasociado',
+            text: 'Exito en la desuscripcion',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          })
+          this.mostrarDetallesEvento = false;
+          this.cargarDatos()
+            }
+            else{
+              Swal.fire({
+            title: 'Error al desasociar',
+            text: 'Por favor intente mas tarde',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          })
+          this.mostrarDetallesEvento = false;
+          this.cargarDatos()
+            }
+          },
+          error:(err)=>{
+           Swal.fire({
+            title: 'Error al desasociar',
+            text: 'Por favor intente mas tarde',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          })
+          }
+        })
+  }
   filtrarEquipos():void{
     this.equiposDisponibles=this.equipos.filter(equipo =>equipo.jugadoresAsociados==equipo.maxJugadores)
     console.log(this.equipos)
@@ -210,10 +250,12 @@ constructor(public router:Router){}
         );
                         this.mostrarModalAsociarEquipo = false;
                         this.isLoading= false
+                        this.mostrarDetallesEvento= false
                         this.cargarDatos()
                       },
                       error:(err)=>{
                         console.error("Error al asociar equipo", err);
+                        this.mostrarDetallesEvento= false
                         this.mostrarErrorSweetAlert('Error', 'No se pudo asociar el equipo al evento. Por favor, inténtalo de nuevo.');
                         this.isLoading = false;
                       }

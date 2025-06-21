@@ -11,6 +11,7 @@ import { MatIcon } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { OrganizacionService } from '../../services/organizacion.service';
 import { WsService } from '../../services/websocket.service';
+import { delay, filter, Subject, switchMap, take, takeUntil } from 'rxjs';
 @Component({
     selector: 'app-organizacion-main',
     standalone:true,
@@ -47,6 +48,7 @@ export class OrganizacionMainComponent implements OnInit {
   notificationMessage: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 10;
+  private destroy$ = new Subject<void>();
   nombre: string = ''
   navigation = [
   { name: 'Crear Eventos', route: 'crear-eventos', icon: 'add' },
@@ -59,6 +61,26 @@ export class OrganizacionMainComponent implements OnInit {
   ngOnInit(): void {
     const id = Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
+    const savedCount = localStorage.getItem('unreadMessages');
+        const initialCount = savedCount ? parseInt(savedCount, 10) : 0;
+        this.nuevosMensajes = initialCount;
+        this.wsService.connect();
+      this.wsService.connectionEstablished.pipe(
+        filter(connected => connected),
+        take(1),
+        delay(150), 
+        switchMap(() => this.wsService.getNotificationCount()),
+        takeUntil(this.destroy$)
+      ).subscribe(count => {
+         this.nuevosMensajes = count;
+              console.log('Notificaciones:', count);
+            
+              if (Number(localStorage.getItem("unreadMessages")) == 0) {
+                localStorage.setItem('unreadMessages', count.toString());
+              }
+            
+              this.nuevosMensajes = Number(localStorage.getItem("unreadMessages"));
+      });
     if (!this.isAuthenticated()|| !token || !id) {
       this.showAuthError();
       return

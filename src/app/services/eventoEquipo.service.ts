@@ -8,6 +8,7 @@ import { EventoEquipo } from "../models/eventoEquipo.model";
 import { EventoEquipoDTO } from "../models/eventoEquipoDTO.model";
 import { Equipo } from "../models/equipo.model";
 import { Evento } from "../models/evento.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 @Injectable({
     providedIn:"root"
 })
@@ -39,4 +40,11 @@ export class EventoEquipoService{
             });
             return this.http.get<Evento[]>(`${appSettings.apiGeneral}/equiposEvento/listar/${id}`, { headers });
         }
+
+    delete(idequipo:number,idevento:number, token :string): Observable<ResponseAPI>{
+        const headers = new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            });
+            return this.http.delete<ResponseAPI>(`${appSettings.apiGeneral}/desasociarEquipo/${idequipo}/${idevento}`, { headers });
+    }
     }

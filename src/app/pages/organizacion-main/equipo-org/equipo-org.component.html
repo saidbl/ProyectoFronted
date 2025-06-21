@@ -222,35 +222,49 @@
           <div *ngFor="let equipo of selectedEvent.equipos" 
                class="bg-gray-800/40 border border-gray-800 rounded-xl p-4 hover:border-blue-500/30 transition-all">
             <div class="flex justify-between items-center">
-              <div class="flex items-center gap-3">
-                <img [src]="'http://localhost:8080/' + equipo.img || 'assets/default-team.png'" 
-                     class="w-12 h-12 rounded-full object-cover border border-gray-700">
-                <div>
-                  <h4 class="font-medium text-white">{{equipo.nombre}}</h4>
-                  <div class="flex items-center text-xs text-gray-400 mt-1 gap-2">
-                    <span class="flex items-center">
-                      <mat-icon class="text-xs mr-1">person</mat-icon>
-                      {{equipo.instructor.nombre}}
-                    </span>
-                    <span class="flex items-center">
-                      <mat-icon class="text-xs mr-1">people</mat-icon>
-                      {{equipo.jugadoresAsociados}} jugadores
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <button (click)="toggleTeamPlayers(equipo.id)"
-                      class="text-xs px-3 py-1.5 bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 rounded-lg flex items-center transition-colors">
-                <mat-icon class="mr-1 text-sm">{{showPlayers[equipo.id] ? 'visibility_off' : 'visibility'}}</mat-icon>
-                {{modalshowPlayers? 'Ocultar' : 'Ver'}}
-              </button>
-            </div>
+  <div class="flex items-center gap-3">
+    <img [src]="equipo.img ? 'http://localhost:8080/' + equipo.img : 'assets/default-team.png'" 
+         class="w-12 h-12 rounded-full object-cover border border-gray-700">
+    <div>
+      <h4 class="font-medium text-white">{{ equipo.nombre }}</h4>
+      <div class="flex items-center text-xs text-gray-400 mt-1 gap-2">
+        <span class="flex items-center">
+          <mat-icon class="text-xs mr-1">person</mat-icon>
+          {{ equipo.instructor.nombre }}
+        </span>
+        <span class="flex items-center">
+          <mat-icon class="text-xs mr-1">people</mat-icon>
+          {{ equipo.jugadoresAsociados }} jugadores
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex gap-2">
+    <!-- Botón Ver/Ocultar Jugadores -->
+    <button (click)="toggleTeamPlayers(equipo.id)"
+            class="text-xs px-3 py-1.5 bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 rounded-lg flex items-center transition-colors">
+      <mat-icon class="mr-1 text-sm">
+        {{ modalshowPlayers[equipo.id] ? 'visibility_off' : 'visibility' }}
+      </mat-icon>
+      {{ modalshowPlayers[equipo.id] ? 'Ocultar' : 'Ver' }}
+    </button>
+
+    <!-- Botón Desasociar -->
+    <button (click)="desasociarEquipo(equipo.id,selectedEvent.evento.id)"
+            class="text-xs px-3 py-1.5 bg-red-800/30 hover:bg-red-800/50 text-red-400 rounded-lg flex items-center transition-colors">
+      <mat-icon class="mr-1 text-sm">link_off</mat-icon>
+      Desasociar
+    </button>
+  </div>
+</div>
+
             
             <!-- Jugadores expandibles -->
-            <div *ngIf="modalshowPlayers" class="mt-4 pt-4 border-t border-gray-800">
+            <div *ngIf="modalshowPlayers[equipo.id]" class="mt-4 pt-4 border-t border-gray-800">
               <h5 class="text-sm font-medium text-gray-400 mb-2">Jugadores del equipo:</h5>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div *ngFor="let jugador of showPlayers" 
+                <div *ngFor="let jugador of showPlayers[equipo.id]" 
                      class="bg-gray-900/30 rounded-lg p-3 flex items-center gap-3">
                   <img [src]="'https://ui-avatars.com/api/?name=' + jugador.deportista.nombre + ' ' + jugador.deportista.apellido" 
                        class="w-10 h-10 rounded-full border border-gray-700">

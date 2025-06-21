@@ -310,6 +310,12 @@
               <p class="text-sm font-medium text-white">{{equipo.nombre}}</p>
               <p class="text-xs text-gray-400">{{equipo.deporte.nombre}} • {{equipo.jugadoresAsociados}} jugadores</p>
             </div>
+            <button *ngIf="equipo.instructor.id === idInstructorActual"
+          (click)="desasociarEquipoDelEvento(equipo.id,eventoSeleccionado.id)"
+          class="ml-3 text-xs px-3 py-1.5 bg-red-700/30 hover:bg-red-700/50 text-red-400 rounded-lg flex items-center transition-colors">
+    <mat-icon class="mr-1 text-sm">link_off</mat-icon>
+    Desasociar
+  </button>
           </div>
         </div>
         

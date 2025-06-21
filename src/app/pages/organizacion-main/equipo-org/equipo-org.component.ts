@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { OrganizacionService } from '../../../services/organizacion.service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { EventoEquipoService } from '../../../services/eventoEquipo.service';
 @Component({
     selector: 'app-equipo-org',
     imports: [FormsModule, CommonModule,MatIcon,RouterModule],
@@ -22,12 +23,13 @@ export class EquipoOrgComponent implements OnInit {
   private eeservice= inject(EventoService)
   private deservice = inject(JugadorEquipoService)
   private oservice = inject (OrganizacionService)
+  private eservice = inject(EventoEquipoService)
   eventosEquipos: EventoConEquipos[] = [];
   fotoPerfil: string = "http://localhost:8080/";
   nombre: string = ''
   nuevosMensajes = 0;
   filteredEventos: EventoConEquipos[] = [];
-  showPlayers: JugadorEquipo[] = [];
+  showPlayers: { [key: number]: JugadorEquipo[] } = {};
   isLoading = true;
   errorMessage = '';
   equipos:Equipo[]=[]
@@ -41,7 +43,7 @@ export class EquipoOrgComponent implements OnInit {
   totalEventos : number = 0
   nombre_organizacion = ""
   showUserDropdown : boolean = false
-  modalshowPlayers : boolean = false
+  modalshowPlayers: { [id: number]: boolean } = {};
   navigation = [
   { name: 'Crear Eventos', route: '../crear-eventos', icon: 'add' },
   { name: 'Eventos', route: '../eventos', icon: 'event' },
@@ -57,6 +59,48 @@ export class EquipoOrgComponent implements OnInit {
     }
     this.loadEventosEquipos();
     this.loadUserData();
+  }
+  desasociarEquipo(idEquipo:number, idEvento:number){
+    const token = localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    console.log(idEquipo)
+    console.log(idEvento)
+    this.eservice.delete(idEquipo,idEvento,token).subscribe({
+      next:(data)=>{
+        if(data.success){
+          Swal.fire({
+        title: 'Equipo Desasociado',
+        text: 'Exito en la desuscripcion',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      })
+      this.selectedEvent= null
+      this.loadEventosEquipos()
+      this.loadUserData()
+        }
+        else{
+          Swal.fire({
+        title: 'Error al desasociar',
+        text: 'Por favor intente mas tarde',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      })
+      this.selectedEvent= null
+      this.loadEventosEquipos()
+      this.loadUserData()
+        }
+      },
+      error:(err)=>{
+       Swal.fire({
+        title: 'Error al desasociar',
+        text: 'Por favor intente mas tarde',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      })
+      }
+    })
   }
   private isAuthenticated(): boolean {
       return !!localStorage.getItem('token');
@@ -108,19 +152,19 @@ export class EquipoOrgComponent implements OnInit {
   }
 
   toggleTeamPlayers(teamId: number): void {
-    if (this.modalshowPlayers){
-      this.modalshowPlayers = false
-      return
-    }
     const id = Number(localStorage.getItem("id"))
     const token = localStorage.getItem("token")
     if(!token) {
       throw new Error("Not Token Found")
     }
+    if (this.modalshowPlayers[teamId]) {
+    this.modalshowPlayers[teamId] = false;
+    return;
+  }
     this.deservice.list(teamId,token).subscribe({
       next:(data)=>{
-       this.showPlayers = data
-       this.modalshowPlayers = true
+       this.showPlayers[teamId] = data
+       this.modalshowPlayers[teamId] = true
       },
       error:(err)=>{
         console.error(err)

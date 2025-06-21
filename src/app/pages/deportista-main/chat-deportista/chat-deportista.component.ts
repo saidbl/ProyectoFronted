@@ -4,7 +4,6 @@ import { WsService } from '../../../services/websocket.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EquipoService } from '../../../services/equipo.service';
-import { DeportistaService } from '../../../services/deportista.service';
 import { MensajeService } from '../../../services/mensaje.service';
 import { OrganizacionService } from '../../../services/organizacion.service';
 import { Chat } from '../../../models/chat.model';
@@ -234,8 +233,7 @@ export class ChatDeportistaComponent {
     switch (mensaje.remitenteTipo) {
       case RemitenteTipo.INSTRUCTOR:
         if (this.selectedChat?.tipo === ChatTipo.EQUIPO) {
-          console.log(this.fotosDeportistas.get(mensaje.remitenteId))
-          return this.fotosDeportistas.get(mensaje.remitenteId) || 'assets/default.png';
+         this.selectedChat?.instructor?.fotoPerfil|| 'assets/default.png';
         }
         return this.selectedChat?.instructor?.fotoPerfil || 'assets/default.png';
       
