@@ -279,6 +279,10 @@ cambiarVista(tipo:string){
   }else if(tipo === "medicion"){
     this.currentView = "medicion"
   }
+  this.showmedicionForm=false
+  this.showgoalsForm=false
+  this.showmetricaForm=false
+  this.showrendimientoForm=false
 }
    cargarDatos(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -757,7 +761,13 @@ cambiarVista(tipo:string){
     console.log(newMetric)
     this.tmservice.add(newMetric,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
-        console.log(data)
+        Swal.fire({
+              title: '¡Exito al agregar!',
+              text: 'Agregado exitosamente.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
         this.loadInitialData(); 
 
       },
@@ -781,7 +791,13 @@ cambiarVista(tipo:string){
     console.log(newRecord)
     this.rrservice.add(newRecord,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
-        console.log(data)
+        Swal.fire({
+              title: '¡Exito al agregar!',
+              text: 'Agregado exitosamente.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
         this.loadInitialData(); 
 
       },
@@ -802,6 +818,13 @@ cambiarVista(tipo:string){
     newGoal.iddeportista = Number(localStorage.getItem("id"))
     this.orservice.add(newGoal,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
+        Swal.fire({
+              title: '¡Exito al agregar!',
+              text: 'Agregado exitosamente.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
         this.loadInitialData(); 
 
       },
@@ -821,8 +844,13 @@ cambiarVista(tipo:string){
     console.log(newMedicion)
     this.mfservice.add(newMedicion,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
-        console.log(data)
-        alert("agregado"+data)
+        Swal.fire({
+              title: '¡Exito al agregar!',
+              text: 'Agregado exitosamente.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
         this.loadInitialData(); // Para recargar datos principales
       },
       error:(err)=>{
@@ -841,7 +869,13 @@ cambiarVista(tipo:string){
     }
     this.orservice.completado(goal.id,token).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data)=>{
-        alert("Completado"+data)
+        Swal.fire({
+              title: '¡Felicidades!',
+              text: 'Objetivo completado.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
         this.loadInitialData(); // Para recargar datos principales
       },
       error:(err)=>{
