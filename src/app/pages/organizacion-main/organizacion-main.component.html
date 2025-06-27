@@ -204,7 +204,7 @@
           </h3>
         </div>
         <div class="divide-y divide-gray-800">
-          <div *ngFor="let team of ultimosEquipos.slice(0,3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer" [routerLink]="['/equipos', team.id]">
+          <div *ngFor="let team of ultimosEquipos.slice(0,3)" class="p-4 hover:bg-gray-800/50 transition-all duration-200 cursor-pointer">
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
                 <img [src]="'http://localhost:8080/' + team.img" class="h-10 w-10 rounded-full object-cover border border-gray-700">

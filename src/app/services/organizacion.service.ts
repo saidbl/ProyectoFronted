@@ -4,6 +4,7 @@ import { appSettings } from "../settings/appSettings";
 import { Observable } from "rxjs";
 import { Organizacion } from "../models/organizacion.model";
 import { OrganizacionDTO } from "../models/organizacionDTO.model";
+import { ResponseAPI } from "../models/ResponseAPI";
 @Injectable({
     providedIn:"root"
 })
@@ -49,6 +50,20 @@ export class OrganizacionService{
             localStorage.removeItem("rol")
         }
       }
+    
+    delete(id: number, token: string): Observable<ResponseAPI>{
+                    const headers = new HttpHeaders({
+                        'Authorization': `Bearer ${token}`
+                    });
+                    return this.http.delete<ResponseAPI>(`${appSettings.apiGeneral}/organizacion/eliminar/${id}`,{ headers })
+                }
+
+    list(token:string):Observable<Organizacion[]>{
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.get<Organizacion[]>(`${appSettings.apiGeneral}/listarOrganizacion`,{headers})
+    }
 
       isAuthenticated():boolean{
         if(typeof localStorage != "undefined"){

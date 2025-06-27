@@ -8,9 +8,11 @@ import { OrganizacionDTO } from '../../../models/organizacionDTO.model';
 import { OrganizacionService } from '../../../services/organizacion.service';
 import { AdminService } from '../../../services/admin.service';
 import { Router } from '@angular/router';
+import { Organizacion } from '../../../models/organizacion.model';
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-registro-organizacion',
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule,CommonModule,MatIcon],
   templateUrl: './registro-organizacion.component.html',
   styleUrl: './registro-organizacion.component.css'
 })
@@ -22,6 +24,7 @@ registroForm: FormGroup;
   deportes: Deporte[] = [];
   tiposOrganizacion = ['Club', 'Liga', 'Asociación', 'Federación', 'Escuela'];
   submitted = false;
+  organizaciones : Organizacion[]= []
 
   imagenPreview: string | ArrayBuffer | null = null;
 
@@ -56,8 +59,50 @@ registroForm: FormGroup;
               return;
           }
     this.cargarDeportes();
+    this.cargarOrganizaciones();
   }
 
+  cargarOrganizaciones(): void {
+    const id = Number(localStorage.getItem("id"))
+    const token = localStorage.getItem("token")
+    if(!token) {
+      throw new Error("Not Token Found")
+    }
+    this.oservice.list(token).subscribe({
+      next: (data) => this.organizaciones = data,
+      error: (err) => console.error('Error cargando instructores', err)
+    });
+  }
+
+  eliminarOrganizacion(id:number){
+     Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará al instructor permanentemente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("Not Token Found");
+          }
+          this.oservice.delete(id, token).subscribe({
+            next: (data) => {
+              this.showSuccessAlert("Éxito en la eliminación", "Instructor removido");
+              this.cargarOrganizaciones();
+            },
+            error: (err) => {
+              this.showErrorAlert("Error en eliminación", err.message);
+            }
+          });
+        }
+      });
+
+  }
   onFileChange(event: Event) {
   const fileInput = event.target as HTMLInputElement;
     const file: File | null = fileInput.files?.[0] || null;
@@ -144,6 +189,7 @@ registroForm: FormGroup;
               this.showSuccessAlert("Exito al agregar","Instructor Agregado correctamente")
               this.limpiarFormulario()
               this.cargarDeportes()
+              this.cargarOrganizaciones()
             },
             error: (err) => {
               this.showErrorAlert("Error al agregar",err.error)
